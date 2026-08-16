@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "of-project",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "3456", "C:\\of-project"],
+      "port": 3456
+    }
+  ]
+}

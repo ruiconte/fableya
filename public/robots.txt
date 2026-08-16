@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /bibliotheque
+Disallow: /compte
+Disallow: /livre/
+Disallow: /preview/
+Disallow: /generation
+Disallow: /paiement-confirme
+
+Sitemap: https://fableya.com/sitemap.xml
