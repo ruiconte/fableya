@@ -52,6 +52,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
   const pageState = useRef<PageState | null>(null)
   const currentQuery = useRef('')
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const fetchPage = useCallback(async (
     q: string,
@@ -158,17 +159,18 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     onSelect({ references: picked, generatedPrompt: combinePrompts(picked) })
   }
 
-  // Auto-load when sentinel enters viewport
+  // Auto-load when sentinel enters the scroll container
   useEffect(() => {
     const sentinel = sentinelRef.current
-    if (!sentinel) return
+    const container = scrollContainerRef.current
+    if (!sentinel || !container) return
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting && pageState.current?.hasMore && !loadingMore) {
           loadMore()
         }
       },
-      { rootMargin: '200px' }
+      { root: container, rootMargin: '200px' }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
@@ -270,54 +272,60 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
             </span>
           </div>
 
-          {/* Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {results.map(ref => {
-              const idx = picked.findIndex(r => r.externalId === ref.externalId)
-              const isSelected = idx !== -1
-              const isFull = picked.length >= MAX_SELECT && !isSelected
-              return (
-                <button
-                  key={ref.externalId}
-                  type="button"
-                  onClick={() => togglePick(ref)}
-                  disabled={isFull}
-                  className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all group ${
-                    isSelected
-                      ? 'border-kidoria-rose ring-2 ring-kidoria-rose/30'
-                      : isFull
-                      ? 'border-transparent opacity-40 cursor-not-allowed'
-                      : 'border-transparent hover:border-kidoria-rose/50'
-                  }`}
-                >
-                  <img
-                    src={ref.thumbnailUrl}
-                    alt={ref.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                    onError={e => { (e.target as HTMLImageElement).parentElement!.style.display = 'none' }}
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                  {isSelected && (
-                    <div className="absolute top-2 right-2">
-                      <span className="bg-kidoria-rose text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow">
-                        {idx + 1}
-                      </span>
+          {/* Scrollable grid container */}
+          <div
+            ref={scrollContainerRef}
+            className="h-[520px] overflow-y-auto rounded-2xl pr-1"
+            style={{ scrollbarWidth: 'thin' }}
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {results.map(ref => {
+                const idx = picked.findIndex(r => r.externalId === ref.externalId)
+                const isSelected = idx !== -1
+                const isFull = picked.length >= MAX_SELECT && !isSelected
+                return (
+                  <button
+                    key={ref.externalId}
+                    type="button"
+                    onClick={() => togglePick(ref)}
+                    disabled={isFull}
+                    className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all group ${
+                      isSelected
+                        ? 'border-kidoria-rose ring-2 ring-kidoria-rose/30'
+                        : isFull
+                        ? 'border-transparent opacity-40 cursor-not-allowed'
+                        : 'border-transparent hover:border-kidoria-rose/50'
+                    }`}
+                  >
+                    <img
+                      src={ref.thumbnailUrl}
+                      alt={ref.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      onError={e => { (e.target as HTMLImageElement).parentElement!.style.display = 'none' }}
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                    {isSelected && (
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-kidoria-rose text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow">
+                          {idx + 1}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p className="text-white text-[10px] leading-tight line-clamp-2">{ref.title}</p>
                     </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-white text-[10px] leading-tight line-clamp-2">{ref.title}</p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+                  </button>
+                )
+              })}
+            </div>
 
-          {/* Infinite scroll sentinel */}
-          <div ref={sentinelRef} className="flex items-center justify-center py-4 min-h-[40px]">
-            {loadingMore && (
-              <span className="w-5 h-5 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" />
-            )}
+            {/* Sentinel — inside the scroll container */}
+            <div ref={sentinelRef} className="flex items-center justify-center py-6">
+              {loadingMore && (
+                <span className="w-5 h-5 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" />
+              )}
+            </div>
           </div>
 
           {/* Confirm bar */}
