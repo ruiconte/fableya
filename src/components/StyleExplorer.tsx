@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import type { ExternalStyleReference, StyleProfile } from '../lib/providers/types'
 import { searchMet } from '../lib/providers/met'
 import { searchWikimedia } from '../lib/providers/wikimedia'
@@ -27,6 +27,15 @@ function combinePrompts(refs: ExternalStyleReference[]): string {
   return [...unique, "children's book illustration style"].join(', ')
 }
 
+interface PageState {
+  metPage: number
+  metAllIds: number[]
+  wikiPage: number
+  ovPage: number
+  archPage: number
+  hasMore: boolean
+}
+
 interface Props {
   selected: StyleProfile | null
   onSelect: (profile: StyleProfile) => void
@@ -37,8 +46,69 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<ExternalStyleReference[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
   const [picked, setPicked] = useState<ExternalStyleReference[]>([])
+  const pageState = useRef<PageState | null>(null)
+  const currentQuery = useRef('')
+
+  const fetchPage = useCallback(async (
+    q: string,
+    ps: PageState,
+    append: boolean,
+  ) => {
+    const [metRes, wikiRes, ovRes, archRes] = await Promise.allSettled([
+      searchMet(q, ps.metAllIds.length ? ps.metAllIds : undefined, ps.metPage),
+      searchWikimedia(q, ps.wikiPage),
+      searchOpenverse(q, ps.ovPage),
+      searchArchive(q, ps.archPage),
+    ])
+
+    const metResult = metRes.status === 'fulfilled' ? metRes.value : null
+    const metItems = metResult?.items ?? []
+    const wikiItems = wikiRes.status === 'fulfilled' ? wikiRes.value.items : []
+    const ovItems = ovRes.status === 'fulfilled' ? ovRes.value.items : []
+    const archItems = archRes.status === 'fulfilled' ? archRes.value.items : []
+
+    // Interleave for visual diversity
+    const merged: ExternalStyleReference[] = []
+    const max = Math.max(metItems.length, wikiItems.length, ovItems.length, archItems.length)
+    for (let i = 0; i < max; i++) {
+      if (metItems[i]) merged.push(metItems[i])
+      if (wikiItems[i]) merged.push(wikiItems[i])
+      if (ovItems[i]) merged.push(ovItems[i])
+      if (archItems[i]) merged.push(archItems[i])
+    }
+
+    // Deduplicate against existing results when appending
+    if (append) {
+      setResults(prev => {
+        const existingIds = new Set(prev.map(r => r.externalId))
+        const fresh = merged.filter(r => !existingIds.has(r.externalId))
+        return [...prev, ...fresh]
+      })
+    } else {
+      setResults(merged)
+    }
+
+    // Update page state for next load-more
+    const nextIds = metResult?.allIds ?? ps.metAllIds
+    const hasMoreMet = nextIds.length > (ps.metPage + 1) * 60
+    const hasMoreWiki = wikiItems.length >= 20
+    const hasMoreOv = ovItems.length >= 20
+    const hasMoreArch = archItems.length >= 20
+
+    pageState.current = {
+      metPage: ps.metPage + 1,
+      metAllIds: nextIds,
+      wikiPage: ps.wikiPage + 1,
+      ovPage: ps.ovPage + 1,
+      archPage: ps.archPage + 1,
+      hasMore: hasMoreMet || hasMoreWiki || hasMoreOv || hasMoreArch,
+    }
+
+    return merged.length
+  }, [])
 
   const doSearch = useCallback(async (q: string) => {
     if (!q.trim()) return
@@ -46,37 +116,32 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     setError('')
     setResults([])
     setPicked([])
+    currentQuery.current = q
+    pageState.current = null
+
     try {
-      // 4 sources in parallel for maximum variety
-      const [metRes, wikiRes, ovRes, archRes] = await Promise.allSettled([
-        searchMet(q),
-        searchWikimedia(q),
-        searchOpenverse(q),
-        searchArchive(q),
-      ])
-      const metItems = metRes.status === 'fulfilled' ? metRes.value.items : []
-      const wikiItems = wikiRes.status === 'fulfilled' ? wikiRes.value.items : []
-      const ovItems = ovRes.status === 'fulfilled' ? ovRes.value.items : []
-      const archItems = archRes.status === 'fulfilled' ? archRes.value.items : []
-
-      // Interleave: 1 from each source in rotation for visual diversity
-      const merged: ExternalStyleReference[] = []
-      const max = Math.max(metItems.length, wikiItems.length, ovItems.length, archItems.length)
-      for (let i = 0; i < max && merged.length < 48; i++) {
-        if (metItems[i]) merged.push(metItems[i])
-        if (wikiItems[i]) merged.push(wikiItems[i])
-        if (ovItems[i]) merged.push(ovItems[i])
-        if (archItems[i]) merged.push(archItems[i])
+      const initialState: PageState = {
+        metPage: 0, metAllIds: [], wikiPage: 0, ovPage: 1, archPage: 0, hasMore: true,
       }
-
-      setResults(merged)
-      if (merged.length === 0) setError('Aucun résultat. Essayez un autre terme.')
+      const count = await fetchPage(q, initialState, false)
+      if (count === 0) setError('Aucun résultat. Essayez un autre terme.')
     } catch {
       setError('Impossible de charger les images. Vérifiez votre connexion.')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [fetchPage])
+
+  const loadMore = useCallback(async () => {
+    const ps = pageState.current
+    if (!ps || !ps.hasMore || loadingMore) return
+    setLoadingMore(true)
+    try {
+      await fetchPage(currentQuery.current, ps, true)
+    } finally {
+      setLoadingMore(false)
+    }
+  }, [fetchPage, loadingMore])
 
   const togglePick = (ref: ExternalStyleReference) => {
     setPicked(prev => {
@@ -103,7 +168,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
       <div className="rounded-2xl border-2 border-kidoria-rose bg-kidoria-rose/5 p-5 space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-kidoria-rose text-sm font-bold">
-            ✓ {selected.references.length} image{selected.references.length > 1 ? 's' : ''} sélectionnée{selected.references.length > 1 ? 's' : ''}
+            {selected.references.length} image{selected.references.length > 1 ? 's' : ''} sélectionnée{selected.references.length > 1 ? 's' : ''}
           </span>
           <button type="button" onClick={onClear}
             className="text-xs text-kidoria-muted border border-kidoria-sky rounded-lg px-3 py-1 hover:border-kidoria-muted/40 transition-colors">
@@ -111,7 +176,6 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           </button>
         </div>
 
-        {/* Thumbnail strip */}
         <div className="flex gap-2 overflow-x-auto pb-1">
           {selected.references.map(ref => (
             <img
@@ -125,7 +189,6 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           ))}
         </div>
 
-        {/* Combined prompt */}
         <div className="bg-kidoria-cream rounded-xl px-3 py-2.5">
           <p className="text-[11px] font-semibold text-kidoria-muted uppercase tracking-wide mb-1">Style combiné</p>
           <p className="text-xs text-kidoria-text leading-relaxed italic">"{selected.generatedPrompt}"</p>
@@ -233,10 +296,23 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
             })}
           </div>
 
+          {/* Load more */}
+          {pageState.current?.hasMore && (
+            <button
+              type="button"
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="w-full py-3 rounded-2xl border-2 border-dashed border-kidoria-sky hover:border-kidoria-rose/40 text-kidoria-muted hover:text-kidoria-text text-sm font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loadingMore
+                ? <><span className="w-4 h-4 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" /> Chargement...</>
+                : 'Voir plus de résultats'}
+            </button>
+          )}
+
           {/* Confirm bar */}
           {picked.length > 0 && (
             <div className="rounded-2xl border border-kidoria-rose/30 bg-kidoria-rose/5 p-4 space-y-3">
-              {/* Mini strip */}
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {picked.map((ref, i) => (
                   <div key={ref.externalId} className="relative shrink-0">
@@ -254,7 +330,6 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
                 ))}
               </div>
 
-              {/* Combined prompt preview */}
               <div className="bg-white rounded-xl px-3 py-2.5">
                 <p className="text-[11px] font-semibold text-kidoria-muted uppercase tracking-wide mb-1">Style combiné</p>
                 <p className="text-xs text-kidoria-text leading-relaxed italic line-clamp-3">"{combinePrompts(picked)}"</p>

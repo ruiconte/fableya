@@ -65,17 +65,27 @@ async function fetchObject(id: number): Promise<(MetObject & { _prompt: string }
   }
 }
 
-export async function searchMet(query: string): Promise<ProviderSearchResult> {
-  // isPublicDomain=true ensures ALL returned IDs are public domain — no filtering needed after
-  const searchUrl = `${BASE}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`
-  const res = await fetch(searchUrl)
-  if (!res.ok) throw new Error('Met API unavailable')
+export async function searchMet(query: string, allIds?: number[], page = 0): Promise<ProviderSearchResult & { allIds: number[] }> {
+  let ids = allIds
+  let total = 0
 
-  const { total, objectIDs } = await res.json() as { total: number; objectIDs: number[] | null }
-  if (!objectIDs || objectIDs.length === 0) return { items: [], total: 0 }
+  if (!ids) {
+    const searchUrl = `${BASE}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`
+    const res = await fetch(searchUrl)
+    if (!res.ok) throw new Error('Met API unavailable')
+    const data = await res.json() as { total: number; objectIDs: number[] | null }
+    ids = data.objectIDs ?? []
+    total = data.total
+  } else {
+    total = ids.length
+  }
 
-  // Fetch 60 in parallel to have enough after filtering out those without thumbnails
-  const batch = objectIDs.slice(0, 60)
+  if (ids.length === 0) return { items: [], total: 0, allIds: [] }
+
+  // Each page: take the next batch of 60 candidates, expect ~20 valid
+  const batch = ids.slice(page * 60, (page + 1) * 60)
+  if (batch.length === 0) return { items: [], total, allIds: ids }
+
   const results = await Promise.all(batch.map(fetchObject))
   const valid = results.filter((o): o is NonNullable<typeof o> => o !== null)
 
@@ -94,5 +104,5 @@ export async function searchMet(query: string): Promise<ProviderSearchResult> {
     generatedPrompt: obj._prompt,
   }))
 
-  return { items, total }
+  return { items, total, allIds: ids }
 }

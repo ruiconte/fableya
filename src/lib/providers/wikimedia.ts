@@ -121,13 +121,14 @@ const ILLUSTRATION_CATEGORIES = [
   "Illustrated_books_for_children",
 ]
 
-export async function searchWikimedia(query: string): Promise<ProviderSearchResult> {
+export async function searchWikimedia(query: string, page = 0): Promise<ProviderSearchResult> {
   const textParams = new URLSearchParams({
     action: 'query',
     generator: 'search',
     gsrsearch: query + ' illustration',
     gsrnamespace: '6',
     gsrlimit: '40',
+    gsroffset: String(page * 40),
     prop: 'imageinfo',
     iiprop: 'url|thumburl|mediatype|extmetadata',
     iiurlwidth: '400',

@@ -47,11 +47,11 @@ function buildPrompt(doc: ArchiveDoc): string {
 }
 
 // Query for children's illustration-related book covers / page scans
-export async function searchArchive(query: string): Promise<ProviderSearchResult> {
+export async function searchArchive(query: string, page = 0): Promise<ProviderSearchResult> {
   const encodedQ = encodeURIComponent(
     `(${query}) AND (subject:"children" OR subject:"fairy tales" OR subject:"picture books" OR subject:"illustrated") AND mediatype:texts`
   )
-  const url = `${BASE}/advancedsearch.php?q=${encodedQ}&fl[]=identifier,title,creator,subject&sort[]=downloads+desc&rows=20&output=json`
+  const url = `${BASE}/advancedsearch.php?q=${encodedQ}&fl[]=identifier,title,creator,subject&sort[]=downloads+desc&rows=20&start=${page * 20}&output=json`
 
   const res = await fetch(url, { headers: { Accept: 'application/json' } })
   if (!res.ok) throw new Error('Archive.org API unavailable')

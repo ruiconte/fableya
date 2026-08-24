@@ -66,11 +66,11 @@ function rightsLabel(license: string): string {
   return license.toUpperCase()
 }
 
-export async function searchOpenverse(query: string): Promise<ProviderSearchResult> {
+export async function searchOpenverse(query: string, page = 1): Promise<ProviderSearchResult> {
   // rawpixel = thousands of CC0 children's book illustrations (Greenaway, Crane, Caldecott + modern)
   // nypl = New York Public Library digitized collections
   // flickr = Flickr Commons (museum/library uploads)
-  const url = `${BASE}/images/?q=${encodeURIComponent(query)}&license_type=commercial&source=rawpixel,nypl,flickr&page_size=20`
+  const url = `${BASE}/images/?q=${encodeURIComponent(query)}&license_type=commercial&source=rawpixel,nypl,flickr&page_size=20&page=${page}`
   const res = await fetch(url, {
     headers: { 'Accept': 'application/json' },
   })
