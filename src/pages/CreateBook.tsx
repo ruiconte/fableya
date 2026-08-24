@@ -10,7 +10,6 @@ import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character }
 import type { StyleProfile } from '../lib/providers/types'
 import { StyleExplorer } from '../components/StyleExplorer'
 import { CharacterSection } from '../components/CharacterSection'
-import { BookShowcase } from '../components/BookShowcase'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
 
@@ -131,8 +130,7 @@ export function CreateBook() {
   ]
 
   return (
-    <div className="page-container max-w-2xl" style={{ position: 'relative', zIndex: 1 }}>
-      <BookShowcase />
+    <div className="page-container max-w-2xl">
       <PageSEO title="Créer un livre personnalisé" description="Personnalisez le livre de votre enfant : prénom, âge, thème, style d'illustration. Votre histoire unique est prête en quelques minutes." canonical="/creer" />
       {/* Header */}
       <div className="text-center mb-8">
