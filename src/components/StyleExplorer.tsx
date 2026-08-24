@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import type { ExternalStyleReference, StyleProfile } from '../lib/providers/types'
 import { searchMet } from '../lib/providers/met'
 import { searchWikimedia } from '../lib/providers/wikimedia'
@@ -51,6 +51,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
   const [picked, setPicked] = useState<ExternalStyleReference[]>([])
   const pageState = useRef<PageState | null>(null)
   const currentQuery = useRef('')
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const fetchPage = useCallback(async (
     q: string,
@@ -156,6 +157,22 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     if (picked.length === 0) return
     onSelect({ references: picked, generatedPrompt: combinePrompts(picked) })
   }
+
+  // Auto-load when sentinel enters viewport
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && pageState.current?.hasMore && !loadingMore) {
+          loadMore()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [loadMore, loadingMore])
 
   const handleSuggestion = (s: string) => {
     setQuery(s)
@@ -296,19 +313,12 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
             })}
           </div>
 
-          {/* Load more */}
-          {pageState.current?.hasMore && (
-            <button
-              type="button"
-              onClick={loadMore}
-              disabled={loadingMore}
-              className="w-full py-3 rounded-2xl border-2 border-dashed border-kidoria-sky hover:border-kidoria-rose/40 text-kidoria-muted hover:text-kidoria-text text-sm font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loadingMore
-                ? <><span className="w-4 h-4 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" /> Chargement...</>
-                : 'Voir plus de résultats'}
-            </button>
-          )}
+          {/* Infinite scroll sentinel */}
+          <div ref={sentinelRef} className="flex items-center justify-center py-4 min-h-[40px]">
+            {loadingMore && (
+              <span className="w-5 h-5 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" />
+            )}
+          </div>
 
           {/* Confirm bar */}
           {picked.length > 0 && (
