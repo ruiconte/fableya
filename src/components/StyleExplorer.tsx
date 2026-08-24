@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import type { ExternalStyleReference, StyleProfile } from '../lib/providers/types'
 import { searchMet } from '../lib/providers/met'
 import { searchWikimedia, ILLUSTRATION_CATEGORIES } from '../lib/providers/wikimedia'
@@ -74,7 +74,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
   const [error, setError] = useState('')
   const [picked, setPicked] = useState<ExternalStyleReference[]>([])
   const pageState = useRef<PageState | null>(null)
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const loadingMoreRef = useRef(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const seenIds = useRef<Set<string>>(new Set())
 
@@ -168,27 +168,22 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
 
   const loadMore = useCallback(async () => {
     const ps = pageState.current as (PageState & { _hasMore?: boolean }) | null
-    if (!ps || ps._hasMore === false || loadingMore) return
+    if (!ps || ps._hasMore === false || loadingMoreRef.current) return
+    loadingMoreRef.current = true
     setLoadingMore(true)
     try {
       await fetchPage(ps, true)
     } finally {
+      loadingMoreRef.current = false
       setLoadingMore(false)
     }
-  }, [fetchPage, loadingMore])
+  }, [fetchPage])
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current
-    const container = scrollContainerRef.current
-    if (!sentinel || !container) return
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) loadMore()
-      },
-      { root: container, rootMargin: '300px' }
-    )
-    observer.observe(sentinel)
-    return () => observer.disconnect()
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 400) {
+      loadMore()
+    }
   }, [loadMore])
 
   const doSearch = useCallback(async (q: string) => {
@@ -314,7 +309,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           </div>
 
           {/* Scrollable grid */}
-          <div ref={scrollContainerRef} className="h-[520px] overflow-y-auto rounded-2xl pr-1" style={{ scrollbarWidth: 'thin' }}>
+          <div ref={scrollContainerRef} onScroll={handleScroll} className="h-[520px] overflow-y-auto rounded-2xl pr-1" style={{ scrollbarWidth: 'thin' }}>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {results.map(ref => {
                 const idx = picked.findIndex(r => r.externalId === ref.externalId)
@@ -348,8 +343,8 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
               })}
             </div>
 
-            {/* Sentinel inside scroll container */}
-            <div ref={sentinelRef} className="flex items-center justify-center py-6">
+            {/* Loading indicator */}
+            <div className="flex items-center justify-center py-6">
               {loadingMore && (
                 <span className="w-5 h-5 border-2 border-kidoria-muted border-t-transparent rounded-full animate-spin" />
               )}
