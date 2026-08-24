@@ -5,28 +5,36 @@ export default {
     extend: {
       colors: {
         kidoria: {
-          rose: '#FFB5C8',
-          peach: '#FFCBA4',
-          mint: '#B5EAD7',
-          sky: '#C7E8F3',
-          lavender: '#D4B5EA',
-          cream: '#FFF9F0',
-          text: '#3D2B1F',
-          muted: '#8B7355',
+          // Terracotta accent — warm, editorial, distinctive (was pastel pink)
+          rose: '#C85A2A',
+          // Neutral warm surfaces (were pastels)
+          peach: '#F0EBE4',
+          mint: '#D4E4D8',
+          sky: '#E2DED8',
+          lavender: '#EDEAE5',
+          // Page background — barely warm white
+          cream: '#F8F6F2',
+          // Typography
+          text: '#1A1614',
+          muted: '#706B65',
         },
       },
       fontFamily: {
-        display: ['"Nunito"', 'sans-serif'],
-        body: ['"Nunito"', 'sans-serif'],
-      },
-      borderRadius: {
-        xl: '1rem',
-        '2xl': '1.5rem',
-        '3xl': '2rem',
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        soft: '0 4px 24px rgba(0,0,0,0.06)',
-        card: '0 2px 12px rgba(0,0,0,0.08)',
+        soft: '0 2px 24px rgba(26, 22, 20, 0.08)',
+        card: '0 1px 6px rgba(26, 22, 20, 0.07), 0 0 0 1px rgba(26, 22, 20, 0.05)',
+        book: '−2px 2px 0 rgba(0,0,0,0.08), 0 16px 56px rgba(26, 22, 20, 0.22)',
+        lifted: '0 20px 60px rgba(26, 22, 20, 0.18)',
+      },
+      borderRadius: {
+        lg: '10px',
+        xl: '14px',
+        '2xl': '18px',
+        '3xl': '22px',
       },
     },
   },

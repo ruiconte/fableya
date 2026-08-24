@@ -7,6 +7,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
 import type { BookFormData, VisualStyle, BookLanguage, CreationMode } from '../lib/types'
+import type { StyleProfile } from '../lib/providers/types'
+import { StyleExplorer } from '../components/StyleExplorer'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
 
@@ -32,6 +34,7 @@ export function CreateBook() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [styleTab, setStyleTab] = useState<'preset' | 'explorer'>('preset')
 
   const set = <K extends keyof BookFormData>(key: K, value: BookFormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
@@ -105,8 +108,7 @@ export function CreateBook() {
       <PageSEO title="Créer un livre personnalisé" description="Personnalisez le livre de votre enfant : prénom, âge, thème, style d'illustration. Votre histoire unique est prête en quelques minutes." canonical="/creer" />
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="text-4xl mb-3">✨</div>
-        <h1 className="text-3xl sm:text-4xl font-black mb-3">{t('create.title')}</h1>
+        <h1 className="font-display text-4xl sm:text-5xl mb-3">{t('create.title')}</h1>
         <p className="text-kidoria-muted">{t('create.subtitle')}</p>
       </div>
 
@@ -225,23 +227,67 @@ export function CreateBook() {
             {/* Visual style */}
             <div className="card space-y-4">
               <h2 className="font-black text-lg">{t('create.styleSection')}</h2>
-              <div className="space-y-3">
-                {VISUAL_STYLES.map(s => (
-                  <button key={s.value} type="button" onClick={() => set('visual_style', s.value as VisualStyle)}
-                    className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
-                      form.visual_style === s.value
-                        ? 'border-kidoria-rose bg-kidoria-rose/10'
-                        : 'border-gray-200 hover:border-kidoria-rose/50'
-                    }`}>
-                    <span className="text-2xl">{s.emoji}</span>
-                    <div>
-                      <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
-                      <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
-                    </div>
-                    {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
-                  </button>
-                ))}
+
+              {/* Style mode tabs */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-kidoria-lavender/40 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStyleTab('preset')
+                    if (form.visual_style === 'custom') set('visual_style', 'aquarelle')
+                  }}
+                  className={`rounded-lg py-2 text-sm font-semibold transition-all ${
+                    styleTab === 'preset'
+                      ? 'bg-white text-kidoria-text shadow-sm'
+                      : 'text-kidoria-muted hover:text-kidoria-text'
+                  }`}
+                >
+                  🎨 Styles Fableya
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStyleTab('explorer')}
+                  className={`rounded-lg py-2 text-sm font-semibold transition-all ${
+                    styleTab === 'explorer'
+                      ? 'bg-white text-kidoria-text shadow-sm'
+                      : 'text-kidoria-muted hover:text-kidoria-text'
+                  }`}
+                >
+                  ✨ Trouver mon style
+                </button>
               </div>
+
+              {styleTab === 'preset' ? (
+                <div className="space-y-3">
+                  {VISUAL_STYLES.map(s => (
+                    <button key={s.value} type="button" onClick={() => set('visual_style', s.value as VisualStyle)}
+                      className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
+                        form.visual_style === s.value
+                          ? 'border-kidoria-rose bg-kidoria-rose/10'
+                          : 'border-gray-200 hover:border-kidoria-rose/50'
+                      }`}>
+                      <span className="text-2xl">{s.emoji}</span>
+                      <div>
+                        <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
+                        <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
+                      </div>
+                      {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <StyleExplorer
+                  selected={form.style_profile ?? null}
+                  onSelect={(profile: StyleProfile) => {
+                    set('visual_style', 'custom')
+                    setForm(prev => ({ ...prev, style_profile: profile }))
+                  }}
+                  onClear={() => {
+                    set('visual_style', 'aquarelle')
+                    setForm(prev => ({ ...prev, style_profile: undefined }))
+                  }}
+                />
+              )}
             </div>
 
             {/* Book language — advanced mode only */}
@@ -309,7 +355,7 @@ export function CreateBook() {
         )}
 
         {/* Submit */}
-        <div className="card bg-gradient-to-r from-kidoria-rose/20 to-kidoria-lavender/20 text-center">
+        <div className="card text-center bg-kidoria-lavender/20">
           <p className="text-kidoria-muted text-sm mb-4">{t('create.summaryNote')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button type="submit" onClick={handlePreview} disabled={loading}

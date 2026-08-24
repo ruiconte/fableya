@@ -30,6 +30,8 @@ export function ReadBook() {
   }, [])
 
   const [loading, setLoading] = useState(true)
+  const [cinemaMode, setCinemaMode] = useState(false)
+  const [cinemaTextVisible, setCinemaTextVisible] = useState(true)
 
   useEffect(() => {
     if (!id || !user) return
@@ -87,9 +89,6 @@ export function ReadBook() {
 
   const page = pages[currentPage]
   const isCover = currentPage === 0
-
-  const [cinemaMode, setCinemaMode] = useState(false)
-  const [cinemaTextVisible, setCinemaTextVisible] = useState(true)
 
   const toggleCinema = () => {
     setCinemaMode(v => !v)

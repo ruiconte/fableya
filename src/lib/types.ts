@@ -1,6 +1,6 @@
 export type BookStatus = 'pending' | 'pending_payment' | 'paid' | 'preview_generating' | 'preview_ready' | 'generating' | 'completed' | 'failed'
 
-export type VisualStyle = 'aquarelle' | 'cartoon' | 'conte' | 'pastel' | 'album'
+export type VisualStyle = 'aquarelle' | 'cartoon' | 'conte' | 'pastel' | 'album' | 'custom'
 
 export type BookLanguage = 'fr' | 'en' | 'ja' | 'es' | 'de' | 'it' | 'pt'
 
@@ -16,6 +16,7 @@ export interface BookFormData {
   language: BookLanguage
   custom_story_idea: string
   creation_mode: CreationMode
+  style_profile?: import('./providers/types').StyleProfile
 }
 
 export interface Book {

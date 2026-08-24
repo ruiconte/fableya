@@ -4,8 +4,10 @@
 
 @layer base {
   html {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -16,37 +18,82 @@
   * {
     box-sizing: border-box;
   }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+  }
 }
 
 @layer components {
+  /* Primary button — terracotta, white text, clean */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-kidoria-rose text-kidoria-text font-bold px-6 py-3 rounded-2xl shadow-soft transition-all duration-200 hover:brightness-95 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none;
+    @apply inline-flex items-center justify-center gap-2
+           bg-kidoria-rose text-white font-semibold
+           px-6 py-3 rounded-lg
+           transition-all duration-150
+           hover:opacity-90 active:scale-[0.98]
+           cursor-pointer select-none;
   }
 
+  /* Secondary button — white, dark border */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 bg-white text-kidoria-text font-semibold px-6 py-3 rounded-2xl border-2 border-kidoria-rose/40 shadow-card transition-all duration-200 hover:bg-kidoria-rose/10 active:scale-[0.98] cursor-pointer select-none;
+    @apply inline-flex items-center justify-center gap-2
+           bg-white text-kidoria-text font-semibold
+           px-6 py-3 rounded-lg
+           border border-kidoria-sky
+           transition-all duration-150
+           hover:bg-kidoria-lavender active:scale-[0.98]
+           cursor-pointer select-none;
   }
 
+  /* Card — clean white, subtle border, no harsh shadow */
   .card {
-    @apply bg-white rounded-3xl shadow-card p-6;
+    @apply bg-white rounded-xl border border-kidoria-sky p-6;
   }
 
+  /* Input — clean, neutral border */
   .input {
-    @apply w-full bg-white border-2 border-kidoria-sky/60 rounded-xl px-4 py-3 text-kidoria-text placeholder:text-kidoria-muted/60 focus:outline-none focus:border-kidoria-rose transition-colors;
+    @apply w-full bg-white border border-kidoria-sky
+           rounded-lg px-4 py-3
+           text-kidoria-text placeholder:text-kidoria-muted/50
+           focus:outline-none focus:border-kidoria-rose
+           transition-colors;
   }
 
   .label {
-    @apply block text-sm font-semibold text-kidoria-muted mb-1;
+    @apply block text-sm font-medium text-kidoria-muted mb-1.5;
   }
 
   .page-container {
-    @apply max-w-5xl mx-auto px-4 sm:px-6 py-8;
+    @apply max-w-5xl mx-auto px-4 sm:px-6 py-12;
   }
 }
 
-/* Page flip animation for reader */
-.page-flip {
-  transition: transform 0.4s ease;
+/* Book floating animations for hero */
+@keyframes book-float-a {
+  0%, 100% { transform: rotate(-7deg) translateY(0px); }
+  50%       { transform: rotate(-7deg) translateY(-12px); }
+}
+@keyframes book-float-b {
+  0%, 100% { transform: rotate(5deg) translateY(0px); }
+  50%       { transform: rotate(5deg) translateY(-9px); }
+}
+@keyframes book-float-c {
+  0%, 100% { transform: rotate(-3deg) translateY(0px); }
+  50%       { transform: rotate(-3deg) translateY(-11px); }
+}
+
+.book-float-a {
+  animation: book-float-a 5s ease-in-out infinite;
+}
+.book-float-b {
+  animation: book-float-b 6.5s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+.book-float-c {
+  animation: book-float-c 5.5s ease-in-out infinite;
+  animation-delay: 0.4s;
 }
 
 /* Smooth scrolling */
@@ -54,7 +101,12 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Remove blue outline on mobile tap */
+/* Remove tap highlight */
 button, a {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Font display utility */
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
 }
