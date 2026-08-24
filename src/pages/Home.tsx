@@ -45,16 +45,16 @@ export function Home() {
       />
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="min-h-[calc(100vh-64px)] flex items-center overflow-hidden">
+      <section className="min-h-[calc(100vh-64px)] flex items-center overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full py-16 lg:py-0">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-0">
 
             {/* Left: headline */}
-            <div className="lg:w-[44%] lg:pr-14 text-center lg:text-left">
+            <div className="lg:w-[42%] lg:pr-10 text-center lg:text-left">
               <p className="text-kidoria-rose text-[11px] font-semibold tracking-[0.22em] uppercase mb-8">
                 {t('home.badge')}
               </p>
-              <h1 className="font-display text-5xl sm:text-6xl lg:text-[3.8rem] xl:text-[4.5rem] leading-[1.08] text-kidoria-text mb-7">
+              <h1 className="font-display text-5xl sm:text-6xl lg:text-[3.8rem] xl:text-[4.4rem] leading-[1.08] text-kidoria-text mb-7">
                 <Trans
                   i18nKey="home.hero"
                   components={[
@@ -69,26 +69,74 @@ export function Home() {
                 <Link to="/creer" className="btn-primary text-base px-8 py-4">
                   {t('home.heroCTA')}
                 </Link>
-                <Link to="/apercu" className="btn-secondary text-base px-8 py-4">
+                <Link to="/apercu" className="btn-secondary text-base px-8 py-4 flex items-center gap-2">
+                  <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:'50%',background:'#1a1614',flexShrink:0}}>
+                    <svg width="8" height="10" viewBox="0 0 8 10" fill="none"><path d="M1 1l6 4-6 4V1z" fill="white"/></svg>
+                  </span>
                   Voir un exemple
                 </Link>
               </div>
               <p className="mt-5 text-sm text-kidoria-muted">{t('home.heroSub2')}</p>
             </div>
 
-            {/* Right: scattered books (desktop only) */}
-            <div className="hidden lg:block lg:w-[56%] relative h-[580px] xl:h-[640px]">
-              {/* Book 1 — large, top-left */}
-              <div className="absolute w-52 xl:w-60 aspect-[3/4] top-[3%] left-[5%] book-float-a">
-                <BookCover book={SAMPLE_BOOKS[0]} className="w-full h-full" />
+            {/* Right: scattered books (desktop) */}
+            <div className="hidden lg:block lg:w-[58%] relative h-[620px] xl:h-[680px]">
+              {/* Stars */}
+              {[
+                { top:'8%',  left:'18%',  color:'#F0C060', size:22 },
+                { top:'5%',  left:'52%',  color:'#7B9EA8', size:16 },
+                { top:'16%', right:'10%', color:'#E8834A', size:20 },
+                { top:'44%', left:'8%',   color:'#D4829A', size:18 },
+                { top:'52%', left:'55%',  color:'#7B9EA8', size:14 },
+                { top:'62%', right:'12%', color:'#F0C060', size:24 },
+                { top:'78%', left:'34%',  color:'#E8834A', size:16 },
+                { top:'30%', left:'36%',  color:'#D4829A', size:12 },
+              ].map((s, i) => {
+                const ro = s.size/2, ri = s.size/4
+                const pts = Array.from({length:5},(_,j)=>{
+                  const a=(Math.PI*2*j)/5-Math.PI/2, b=a+Math.PI/5
+                  return [Math.cos(a)*ro+ro, Math.sin(a)*ro+ro, Math.cos(b)*ri+ro, Math.sin(b)*ri+ro]
+                })
+                const d = pts.map(([ox,oy,ix,iy],j)=>`${j===0?'M':'L'}${ox},${oy} L${ix},${iy}`).join(' ')+'Z'
+                return (
+                  <div key={i} style={{position:'absolute', top:s.top, left:(s as {left?:string}).left, right:(s as {right?:string}).right, zIndex:5, pointerEvents:'none'}}>
+                    <svg width={s.size} height={s.size} viewBox={`0 0 ${s.size} ${s.size}`}><path d={d} fill={s.color}/></svg>
+                  </div>
+                )
+              })}
+
+              {/* Row 1 books */}
+              <div className="absolute book-float-a" style={{width:200,top:'3%',left:'2%',transform:'rotate(-14deg)',zIndex:10,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
+                <BookCover book={SAMPLE_BOOKS[0]} className="w-full" />
               </div>
-              {/* Book 2 — medium, right */}
-              <div className="absolute w-44 xl:w-52 aspect-[3/4] top-[16%] right-[3%] book-float-b">
-                <BookCover book={SAMPLE_BOOKS[2]} className="w-full h-full" />
+              <div className="absolute book-float-b" style={{width:210,top:'1%',left:'33%',transform:'rotate(5deg)',zIndex:12,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
+                <BookCover book={SAMPLE_BOOKS[1]} className="w-full" />
               </div>
-              {/* Book 3 — medium, bottom-center */}
-              <div className="absolute w-40 xl:w-48 aspect-[3/4] bottom-[7%] left-[36%] book-float-c">
-                <BookCover book={SAMPLE_BOOKS[1]} className="w-full h-full" />
+              <div className="absolute book-float-c" style={{width:185,top:'4%',right:'2%',transform:'rotate(12deg)',zIndex:10,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
+                <BookCover book={SAMPLE_BOOKS[2]} className="w-full" />
+              </div>
+
+              {/* Row 2 books */}
+              <div className="absolute book-float-b" style={{width:230,top:'46%',left:'0%',transform:'rotate(-7deg)',zIndex:14,borderRadius:12,overflow:'hidden',boxShadow:'0 20px 56px rgba(26,22,20,0.26)'}}>
+                <BookCover book={SAMPLE_BOOKS[2]} className="w-full" />
+              </div>
+              <div className="absolute book-float-a" style={{width:200,top:'44%',left:'36%',transform:'rotate(8deg)',zIndex:13,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
+                <BookCover book={SAMPLE_BOOKS[0]} className="w-full" />
+              </div>
+              <div className="absolute book-float-c" style={{width:190,top:'43%',right:'1%',transform:'rotate(-10deg)',zIndex:11,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
+                <BookCover book={SAMPLE_BOOKS[1]} className="w-full" />
+              </div>
+
+              {/* Social proof */}
+              <div style={{position:'absolute',bottom:'3%',right:'4%',background:'white',borderRadius:40,padding:'10px 18px',display:'flex',alignItems:'center',gap:10,boxShadow:'0 4px 24px rgba(26,22,20,0.12)',zIndex:20}}>
+                <span style={{fontSize:16}}>✨</span>
+                <span style={{fontSize:13,fontWeight:600,color:'#1a1614'}}>Des milliers d'histoires uniques déjà créées</span>
+                <div style={{display:'flex',marginLeft:4}}>
+                  {['#C89EAE','#8BB0C8','#A0C89A'].map((c,i)=>(
+                    <div key={i} style={{width:26,height:26,borderRadius:'50%',background:c,border:'2px solid white',marginLeft:i>0?-8:0,zIndex:3-i}}/>
+                  ))}
+                  <span style={{marginLeft:6,fontSize:12,fontWeight:700,color:'#1a1614',alignSelf:'center'}}>+10k</span>
+                </div>
               </div>
             </div>
 
