@@ -44,11 +44,6 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     }
   }, [])
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    doSearch(query)
-  }
-
   const handleSuggestion = (s: string) => {
     setQuery(s)
     doSearch(s)
@@ -108,7 +103,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
   return (
     <div className="space-y-4">
       {/* Search input */}
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <div className="flex gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -116,17 +111,19 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           placeholder="Ex: watercolor forest, vintage ink, Japanese print..."
           value={query}
           onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); doSearch(query) } }}
         />
         <button
-          type="submit"
+          type="button"
           disabled={loading || !query.trim()}
+          onClick={() => doSearch(query)}
           className="btn-primary px-4 shrink-0 disabled:opacity-50"
         >
           {loading ? (
             <span className="block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : '→'}
         </button>
-      </form>
+      </div>
 
       {/* Suggestions */}
       {results.length === 0 && !loading && !error && (
