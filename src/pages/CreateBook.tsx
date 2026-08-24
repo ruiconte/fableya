@@ -6,9 +6,10 @@ import { PageSEO } from '../components/PageSEO'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
-import type { BookFormData, VisualStyle, BookLanguage, CreationMode } from '../lib/types'
+import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
 import type { StyleProfile } from '../lib/providers/types'
 import { StyleExplorer } from '../components/StyleExplorer'
+import { CharacterSection } from '../components/CharacterSection'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
 
@@ -47,9 +48,32 @@ export function CreateBook() {
       navigate('/connexion', { state: { from: { pathname: '/creer' } } })
       return false
     }
-    if (!form.child_name.trim()) { setError(t('create.errorName')); return false }
-    if (isAdvanced && !form.favorite_character.trim()) { setError(t('create.errorChar')); return false }
+    if (isAdvanced) {
+      const chars = form.characters ?? []
+      if (chars.length === 0) { setError('Ajoutez au moins un personnage.'); return false }
+      if (chars.some(c => !c.name.trim())) { setError('Chaque personnage doit avoir un nom.'); return false }
+    } else {
+      if (!form.child_name.trim()) { setError(t('create.errorName')); return false }
+    }
     return true
+  }
+
+  // Build form_data for submission — derive legacy child_name/child_age from
+  // main character for n8n backward compatibility
+  const buildSubmitData = (): BookFormData => {
+    if (!isAdvanced || !form.characters?.length) return form
+    const main = form.characters.find(c => c.role === 'main') ?? form.characters[0]
+    const ageNum = main.age ? parseInt(main.age) : NaN
+    return {
+      ...form,
+      child_name: main.name,
+      child_age: isNaN(ageNum) ? 4 : ageNum,
+    }
+  }
+
+  const buildTitle = (data: BookFormData): string => {
+    const protagonist = data.child_name || (form.characters?.[0]?.name ?? 'Personnage')
+    return `${protagonist} et ${form.favorite_character || form.genre}`
   }
 
   const handlePreview = async (e: React.FormEvent) => {
@@ -58,10 +82,11 @@ export function CreateBook() {
     if (!validate()) return
     setLoading(true)
     try {
-      const title = `${form.child_name} et ${form.favorite_character || form.genre}`
+      const submitData = buildSubmitData()
+      const title = buildTitle(submitData)
       const { data: book, error: bookError } = await supabase
         .from('books')
-        .insert({ user_id: user!.id, title, status: 'pending', form_data: form })
+        .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
       navigate(`/preview/${book.id}`)
@@ -77,10 +102,11 @@ export function CreateBook() {
     if (!validate()) return
     setLoading(true)
     try {
-      const title = `${form.child_name} et ${form.favorite_character || form.genre}`
+      const submitData = buildSubmitData()
+      const title = buildTitle(submitData)
       const { data: book, error: bookError } = await supabase
         .from('books')
-        .insert({ user_id: user!.id, title, status: 'pending_payment', form_data: form })
+        .insert({ user_id: user!.id, title, status: 'pending_payment', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
       const { data: sessionData, error: fnError } = await supabase.functions.invoke('create-checkout', { body: { book_id: book.id } })
@@ -149,39 +175,46 @@ export function CreateBook() {
 
       <form onSubmit={handleSubmit} className="space-y-8">
 
-        {/* ── Child info (always visible) ── */}
-        <div className="card space-y-6">
-          <h2 className="font-display text-xl">{t('create.childSection')}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="label" htmlFor="child_name">{t('create.childName')} *</label>
-              <input id="child_name" type="text" className="input"
-                placeholder={t('create.childNamePlaceholder')}
-                value={form.child_name} onChange={e => set('child_name', e.target.value)}
-                maxLength={30} required />
-            </div>
-            <div>
-              <label className="label" htmlFor="child_age">{t('create.childAge')} *</label>
-              <select id="child_age" className="input" value={form.child_age}
-                onChange={e => set('child_age', Number(e.target.value))}>
-                {Array.from({ length: 10 }, (_, i) => i + 2).map(age => (
-                  <option key={age} value={age}>{age} {t('create.childAgeUnit')}</option>
-                ))}
-              </select>
+        {/* ── Child info (quick mode) ── */}
+        {!isAdvanced && (
+          <div className="card space-y-6">
+            <h2 className="font-display text-xl">{t('create.childSection')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="child_name">{t('create.childName')} *</label>
+                <input id="child_name" type="text" className="input"
+                  placeholder={t('create.childNamePlaceholder')}
+                  value={form.child_name} onChange={e => set('child_name', e.target.value)}
+                  maxLength={30} required />
+              </div>
+              <div>
+                <label className="label" htmlFor="child_age">{t('create.childAge')} *</label>
+                <select id="child_age" className="input" value={form.child_age}
+                  onChange={e => set('child_age', Number(e.target.value))}>
+                  {Array.from({ length: 10 }, (_, i) => i + 2).map(age => (
+                    <option key={age} value={age}>{age} {t('create.childAgeUnit')}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Favorite character — advanced only */}
-          {isAdvanced && (
+        {/* ── Characters (advanced mode) ── */}
+        {isAdvanced && (
+          <div className="card space-y-6">
             <div>
-              <label className="label" htmlFor="favorite_character">{t('create.favoriteChar')}</label>
-              <input id="favorite_character" type="text" className="input"
-                placeholder={t('create.favoriteCharPlaceholder')}
-                value={form.favorite_character} onChange={e => set('favorite_character', e.target.value)}
-                maxLength={50} />
+              <h2 className="font-display text-xl">Personnages</h2>
+              <p className="text-sm text-kidoria-muted mt-1">
+                Définissez les personnages qui apparaîtront dans l'histoire. Maximum {5} personnages.
+              </p>
             </div>
-          )}
-        </div>
+            <CharacterSection
+              characters={form.characters ?? []}
+              onChange={(chars: Character[]) => setForm(prev => ({ ...prev, characters: chars }))}
+            />
+          </div>
+        )}
 
         {/* ── Genre (always visible) ── */}
         <div className="card space-y-6">

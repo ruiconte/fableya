@@ -1,4 +1,23 @@
+export const MAX_CHARACTERS = 5
+
 export type BookStatus = 'pending' | 'pending_payment' | 'paid' | 'preview_generating' | 'preview_ready' | 'generating' | 'completed' | 'failed'
+
+export type CharacterType = 'human' | 'animal' | 'creature' | 'other'
+export type CharacterRole = 'main' | 'friend' | 'sibling' | 'parent' | 'grandparent' | 'companion' | 'rival' | 'supporting' | 'other'
+export type CharacterGender = 'male' | 'female' | 'unspecified'
+
+export interface Character {
+  id: string
+  name: string             // required, max 50
+  type: CharacterType
+  role: CharacterRole
+  age?: string             // optional free text — "7 ans", "bébé", irrelevant for animals
+  gender?: CharacterGender
+  appearance?: string      // max 300
+  personality: string[]    // preset keys
+  personalityCustom?: string // max 200
+  clothing?: string        // max 200
+}
 
 export type VisualStyle = 'aquarelle' | 'cartoon' | 'conte' | 'pastel' | 'album' | 'custom'
 
@@ -7,8 +26,12 @@ export type BookLanguage = 'fr' | 'en' | 'ja' | 'es' | 'de' | 'it' | 'pt'
 export type CreationMode = 'quick' | 'advanced'
 
 export interface BookFormData {
+  // ── Legacy fields — kept for quick mode + n8n backward compat ──
   child_name: string
   child_age: number
+  // ── New multi-character list (advanced mode) ──
+  characters?: Character[]
+  // ── Rest unchanged ──
   genre: string
   favorite_character: string
   moral_value: string
