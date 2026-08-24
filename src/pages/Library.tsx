@@ -87,7 +87,7 @@ export function Library() {
 
       {books.length === 0 ? (
         <div className="text-center py-24 border border-dashed border-kidoria-sky rounded-xl">
-          <p className="text-kidoria-muted text-5xl mb-6">📚</p>
+          <p className="text-kidoria-muted text-5xl mb-6 font-display">—</p>
           <h2 className="font-display text-3xl mb-3 text-kidoria-text">{t('library.emptyTitle')}</h2>
           <p className="text-kidoria-muted mb-10 max-w-sm mx-auto text-sm leading-relaxed">{t('library.emptySub')}</p>
           <Link to="/creer" className="btn-primary">{t('library.emptyCTA')}</Link>
@@ -110,7 +110,6 @@ export function Library() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-5xl text-kidoria-muted/30">
-                    📖
                   </div>
                 )}
               </div>

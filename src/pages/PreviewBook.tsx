@@ -74,7 +74,7 @@ export function PreviewBook() {
       <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center gap-6 text-center px-4">
         <div className="w-16 h-16 border-4 border-kidoria-rose border-t-transparent rounded-full animate-spin" />
         <div>
-          <h2 className="text-2xl font-black mb-2">✨ Votre aperçu est en cours de création…</h2>
+          <h2 className="text-2xl font-black mb-2">Votre aperçu est en cours de création…</h2>
           <p className="text-kidoria-muted">Les 5 premières pages de votre histoire sont en train d'être illustrées. Cela prend environ 2 minutes.</p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function PreviewBook() {
   if (status === 'failed') {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center gap-4 text-center px-4">
-        <div className="text-6xl">😢</div>
+        <div className="text-kidoria-muted font-display text-4xl">—</div>
         <h2 className="text-2xl font-black">Une erreur est survenue</h2>
         <button onClick={() => navigate('/creer')} className="btn-primary">Réessayer</button>
       </div>
@@ -99,7 +99,7 @@ export function PreviewBook() {
       {/* Top bar */}
       <div className="shrink-0 bg-white/90 backdrop-blur border-b border-gray-100 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-          <span className="font-black text-sm sm:text-base truncate max-w-[200px]">👀 Aperçu — {book?.title}</span>
+          <span className="font-black text-sm sm:text-base truncate max-w-[200px]">Aperçu — {book?.title}</span>
           <div className="flex items-center gap-3">
             <span className="text-sm text-kidoria-muted font-semibold">{currentPage + 1} / {pages.length}</span>
             <span className="text-xs bg-kidoria-rose/20 text-kidoria-rose font-bold px-2 py-1 rounded-full">Aperçu gratuit</span>
@@ -114,7 +114,7 @@ export function PreviewBook() {
             <div className="w-full h-full rounded-3xl overflow-hidden">
               {page?.image_url
                 ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                : <div className="w-full h-full flex items-center justify-center text-6xl opacity-30">🎨</div>}
+                : <div className="w-full h-full bg-kidoria-lavender/30" />}
             </div>
           </div>
           <div className="sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white/60 h-1/2 sm:h-full overflow-y-auto">
@@ -135,7 +135,7 @@ export function PreviewBook() {
           </div>
           {isLastPreviewPage ? (
             <button onClick={handlePay} disabled={paying} className="btn-primary px-6 py-2 disabled:opacity-60">
-              {paying ? '…' : '🔓 Débloquer la suite — 5€'}
+              {paying ? '…' : 'Débloquer la suite — 5€'}
             </button>
           ) : (
             <button onClick={goNext} className="btn-primary px-6 py-2">Suivant</button>
@@ -147,7 +147,7 @@ export function PreviewBook() {
       {isLastPreviewPage && (
         <div className="shrink-0 bg-gradient-to-r from-kidoria-rose/20 to-kidoria-lavender/20 border-t border-kidoria-rose/20 px-4 py-3 text-center">
           <p className="text-sm font-semibold text-kidoria-text">
-            ✨ L'histoire continue sur <strong>{book?.form_data?.creation_mode === 'advanced' ? 15 : 10} pages</strong> supplémentaires — débloque-les maintenant !
+            L'histoire continue sur <strong>{book?.form_data?.creation_mode === 'advanced' ? 15 : 10} pages</strong> supplémentaires — débloque-les maintenant !
           </p>
         </div>
       )}

@@ -124,7 +124,6 @@ export function CreateBook() {
           }`}
         >
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl">⚡</span>
             <span className="font-black text-sm">{t('create.modeQuick')}</span>
             {!isAdvanced && <span className="ml-auto text-kidoria-rose">✓</span>}
           </div>
@@ -141,7 +140,6 @@ export function CreateBook() {
           }`}
         >
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl">🎨</span>
             <span className="font-black text-sm">{t('create.modeAdvanced')}</span>
             {isAdvanced && <span className="ml-auto text-kidoria-rose">✓</span>}
           </div>
@@ -149,11 +147,11 @@ export function CreateBook() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
 
         {/* ── Child info (always visible) ── */}
-        <div className="card space-y-5">
-          <h2 className="font-black text-lg">{t('create.childSection')}</h2>
+        <div className="card space-y-6">
+          <h2 className="font-display text-xl">{t('create.childSection')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="label" htmlFor="child_name">{t('create.childName')} *</label>
@@ -186,8 +184,8 @@ export function CreateBook() {
         </div>
 
         {/* ── Genre (always visible) ── */}
-        <div className="card space-y-4">
-          <h2 className="font-black text-lg">{t('create.genreSection')}</h2>
+        <div className="card space-y-6">
+          <h2 className="font-display text-xl">{t('create.genreSection')}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {GENRES.map(g => (
               <button key={g.value} type="button" onClick={() => set('genre', g.value)}
@@ -203,8 +201,8 @@ export function CreateBook() {
         </div>
 
         {/* ── Moral value (always visible) ── */}
-        <div className="card space-y-4">
-          <h2 className="font-black text-lg">{t('create.moralSection')}</h2>
+        <div className="card space-y-6">
+          <h2 className="font-display text-xl">{t('create.moralSection')}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {MORAL_VALUES.map(v => (
               <button key={v.value} type="button" onClick={() => set('moral_value', v.value)}
@@ -223,8 +221,8 @@ export function CreateBook() {
         {isAdvanced && (
           <>
             {/* Visual style */}
-            <div className="card space-y-4">
-              <h2 className="font-black text-lg">{t('create.styleSection')}</h2>
+            <div className="card space-y-6">
+              <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
 
               {/* Style mode tabs */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-kidoria-lavender/40 rounded-xl">
@@ -240,7 +238,7 @@ export function CreateBook() {
                       : 'text-kidoria-muted hover:text-kidoria-text'
                   }`}
                 >
-                  🎨 Styles Fableya
+                  Styles Fableya
                 </button>
                 <button
                   type="button"
@@ -251,7 +249,7 @@ export function CreateBook() {
                       : 'text-kidoria-muted hover:text-kidoria-text'
                   }`}
                 >
-                  ✨ Trouver mon style
+                  Trouver mon style
                 </button>
               </div>
 
@@ -288,8 +286,8 @@ export function CreateBook() {
             </div>
 
             {/* Book language — advanced mode only */}
-            {isAdvanced && <div className="card space-y-4">
-              <h2 className="font-black text-lg">{t('create.languageSection')}</h2>
+            {isAdvanced && <div className="card space-y-6">
+              <h2 className="font-display text-xl">{t('create.languageSection')}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {BOOK_LANGUAGES.map(l => (
                   <button key={l.value} type="button" onClick={() => set('language', l.value as BookLanguage)}
@@ -306,7 +304,7 @@ export function CreateBook() {
             </div>}
 
             {/* Story idea — free text */}
-            <div className="card space-y-4">
+            <div className="card space-y-6">
               <div>
                 <h2 className="font-black text-lg mb-1">{t('create.storyIdeaSection')}</h2>
                 <p className="text-sm text-kidoria-muted leading-relaxed">{t('create.storyIdeaIntro')}</p>
@@ -357,11 +355,11 @@ export function CreateBook() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button type="submit" onClick={handlePreview} disabled={loading}
               className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-              {loading ? '…' : `👀 ${t('create.previewButton')}`}
+              {loading ? '…' : t('create.previewButton')}
             </button>
             <button type="button" onClick={handlePayNow} disabled={loading}
               className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
-              {loading ? '…' : `⚡ ${t('create.payButton2')}`}
+              {loading ? '…' : t('create.payButton2')}
             </button>
           </div>
           <p className="text-xs text-kidoria-muted mt-3">{t('create.paySecure')}</p>

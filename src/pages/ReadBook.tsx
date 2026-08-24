@@ -69,7 +69,7 @@ export function ReadBook() {
   if (!book) {
     return (
       <div className="page-container text-center">
-        <div className="text-5xl mb-4">📭</div>
+        <div className="text-kidoria-muted font-display text-4xl mb-4">—</div>
         <h1 className="text-2xl font-black mb-3">{t('reader.notFound')}</h1>
         <Link to="/bibliotheque" className="btn-secondary">{t('reader.backToLibrary')}</Link>
       </div>
@@ -80,7 +80,7 @@ export function ReadBook() {
   if (pages.length === 0) {
     return (
       <div className="page-container text-center">
-        <div className="text-5xl mb-4">📭</div>
+        <div className="text-kidoria-muted font-display text-4xl mb-4">—</div>
         <h1 className="text-2xl font-black mb-3">{t('reader.notFound')}</h1>
         <Link to="/bibliotheque" className="btn-secondary">{t('reader.backToLibrary')}</Link>
       </div>
@@ -117,7 +117,7 @@ export function ReadBook() {
       >
         {page.image_url
           ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
-          : <div className="text-6xl opacity-30">🎨</div>
+          : <div className="w-full h-full bg-kidoria-lavender/30" />
         }
 
         {/* Texte overlay */}
@@ -155,9 +155,9 @@ export function ReadBook() {
           <h2 className="font-black text-sm sm:text-base truncate max-w-[180px] sm:max-w-none">{book.title}</h2>
           <div className="flex items-center gap-3">
             <span className="text-sm text-kidoria-muted font-semibold">{currentPage + 1} / {pages.length}</span>
-            <button onClick={toggleCinema} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-lg sm:hidden" title="Mode cinéma">🎬</button>
-            <button onClick={toggleFullscreen} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-xl hidden sm:block" title={isFullscreen ? 'Quitter le plein écran' : 'Plein écran'}>
-              {isFullscreen ? '⊠' : '⛶'}
+            <button onClick={toggleCinema} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-xs font-semibold sm:hidden">Cinéma</button>
+            <button onClick={toggleFullscreen} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-xs font-semibold hidden sm:block">
+              {isFullscreen ? 'Réduire' : 'Plein écran'}
             </button>
           </div>
         </div>
@@ -172,7 +172,7 @@ export function ReadBook() {
             <div className="max-h-full max-w-[320px] aspect-[3/4] rounded-3xl shadow-soft overflow-hidden">
               {page.image_url
                 ? <img src={page.image_url} alt="Cover" className="w-full h-full object-cover" />
-                : <div className="w-full h-full bg-gradient-to-br from-kidoria-rose/30 to-kidoria-lavender/30 flex items-center justify-center p-8"><div className="text-center"><div className="text-8xl mb-4">📖</div><h2 className="text-2xl font-black text-kidoria-text">{book.title}</h2></div></div>
+                : <div className="w-full h-full bg-gradient-to-br from-kidoria-rose/30 to-kidoria-lavender/30 flex items-center justify-center p-8"><div className="text-center"><h2 className="font-display text-2xl text-kidoria-text">{book.title}</h2></div></div>
               }
             </div>
           </div>
@@ -183,7 +183,7 @@ export function ReadBook() {
               <div className="w-full h-full rounded-3xl overflow-hidden">
                 {page.image_url
                   ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                  : <div className="w-full h-full flex items-center justify-center text-6xl opacity-30">🎨</div>}
+                  : <div className="w-full h-full bg-kidoria-lavender/30" />}
               </div>
             </div>
             {/* Text — right on desktop, bottom on mobile */}

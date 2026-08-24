@@ -50,7 +50,7 @@ export function AuthCallback() {
   if (errorMsg) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
-        <div className="text-4xl">❌</div>
+        <div className="text-red-500 font-bold text-lg">Erreur</div>
         <p className="text-red-500 font-bold text-center max-w-md">{errorMsg}</p>
         <button onClick={() => navigate('/connexion')} className="btn-primary">Retour connexion</button>
       </div>

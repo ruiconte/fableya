@@ -36,7 +36,7 @@ export function PublicBook() {
           <Link to="/" className="text-sm font-semibold text-kidoria-muted hover:text-kidoria-text transition-colors">
             ← Accueil
           </Link>
-          <span className="font-black text-sm sm:text-base truncate max-w-[200px]">📖 {book.title}</span>
+          <span className="font-black text-sm sm:text-base truncate max-w-[200px]">{book.title}</span>
           <span className="text-sm text-kidoria-muted font-semibold">{currentPage + 1} / {pages.length}</span>
         </div>
       </div>
@@ -47,7 +47,7 @@ export function PublicBook() {
             <div className="w-full h-full rounded-3xl overflow-hidden">
               {page?.image_url
                 ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                : <div className="w-full h-full flex items-center justify-center text-6xl opacity-30">🎨</div>}
+                : <div className="w-full h-full bg-kidoria-lavender/30" />}
             </div>
           </div>
           <div className="sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white/60 h-1/2 sm:h-full overflow-y-auto">
@@ -78,7 +78,7 @@ export function PublicBook() {
       {isLast && (
         <div className="shrink-0 bg-gradient-to-r from-kidoria-rose/20 to-kidoria-lavender/20 border-t border-kidoria-rose/20 px-4 py-3 text-center">
           <p className="text-sm font-semibold text-kidoria-text">
-            ✨ Votre livre contiendra 15 pages personnalisées avec le prénom de votre enfant —{' '}
+            Votre livre contiendra 15 pages personnalisées avec le prénom de votre enfant —{' '}
             <Link to="/creer" className="text-kidoria-rose underline font-black">Créer mon livre</Link>
           </p>
         </div>

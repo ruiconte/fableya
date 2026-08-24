@@ -66,15 +66,16 @@ async function fetchObject(id: number): Promise<(MetObject & { _prompt: string }
 }
 
 export async function searchMet(query: string): Promise<ProviderSearchResult> {
-  const searchUrl = `${BASE}/search?q=${encodeURIComponent(query)}&hasImages=true`
+  // isPublicDomain=true ensures ALL returned IDs are public domain — no filtering needed after
+  const searchUrl = `${BASE}/search?q=${encodeURIComponent(query)}&hasImages=true&isPublicDomain=true`
   const res = await fetch(searchUrl)
   if (!res.ok) throw new Error('Met API unavailable')
 
   const { total, objectIDs } = await res.json() as { total: number; objectIDs: number[] | null }
   if (!objectIDs || objectIDs.length === 0) return { items: [], total: 0 }
 
-  // Fetch first 40 in parallel, expect ~20 valid after filtering
-  const batch = objectIDs.slice(0, 40)
+  // Fetch 60 in parallel to have enough after filtering out those without thumbnails
+  const batch = objectIDs.slice(0, 60)
   const results = await Promise.all(batch.map(fetchObject))
   const valid = results.filter((o): o is NonNullable<typeof o> => o !== null)
 

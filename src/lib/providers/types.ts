@@ -14,8 +14,8 @@ export interface ExternalStyleReference {
 }
 
 export interface StyleProfile {
-  reference: ExternalStyleReference
-  generatedPrompt: string
+  references: ExternalStyleReference[]  // 1–10 selected images
+  generatedPrompt: string               // blended prompt sent to generation
 }
 
 export interface ProviderSearchResult {

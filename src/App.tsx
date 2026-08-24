@@ -76,7 +76,7 @@ function App() {
 
             <Route path="*" element={
               <div className="page-container text-center py-20">
-                <div className="text-6xl mb-4">🔍</div>
+                <div className="text-5xl mb-4 text-kidoria-muted font-display">404</div>
                 <h1 className="text-3xl font-black mb-3">{t('notFound.title')}</h1>
                 <a href="/" className="btn-primary inline-flex">{t('notFound.back')}</a>
               </div>

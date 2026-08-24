@@ -42,7 +42,9 @@ export function Register() {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center card">
-          <div className="text-5xl mb-4">📬</div>
+          <div className="w-12 h-12 mb-4 mx-auto rounded-full bg-kidoria-rose/10 flex items-center justify-center">
+            <svg className="w-6 h-6 text-kidoria-rose" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          </div>
           <h1 className="text-2xl font-black mb-3">{t('auth.confirmEmailTitle')}</h1>
           <p className="text-kidoria-muted leading-relaxed">
             <Trans i18nKey="auth.confirmEmailSub" values={{ email }} components={[<strong key="0" />]} />
@@ -58,7 +60,7 @@ export function Register() {
       <PageSEO title="Créer un compte" description="Créez votre compte Fableya gratuitement et commencez à créer des livres personnalisés pour votre enfant." canonical="/inscription" />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-4xl">📚</Link>
+          <Link to="/" className="font-display font-bold text-xl text-kidoria-text">Fableya</Link>
           <h1 className="text-3xl font-black mt-4 mb-2">{t('auth.createTitle')}</h1>
           <p className="text-kidoria-muted">{t('auth.createSub')}</p>
         </div>

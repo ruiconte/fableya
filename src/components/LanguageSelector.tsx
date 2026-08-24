@@ -35,8 +35,7 @@ export function LanguageSelector() {
         aria-label="Change language"
         aria-expanded={open}
       >
-        <span className="text-base">{current.flag}</span>
-        <span className="hidden sm:inline">{current.code.toUpperCase()}</span>
+        <span>{current.code.toUpperCase()}</span>
         <svg className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -52,7 +51,7 @@ export function LanguageSelector() {
                 lang.code === i18n.language ? 'text-kidoria-text bg-kidoria-rose/10' : 'text-kidoria-muted'
               }`}
             >
-              <span className="text-base">{lang.flag}</span>
+              <span className="w-8 text-xs font-bold text-kidoria-muted">{lang.code.toUpperCase()}</span>
               <span>{lang.label}</span>
               {lang.code === i18n.language && <span className="ml-auto text-kidoria-rose">✓</span>}
             </button>

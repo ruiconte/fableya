@@ -44,7 +44,7 @@ export function Login() {
       <PageSEO title="Connexion" description="Connectez-vous à votre compte Fableya pour accéder à vos livres personnalisés." canonical="/connexion" />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-4xl">📚</Link>
+          <Link to="/" className="font-display font-bold text-xl text-kidoria-text">Fableya</Link>
           <h1 className="text-3xl font-black mt-4 mb-2">{t('auth.welcome')}</h1>
           <p className="text-kidoria-muted">{t('auth.welcomeSub')}</p>
         </div>
