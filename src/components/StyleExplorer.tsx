@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import type { ExternalStyleReference, StyleProfile } from '../lib/providers/types'
 import { searchOpenverse } from '../lib/providers/openverse'
+import { searchWikimedia } from '../lib/providers/wikimedia'
 
 const MAX_SELECT = 10
 
@@ -42,11 +43,26 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     setResults([])
     setPicked([])
     try {
-      const res = await searchOpenverse(q)
-      setResults(res.items)
-      if (res.items.length === 0) setError('Aucun résultat. Essayez une autre recherche.')
+      // Search Openverse + Wikimedia Commons in parallel
+      const [ov, wiki] = await Promise.allSettled([
+        searchOpenverse(q),
+        searchWikimedia(q),
+      ])
+      const ovItems = ov.status === 'fulfilled' ? ov.value.items : []
+      const wikiItems = wiki.status === 'fulfilled' ? wiki.value.items : []
+
+      // Interleave results: 1 Openverse, 1 Wikimedia, ...
+      const merged: ExternalStyleReference[] = []
+      const max = Math.max(ovItems.length, wikiItems.length)
+      for (let i = 0; i < max && merged.length < 30; i++) {
+        if (ovItems[i]) merged.push(ovItems[i])
+        if (wikiItems[i]) merged.push(wikiItems[i])
+      }
+
+      setResults(merged)
+      if (merged.length === 0) setError('Aucun résultat. Essayez un autre terme.')
     } catch {
-      setError('Impossible de contacter Openverse. Vérifiez votre connexion.')
+      setError('Impossible de charger les images. Vérifiez votre connexion.')
     } finally {
       setLoading(false)
     }
@@ -157,7 +173,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           {/* Counter */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-kidoria-muted">
-              {results.length} illustrations · Openverse CC · libres de droits
+              {results.length} illustrations · Openverse + Wikimedia Commons · libres de droits
             </p>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${picked.length > 0 ? 'bg-kidoria-rose/10 text-kidoria-rose' : 'bg-kidoria-lavender text-kidoria-muted'}`}>
               {picked.length}/{MAX_SELECT}
