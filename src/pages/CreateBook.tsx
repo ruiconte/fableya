@@ -196,7 +196,6 @@ export function CreateBook() {
                     ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
                     : 'border-gray-200 hover:border-kidoria-rose/50'
                 }`}>
-                <div className="text-xl mb-1">{g.emoji}</div>
                 <div className="text-sm font-semibold">{t(`genres.${g.value}`)}</div>
               </button>
             ))}
@@ -214,7 +213,6 @@ export function CreateBook() {
                     ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
                     : 'border-gray-200 hover:border-kidoria-rose/50'
                 }`}>
-                <div className="text-xl mb-1">{v.emoji}</div>
                 <div className="text-xs font-semibold leading-tight">{t(`morals.${v.value}`)}</div>
               </button>
             ))}
@@ -266,7 +264,6 @@ export function CreateBook() {
                           ? 'border-kidoria-rose bg-kidoria-rose/10'
                           : 'border-gray-200 hover:border-kidoria-rose/50'
                       }`}>
-                      <span className="text-2xl">{s.emoji}</span>
                       <div>
                         <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
                         <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
