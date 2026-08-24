@@ -1,17 +1,21 @@
 import { useState, useCallback } from 'react'
 import type { ExternalStyleReference, StyleProfile } from '../lib/providers/types'
-import { searchOpenverse } from '../lib/providers/openverse'
+import { searchMet } from '../lib/providers/met'
 import { searchWikimedia } from '../lib/providers/wikimedia'
+import { searchOpenverse } from '../lib/providers/openverse'
+import { searchArchive } from '../lib/providers/archive'
 
 const MAX_SELECT = 10
 
 const SUGGESTIONS = [
-  'vintage children book illustration',
-  'watercolor storybook',
-  'fairy tale art nouveau',
-  'pastel gouache illustration',
-  'ink children illustration',
-  'Japanese woodblock children',
+  'watercolor fairy tale',
+  'art nouveau illustration',
+  'vintage engraving children',
+  'Japanese woodblock',
+  'pastel storybook',
+  'ink drawing fairy tale',
+  'Hansel Gretel Rackham',
+  'Alice Wonderland illustration',
 ]
 
 function combinePrompts(refs: ExternalStyleReference[]): string {
@@ -43,20 +47,26 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
     setResults([])
     setPicked([])
     try {
-      // Search Openverse + Wikimedia Commons in parallel
-      const [ov, wiki] = await Promise.allSettled([
-        searchOpenverse(q),
+      // 4 sources in parallel for maximum variety
+      const [metRes, wikiRes, ovRes, archRes] = await Promise.allSettled([
+        searchMet(q),
         searchWikimedia(q),
+        searchOpenverse(q),
+        searchArchive(q),
       ])
-      const ovItems = ov.status === 'fulfilled' ? ov.value.items : []
-      const wikiItems = wiki.status === 'fulfilled' ? wiki.value.items : []
+      const metItems = metRes.status === 'fulfilled' ? metRes.value.items : []
+      const wikiItems = wikiRes.status === 'fulfilled' ? wikiRes.value.items : []
+      const ovItems = ovRes.status === 'fulfilled' ? ovRes.value.items : []
+      const archItems = archRes.status === 'fulfilled' ? archRes.value.items : []
 
-      // Interleave results: 1 Openverse, 1 Wikimedia, ...
+      // Interleave: 1 from each source in rotation for visual diversity
       const merged: ExternalStyleReference[] = []
-      const max = Math.max(ovItems.length, wikiItems.length)
-      for (let i = 0; i < max && merged.length < 30; i++) {
-        if (ovItems[i]) merged.push(ovItems[i])
+      const max = Math.max(metItems.length, wikiItems.length, ovItems.length, archItems.length)
+      for (let i = 0; i < max && merged.length < 48; i++) {
+        if (metItems[i]) merged.push(metItems[i])
         if (wikiItems[i]) merged.push(wikiItems[i])
+        if (ovItems[i]) merged.push(ovItems[i])
+        if (archItems[i]) merged.push(archItems[i])
       }
 
       setResults(merged)
@@ -173,7 +183,7 @@ export function StyleExplorer({ selected, onSelect, onClear }: Props) {
           {/* Counter */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-kidoria-muted">
-              {results.length} illustrations · Openverse + Wikimedia Commons · libres de droits
+              {results.length} illustrations · Met · Wikimedia · Openverse · Archive.org · domaine public
             </p>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${picked.length > 0 ? 'bg-kidoria-rose/10 text-kidoria-rose' : 'bg-kidoria-lavender text-kidoria-muted'}`}>
               {picked.length}/{MAX_SELECT}
