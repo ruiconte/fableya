@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '../lib/supabase'
 
+// x in px (positive = inward from edge, negative = partially off-screen)
 const BOOK_SLOTS = [
-  { x: 0,  y: 3,  rotate: -14, size: 'lg', anchor: 'left'  },
-  { x: 1,  y: 38, rotate: -5,  size: 'md', anchor: 'left'  },
-  { x: 0,  y: 68, rotate: 11,  size: 'sm', anchor: 'left'  },
-  { x: 0,  y: 5,  rotate: 13,  size: 'lg', anchor: 'right' },
-  { x: 1,  y: 40, rotate: -8,  size: 'md', anchor: 'right' },
-  { x: 0,  y: 67, rotate: -12, size: 'sm', anchor: 'right' },
+  { x: -40, y: 2,  rotate: -12, size: 'lg', anchor: 'left'  },
+  { x:  30, y: 33, rotate: -6,  size: 'md', anchor: 'left'  },
+  { x: -20, y: 60, rotate: 14,  size: 'sm', anchor: 'left'  },
+  { x:  20, y: 74, rotate: -9,  size: 'md', anchor: 'left'  },
+  { x: -40, y: 3,  rotate: 15,  size: 'lg', anchor: 'right' },
+  { x:  25, y: 36, rotate: -10, size: 'sm', anchor: 'right' },
+  { x: -15, y: 62, rotate: 9,   size: 'md', anchor: 'right' },
+  { x:  20, y: 76, rotate: -13, size: 'sm', anchor: 'right' },
 ] as const
 
 const SIZE = { lg: 200, md: 168, sm: 138 } as const
@@ -28,11 +31,13 @@ const STARS = [
 
 const QUERIES = [
   'children fairy tale illustration',
-  'watercolor children book illustration',
-  'vintage fairy tale illustration children',
-  'children adventure storybook illustration',
-  'nature animals children illustration',
-  'enchanted forest magic children illustration',
+  'watercolor children book',
+  'vintage storybook illustration',
+  'children adventure illustration',
+  'nature animals children',
+  'enchanted forest illustration',
+  'fairy tale princess illustration',
+  'children fantasy watercolor',
 ]
 
 const COLORS: [string, string][] = [
@@ -42,19 +47,30 @@ const COLORS: [string, string][] = [
   ['#A0C89A', '#6B9B68'],
   ['#C8BA82', '#9B8B4A'],
   ['#B09AC8', '#7B6B9B'],
+  ['#C8A882', '#9B7B5A'],
+  ['#9AC8BE', '#6B9B92'],
 ]
 
 async function fetchOpenverseImages(): Promise<string[]> {
   const results = await Promise.allSettled(
     QUERIES.map(async (q, i) => {
-      await new Promise(r => setTimeout(r, i * 80))
-      const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&source=rawpixel&page_size=8&license_type=commercial`
-      const res = await fetch(url, { headers: { Accept: 'application/json' } })
-      if (!res.ok) return null
-      const data = await res.json()
-      const imgs = (data.results || []).filter((img: { url?: string }) => img.url)
-      if (!imgs.length) return null
-      return imgs[Math.floor(Math.random() * Math.min(imgs.length, 4))].url as string
+      await new Promise(r => setTimeout(r, i * 60))
+      // Try rawpixel first, fall back to any source
+      for (const source of ['rawpixel', '']) {
+        const params = new URLSearchParams({ q, page_size: '10' })
+        if (source) params.set('source', source)
+        const res = await fetch(
+          `https://api.openverse.org/v1/images/?${params}`,
+          { headers: { Accept: 'application/json' } }
+        )
+        if (!res.ok) continue
+        const data = await res.json()
+        const imgs = (data.results || []).filter((img: { url?: string }) => img.url)
+        if (imgs.length) {
+          return imgs[Math.floor(Math.random() * Math.min(imgs.length, 6))].url as string
+        }
+      }
+      return null
     })
   )
   return results
@@ -108,7 +124,7 @@ function Book({ slot, idx, src }: { slot: typeof BOOK_SLOTS[number]; idx: number
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       position: 'fixed',
       top: `${slot.y}%`,
-      ...(slot.anchor === 'left' ? { left: `${slot.x}%` } : { right: `${slot.x}%` }),
+      ...(slot.anchor === 'left' ? { left: `${slot.x}px` } : { right: `${slot.x}px` }),
       width: w,
       zIndex: 0,
       transform: `rotate(${slot.rotate}deg)${hov ? ' scale(1.06) translateY(-6px)' : ''}`,
