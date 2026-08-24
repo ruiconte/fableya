@@ -4,17 +4,17 @@ import { supabase } from '../lib/supabase'
 
 // x in px (positive = inward from edge, negative = partially off-screen)
 const BOOK_SLOTS = [
-  { x: -40, y: 2,  rotate: -12, size: 'lg', anchor: 'left'  },
-  { x:  30, y: 33, rotate: -6,  size: 'md', anchor: 'left'  },
-  { x: -20, y: 60, rotate: 14,  size: 'sm', anchor: 'left'  },
-  { x:  20, y: 74, rotate: -9,  size: 'md', anchor: 'left'  },
-  { x: -40, y: 3,  rotate: 15,  size: 'lg', anchor: 'right' },
-  { x:  25, y: 36, rotate: -10, size: 'sm', anchor: 'right' },
-  { x: -15, y: 62, rotate: 9,   size: 'md', anchor: 'right' },
-  { x:  20, y: 76, rotate: -13, size: 'sm', anchor: 'right' },
+  { x:  20, y: 2,  rotate: -12, size: 'lg', anchor: 'left'  },
+  { x:  80, y: 36, rotate: -6,  size: 'md', anchor: 'left'  },
+  { x:  10, y: 62, rotate: 14,  size: 'sm', anchor: 'left'  },
+  { x:  70, y: 76, rotate: -9,  size: 'md', anchor: 'left'  },
+  { x:  20, y: 3,  rotate: 15,  size: 'lg', anchor: 'right' },
+  { x:  75, y: 38, rotate: -10, size: 'sm', anchor: 'right' },
+  { x:  10, y: 63, rotate: 9,   size: 'md', anchor: 'right' },
+  { x:  65, y: 77, rotate: -13, size: 'sm', anchor: 'right' },
 ] as const
 
-const SIZE = { lg: 200, md: 168, sm: 138 } as const
+const SIZE = { lg: 260, md: 220, sm: 185 } as const
 
 const STARS = [
   { top: 12, left: 21,  color: '#E8834A', size: 26 },
