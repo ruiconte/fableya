@@ -10,7 +10,6 @@ interface WikiImageInfo {
     Artist?: { value: string }
     LicenseShortName?: { value: string }
     ImageDescription?: { value: string }
-    DateTimeOriginal?: { value: string }
   }
 }
 
@@ -19,6 +18,41 @@ interface WikiPage {
   title: string
   imageinfo?: WikiImageInfo[]
 }
+
+// Large pool of illustration categories to cycle through indefinitely
+export const ILLUSTRATION_CATEGORIES = [
+  "Children's_book_illustrations",
+  "Fairy_tale_illustrations",
+  "Picture_books",
+  "Illustrated_books_for_children",
+  "Arthur_Rackham",
+  "Walter_Crane_(artist)",
+  "Kate_Greenaway",
+  "Randolph_Caldecott",
+  "Edmund_Dulac",
+  "Kay_Nielsen",
+  "John_Bauer_(illustrator)",
+  "Heinrich_Vogeler",
+  "Carl_Larsson",
+  "Beatrix_Potter",
+  "Ernst_Kreidolf",
+  "Elsa_Beskow",
+  "Books_illustrated_by_Arthur_Rackham",
+  "Books_illustrated_by_Edmund_Dulac",
+  "Grimm's_Fairy_Tales_illustrations",
+  "Illustrations_of_fairy_tales",
+  "Woodblock_prints_of_Japan",
+  "Ukiyo-e",
+  "Japanese_picture_books",
+  "Watercolor_paintings",
+  "Art_Nouveau_illustrations",
+  "Victorian_illustrations",
+  "Illustrations_by_Walter_Crane",
+  "Illustrations_by_Kate_Greenaway",
+  "Vintage_children_illustrations",
+  "Storybook_illustrations",
+  "Andersen_fairy_tales_illustrations",
+]
 
 function stripHtml(s: string): string {
   return s.replace(/<[^>]*>/g, '').trim()
@@ -34,8 +68,8 @@ function buildPrompt(title: string, description: string): string {
     parts.push('engraving illustration style, fine crosshatch lines')
   } else if (combined.includes('art nouveau') || combined.includes('nouveau')) {
     parts.push('Art Nouveau illustration, flowing organic lines, decorative borders')
-  } else if (combined.includes('woodcut') || combined.includes('woodblock')) {
-    parts.push('woodcut print style, bold black outlines')
+  } else if (combined.includes('woodcut') || combined.includes('woodblock') || combined.includes('ukiyo')) {
+    parts.push('woodcut print style, bold flat colors and outlines')
   } else if (combined.includes('lithograph')) {
     parts.push('lithograph illustration, soft tonal gradients')
   } else if (combined.includes('ink') || combined.includes('pen')) {
@@ -93,42 +127,38 @@ function toRef(p: WikiPage): ExternalStyleReference | null {
   }
 }
 
-// Fetch files from a specific Wikimedia category
-async function fetchCategory(category: string, limit = 20): Promise<WikiPage[]> {
-  const params2 = new URLSearchParams({
+async function fetchCategory(category: string, page = 0): Promise<WikiPage[]> {
+  const params = new URLSearchParams({
     action: 'query',
     generator: 'categorymembers',
     gcmtitle: `Category:${category}`,
     gcmtype: 'file',
-    gcmlimit: String(limit),
+    gcmlimit: '30',
+    gcmoffset: String(page * 30),
     prop: 'imageinfo',
     iiprop: 'url|thumburl|extmetadata',
     iiurlwidth: '400',
     format: 'json',
     origin: '*',
   })
-  const res = await fetch(`${API}?${params2}`)
+  const res = await fetch(`${API}?${params}`)
   if (!res.ok) return []
   const data = await res.json()
   return pagesFromResponse(data)
 }
 
-// Children's illustration categories to sample from when text search returns few results
-const ILLUSTRATION_CATEGORIES = [
-  "Children's_book_illustrations",
-  "Fairy_tale_illustrations",
-  "Picture_books",
-  "Illustrated_books_for_children",
-]
+// page = text search page, catIdx = which category to browse in parallel
+export async function searchWikimedia(query: string, page = 0, catIdx = 0): Promise<ProviderSearchResult & { catIdx: number }> {
+  const category = ILLUSTRATION_CATEGORIES[catIdx % ILLUSTRATION_CATEGORIES.length]
+  const catPage = Math.floor(catIdx / ILLUSTRATION_CATEGORIES.length)
 
-export async function searchWikimedia(query: string, page = 0): Promise<ProviderSearchResult> {
   const textParams = new URLSearchParams({
     action: 'query',
     generator: 'search',
     gsrsearch: query + ' illustration',
     gsrnamespace: '6',
-    gsrlimit: '40',
-    gsroffset: String(page * 40),
+    gsrlimit: '30',
+    gsroffset: String(page * 30),
     prop: 'imageinfo',
     iiprop: 'url|thumburl|mediatype|extmetadata',
     iiurlwidth: '400',
@@ -136,17 +166,14 @@ export async function searchWikimedia(query: string, page = 0): Promise<Provider
     origin: '*',
   })
 
-  // Text search + category browse in parallel
-  const randomCategory = ILLUSTRATION_CATEGORIES[Math.floor(Math.random() * ILLUSTRATION_CATEGORIES.length)]
   const [textRes, catRes] = await Promise.allSettled([
     fetch(`${API}?${textParams}`).then(r => r.json()),
-    fetchCategory(randomCategory, 20),
+    fetchCategory(category, catPage),
   ])
 
   const textPages = textRes.status === 'fulfilled' ? pagesFromResponse(textRes.value) : []
   const catPages = catRes.status === 'fulfilled' ? catRes.value : []
 
-  // Deduplicate by pageid
   const seen = new Set<number>()
   const allPages = [...textPages, ...catPages].filter(p => {
     if (seen.has(p.pageid)) return false
@@ -159,5 +186,5 @@ export async function searchWikimedia(query: string, page = 0): Promise<Provider
     .filter((r): r is ExternalStyleReference => r !== null)
     .slice(0, 20)
 
-  return { items, total: items.length }
+  return { items, total: items.length, catIdx: catIdx + 1 }
 }
