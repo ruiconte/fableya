@@ -96,6 +96,16 @@
   animation-delay: 0.4s;
 }
 
+/* ── BookShowcase scroll columns ─────────────────────────── */
+@keyframes showcase-up {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+@keyframes showcase-down {
+  0%   { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
 /* ── Side decoration animations ──────────────────────────── */
 @keyframes deco-float-a {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
