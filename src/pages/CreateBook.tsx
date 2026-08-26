@@ -79,26 +79,6 @@ export function CreateBook() {
     return `${protagonist} et ${form.favorite_character || form.genre}`
   }
 
-  const handlePreview = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (!validate()) return
-    setLoading(true)
-    try {
-      const submitData = buildSubmitData()
-      const title = buildTitle(submitData)
-      const { data: book, error: bookError } = await supabase
-        .from('books')
-        .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
-        .select().single()
-      if (bookError) throw bookError
-      navigate(`/preview/${book.id}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('common.error'))
-      setLoading(false)
-    }
-  }
-
   const handlePayNow = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -141,8 +121,6 @@ export function CreateBook() {
       setLoading(false)
     }
   }
-
-  const handleSubmit = handlePreview
 
   const fillExample = (text: string) => set('custom_story_idea', text)
 
