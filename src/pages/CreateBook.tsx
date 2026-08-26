@@ -121,6 +121,37 @@ export function CreateBook() {
     }
   }
 
+  const handleGenerateWithSub = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    if (!validate()) return
+    setLoading(true)
+    try {
+      const submitData = buildSubmitData()
+      const title = buildTitle(submitData)
+      const { data: book, error: bookError } = await supabase
+        .from('books')
+        .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
+        .select().single()
+      if (bookError) throw bookError
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-book`,
+        {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${session!.access_token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ book_id: book.id }),
+        }
+      )
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || data.error || 'Erreur génération')
+      navigate(`/generation?book_id=${book.id}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('common.error'))
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = handlePreview
 
   const fillExample = (text: string) => set('custom_story_idea', text)
@@ -464,17 +495,34 @@ export function CreateBook() {
         {/* Submit */}
         <div className="card text-center bg-kidoria-lavender/20">
           <p className="text-kidoria-muted text-sm mb-4">{t('create.summaryNote')}</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button type="submit" onClick={handlePreview} disabled={loading}
-              className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-              {loading ? '…' : t('create.previewButton')}
-            </button>
-            <button type="button" onClick={handlePayNow} disabled={loading}
-              className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
-              {loading ? '…' : t('create.payButton2')}
-            </button>
-          </div>
-          <p className="text-xs text-kidoria-muted mt-3">{t('create.paySecure')}</p>
+          {subscription?.isActive && subscription.booksRemaining > 0 ? (
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button type="submit" onClick={handlePreview} disabled={loading}
+                className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
+                {loading ? '…' : t('create.previewButton')}
+              </button>
+              <button type="button" onClick={handleGenerateWithSub} disabled={loading}
+                className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
+                {loading ? '…' : 'Générer mon livre →'}
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button type="submit" onClick={handlePreview} disabled={loading}
+                className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
+                {loading ? '…' : t('create.previewButton')}
+              </button>
+              <button type="button" onClick={handlePayNow} disabled={loading}
+                className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
+                {loading ? '…' : t('create.payButton2')}
+              </button>
+            </div>
+          )}
+          <p className="text-xs text-kidoria-muted mt-3">
+            {subscription?.isActive && subscription.booksRemaining > 0
+              ? `Inclus dans votre abonnement · ${subscription.booksRemaining} livre${subscription.booksRemaining > 1 ? 's' : ''} restant${subscription.booksRemaining > 1 ? 's' : ''}`
+              : t('create.paySecure')}
+          </p>
         </div>
       </form>
     </div>
