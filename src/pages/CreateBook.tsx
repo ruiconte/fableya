@@ -478,45 +478,19 @@ export function CreateBook() {
           <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 font-medium">{error}</div>
         )}
 
-        {/* Bottom banner — "Chaque histoire est unique" */}
-        <div className="rounded-2xl bg-kidoria-lavender/30 border border-kidoria-sky px-5 py-4 flex items-center gap-4">
-          <div>
-            <p className="font-bold text-sm">Chaque histoire est unique</p>
-            <p className="text-xs text-kidoria-muted leading-relaxed mt-0.5">
-              Fableya crée des livres magiques et éducatifs, adaptés à votre enfant.
-            </p>
-          </div>
-          <button type="submit" onClick={handlePreview} disabled={loading}
-            className="btn-primary ml-auto shrink-0 text-sm px-6 py-2.5">
-            {loading ? '…' : t('create.previewButton')} →
-          </button>
-        </div>
-
         {/* Submit */}
         <div className="card text-center bg-kidoria-lavender/20">
           <p className="text-kidoria-muted text-sm mb-4">{t('create.summaryNote')}</p>
           {subscription?.isActive && subscription.booksRemaining > 0 ? (
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button type="submit" onClick={handlePreview} disabled={loading}
-                className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-                {loading ? '…' : t('create.previewButton')}
-              </button>
-              <button type="button" onClick={handleGenerateWithSub} disabled={loading}
-                className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
-                {loading ? '…' : 'Générer mon livre →'}
-              </button>
-            </div>
+            <button type="button" onClick={handleGenerateWithSub} disabled={loading}
+              className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
+              {loading ? '…' : 'Générer mon livre →'}
+            </button>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button type="submit" onClick={handlePreview} disabled={loading}
-                className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-                {loading ? '…' : t('create.previewButton')}
-              </button>
-              <button type="button" onClick={handlePayNow} disabled={loading}
-                className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
-                {loading ? '…' : t('create.payButton2')}
-              </button>
-            </div>
+            <button type="button" onClick={handlePayNow} disabled={loading}
+              className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
+              {loading ? '…' : t('create.payButton2')}
+            </button>
           )}
           <p className="text-xs text-kidoria-muted mt-3">
             {subscription?.isActive && subscription.booksRemaining > 0
