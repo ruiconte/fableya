@@ -155,6 +155,17 @@ export function ReadBook() {
           <h2 className="font-black text-sm sm:text-base truncate max-w-[180px] sm:max-w-none">{book.title}</h2>
           <div className="flex items-center gap-3">
             <span className="text-sm text-kidoria-muted font-semibold">{currentPage + 1} / {pages.length}</span>
+            {book.pdf_url && (
+              <a
+                href={book.pdf_url}
+                download
+                className="text-kidoria-muted hover:text-kidoria-rose transition-colors text-xs font-semibold flex items-center gap-1"
+                title="Télécharger en PDF"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PDF
+              </a>
+            )}
             <button onClick={toggleCinema} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-xs font-semibold sm:hidden">Cinéma</button>
             <button onClick={toggleFullscreen} className="text-kidoria-muted hover:text-kidoria-text transition-colors text-xs font-semibold hidden sm:block">
               {isFullscreen ? 'Réduire' : 'Plein écran'}
