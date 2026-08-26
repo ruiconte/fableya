@@ -9,6 +9,7 @@ import type { Book, BookStatus } from '../lib/types'
 const STATUS_COLOR: Record<BookStatus, string> = {
   pending: 'text-yellow-600 bg-yellow-50 border-yellow-200',
   pending_payment: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+  queued: 'text-blue-600 bg-blue-50 border-blue-200',
   paid: 'text-blue-600 bg-blue-50 border-blue-200',
   preview_generating: 'text-purple-600 bg-purple-50 border-purple-200',
   preview_ready: 'text-orange-600 bg-orange-50 border-orange-200',
@@ -20,6 +21,7 @@ const STATUS_COLOR: Record<BookStatus, string> = {
 const STATUS_DOT: Record<BookStatus, string> = {
   pending: 'bg-yellow-400',
   pending_payment: 'bg-yellow-400',
+  queued: 'bg-blue-400',
   paid: 'bg-blue-400',
   preview_generating: 'bg-purple-400',
   preview_ready: 'bg-orange-400',
@@ -28,7 +30,7 @@ const STATUS_DOT: Record<BookStatus, string> = {
   failed: 'bg-red-400',
 }
 
-const DELETABLE_STATUSES: BookStatus[] = ['completed', 'failed', 'pending_payment', 'preview_ready']
+const DELETABLE_STATUSES: BookStatus[] = ['completed', 'failed', 'pending_payment', 'preview_ready', 'queued']
 
 export function Library() {
   const { user } = useAuth()
@@ -155,6 +157,7 @@ export function Library() {
                   {{
                     pending: 'En attente',
                     pending_payment: 'Paiement requis',
+                    queued: 'En file',
                     paid: 'Payé',
                     preview_generating: 'Aperçu en cours',
                     preview_ready: 'Aperçu prêt',

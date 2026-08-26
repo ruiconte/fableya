@@ -1,6 +1,6 @@
 export const MAX_CHARACTERS = 5
 
-export type BookStatus = 'pending' | 'pending_payment' | 'paid' | 'preview_generating' | 'preview_ready' | 'generating' | 'completed' | 'failed'
+export type BookStatus = 'pending' | 'pending_payment' | 'queued' | 'paid' | 'preview_generating' | 'preview_ready' | 'generating' | 'completed' | 'failed'
 
 export type CharacterType = 'human' | 'animal' | 'creature' | 'other'
 export type CharacterRole = 'main' | 'friend' | 'sibling' | 'parent' | 'grandparent' | 'companion' | 'rival' | 'supporting' | 'other'

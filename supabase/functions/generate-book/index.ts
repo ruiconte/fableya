@@ -6,8 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-const N8N_WEBHOOK_URL = 'https://n8n.srv1608234.hstgr.cloud/webhook/bf8f6868-2bdd-47c0-86c9-8ed5b186cd6d'
-
 const ACTIVE_SUB_STATUSES = ['active', 'trialing']
 
 Deno.serve(async (req) => {
@@ -128,20 +126,12 @@ Deno.serve(async (req) => {
     }
 
     // ── Launch generation ────────────────────────────────────────────────────
+    // Set status to 'paid' — generator.py polls status=paid for full book generation
     await supabase
       .from('books')
-      .update({ status: 'generating' })
+      .update({ status: 'paid' })
       .eq('id', book_id)
 
-    const n8nRes = await fetch(N8N_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ book_id, form_data: book.form_data }),
-    })
-
-    console.log('n8n response status:', n8nRes.status)
-
-    // Mark usage as committed after n8n accepts the job
     if (usageRowId) {
       await supabase
         .from('book_generation_usage')

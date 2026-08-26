@@ -131,7 +131,7 @@ export function CreateBook() {
       const title = buildTitle(submitData)
       const { data: book, error: bookError } = await supabase
         .from('books')
-        .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
+        .insert({ user_id: user!.id, title, status: 'queued', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
       // GeneratingBook will call generate-book automatically on arrival
