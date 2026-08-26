@@ -49,7 +49,7 @@ export function Library() {
     if (!user) return
     supabase
       .from('books')
-      .select('*')
+      .select('*, book_pages(image_url, page_number)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
@@ -108,16 +108,22 @@ export function Library() {
             >
               {/* Cover */}
               <div className="aspect-[3/4] bg-kidoria-lavender overflow-hidden">
-                {book.cover_url ? (
-                  <img
-                    src={book.cover_url}
-                    alt={book.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-5xl text-kidoria-muted/30">
-                  </div>
-                )}
+                {(() => {
+                  const imgSrc = book.cover_url ||
+                    (book as {book_pages?: {image_url: string, page_number: number}[]}).book_pages
+                      ?.sort((a, b) => a.page_number - b.page_number)[0]?.image_url
+                  return imgSrc ? (
+                    <img
+                      src={imgSrc}
+                      alt={book.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-kidoria-lavender/40">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-kidoria-muted/40"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                  )
+                })()}
               </div>
 
               {/* Info */}
