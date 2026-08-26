@@ -1,13 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation, Trans } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../hooks/useSubscription'
 
 export function Account() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { subscription, loading: subLoading, openPortal } = useSubscription()
+  const [bookCount, setBookCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!user) return
+    supabase.from('books').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
+      .then(({ count }) => setBookCount(count ?? 0))
+  }, [user])
 
   const [displayName, setDisplayName] = useState(user?.user_metadata?.display_name ?? '')
   const [newPwd, setNewPwd] = useState('')
@@ -62,6 +71,69 @@ export function Account() {
   return (
     <div className="page-container max-w-2xl">
       <h1 className="text-3xl font-black mb-8">{t('account.title')}</h1>
+
+      {/* Subscription + stats card */}
+      <div className="card mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-black text-lg">Mon abonnement</h2>
+          {!subLoading && subscription?.isActive && (
+            <span className="text-xs font-semibold bg-kidoria-rose/10 text-kidoria-rose px-3 py-1 rounded-full">
+              Fableya Plus
+            </span>
+          )}
+        </div>
+
+        {subLoading ? (
+          <div className="h-4 bg-kidoria-sky rounded animate-pulse w-1/2" />
+        ) : subscription?.isActive ? (
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
+                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Livres restants</p>
+                <p className="text-2xl font-black text-kidoria-text">{subscription.booksRemaining}</p>
+                <p className="text-xs text-kidoria-muted">sur {subscription.planBookLimit} ce mois</p>
+              </div>
+              <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
+                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Mes livres</p>
+                <p className="text-2xl font-black text-kidoria-text">{bookCount ?? '—'}</p>
+                <p className="text-xs text-kidoria-muted">livres créés</p>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs text-kidoria-muted mb-1">
+                <span>{subscription.booksUsed} utilisés</span>
+                <span>
+                  {subscription.cancelAtPeriodEnd ? 'Se termine' : 'Renouvellement'} le{' '}
+                  {subscription.currentPeriodEnd
+                    ? new Date(subscription.currentPeriodEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+                    : '—'}
+                </span>
+              </div>
+              <div className="h-2 bg-kidoria-sky rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-kidoria-rose rounded-full transition-all"
+                  style={{ width: `${Math.round((subscription.booksUsed / subscription.planBookLimit) * 100)}%` }}
+                />
+              </div>
+            </div>
+            <button onClick={openPortal} className="btn-secondary text-sm py-2 w-full justify-center">
+              Gérer l'abonnement
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
+              <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Mes livres</p>
+              <p className="text-2xl font-black text-kidoria-text">{bookCount ?? '—'}</p>
+              <p className="text-xs text-kidoria-muted">livres créés</p>
+            </div>
+            <div className="flex-1 text-sm text-kidoria-muted">
+              <p className="font-semibold text-kidoria-text mb-1">Sans abonnement</p>
+              <p className="text-xs leading-relaxed">Passez à Fableya Plus pour 25 livres/mois à 15 €.</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="card mb-6">
         <h2 className="font-black text-lg mb-4">{t('account.profileSection')}</h2>
