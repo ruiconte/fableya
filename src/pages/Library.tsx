@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { SubscriptionStatus } from '../components/SubscriptionStatus'
 import { useSubscription } from '../hooks/useSubscription'
 import type { Book, BookStatus } from '../lib/types'
 
@@ -88,11 +87,18 @@ export function Library() {
         <div>
           <p className="text-kidoria-rose text-[11px] font-semibold tracking-[0.2em] uppercase mb-3">Fableya</p>
           <h1 className="font-display text-4xl lg:text-5xl text-kidoria-text">{t('library.title')}</h1>
-          {books.length > 0 && (
-            <p className="text-kidoria-muted mt-2 text-sm">
-              {t('library.count', { count: books.length })}
-            </p>
-          )}
+          <div className="flex items-center gap-4 mt-2 flex-wrap">
+            {books.length > 0 && (
+              <p className="text-kidoria-muted text-sm">
+                {t('library.count', { count: books.length })}
+              </p>
+            )}
+            {liveSubscription?.isActive && (
+              <p className="text-kidoria-muted text-sm">
+                · <span className="text-kidoria-rose font-semibold">{liveSubscription.booksRemaining}</span> livre{liveSubscription.booksRemaining !== 1 ? 's' : ''} restant{liveSubscription.booksRemaining !== 1 ? 's' : ''} ce mois
+              </p>
+            )}
+          </div>
         </div>
         <Link to="/creer" className="btn-primary">{t('library.createNew')}</Link>
       </div>
@@ -104,11 +110,6 @@ export function Library() {
           <p className="text-sm text-kidoria-text font-medium">Activation de votre abonnement en cours…</p>
         </div>
       )}
-
-      {/* Subscription section */}
-      <div className="mb-10 max-w-sm">
-        <SubscriptionStatus />
-      </div>
 
       {books.length === 0 ? (
         <div className="text-center py-24 border border-dashed border-kidoria-sky rounded-xl">
@@ -151,7 +152,16 @@ export function Library() {
 
                 <div className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border self-start mb-4 ${STATUS_COLOR[book.status]}`}>
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_DOT[book.status]}`} />
-                  {t(`library.status_${book.status}`)}
+                  {{
+                    pending: 'En attente',
+                    pending_payment: 'Paiement requis',
+                    paid: 'Payé',
+                    preview_generating: 'Aperçu en cours',
+                    preview_ready: 'Aperçu prêt',
+                    generating: 'Génération en cours',
+                    completed: 'Terminé',
+                    failed: 'Erreur',
+                  }[book.status]}
                 </div>
 
                 <div className="mt-auto space-y-2">
