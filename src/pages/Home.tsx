@@ -248,20 +248,38 @@ export function Home() {
               </ul>
             </div>
 
-            {/* Pricing */}
-            <div className="bg-white rounded-xl border border-kidoria-sky p-10 text-center">
-              <p className="text-xs font-semibold tracking-widest uppercase text-kidoria-muted mb-8">
-                {t('home.priceLabel')}
-              </p>
-              <div className="font-display text-8xl text-kidoria-text leading-none mb-3">5€</div>
-              <p className="text-kidoria-muted text-sm mb-10">par livre complet · 15 pages illustrées</p>
-              <Link to="/creer" className="btn-primary w-full justify-center text-base py-4">
-                {t('home.startNow')}
-              </Link>
-              <p className="text-xs text-kidoria-muted mt-5 leading-relaxed">
-                Les 5 premières pages sont gratuites.<br />
-                Payez seulement si vous aimez.
-              </p>
+            {/* Pricing: two options */}
+            <div className="space-y-4">
+              {/* Pay-per-book */}
+              <div className="bg-white rounded-xl border border-kidoria-sky p-7">
+                <p className="text-xs font-semibold tracking-widest uppercase text-kidoria-muted mb-4">Un livre</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="font-display text-5xl text-kidoria-text leading-none">5€</span>
+                  <span className="text-kidoria-muted text-sm mb-1">/ livre</span>
+                </div>
+                <p className="text-kidoria-muted text-xs mb-5">15 pages illustrées · Paiement unique</p>
+                <Link to="/creer" className="btn-secondary w-full justify-center text-sm py-3">
+                  Créer un livre — 5 €
+                </Link>
+                <p className="text-xs text-kidoria-muted mt-3">Les 5 premières pages sont gratuites.</p>
+              </div>
+
+              {/* Fableya Plus */}
+              <div className="bg-kidoria-rose rounded-xl p-7 text-white relative overflow-hidden">
+                <div className="absolute top-3 right-3 text-[10px] font-bold bg-white/20 rounded-full px-2 py-0.5">
+                  Recommandé
+                </div>
+                <p className="text-xs font-semibold tracking-widest uppercase text-white/70 mb-4">Fableya Plus</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="font-display text-5xl leading-none">15€</span>
+                  <span className="text-white/70 text-sm mb-1">/ mois</span>
+                </div>
+                <p className="text-white/80 text-xs mb-1">25 livres inclus chaque mois</p>
+                <p className="text-white/60 text-xs mb-5">Soit 0,60 € / livre · Résiliation sans engagement</p>
+                <Link to="/mes-livres" className="block w-full text-center bg-white text-kidoria-rose font-semibold rounded-lg py-3 text-sm hover:bg-white/90 transition-opacity">
+                  S'abonner — 15 € / mois
+                </Link>
+              </div>
             </div>
           </div>
         </div>

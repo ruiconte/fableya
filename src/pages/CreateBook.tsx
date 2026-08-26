@@ -5,6 +5,7 @@ import i18n from '../i18n'
 import { PageSEO } from '../components/PageSEO'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useSubscription } from '../hooks/useSubscription'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
 import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
 import type { StyleProfile } from '../lib/providers/types'
@@ -23,6 +24,7 @@ export function CreateBook() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { subscription, loading: subLoading, subscribe } = useSubscription()
   const [form, setForm] = useState<BookFormData>({
     child_name: '',
     child_age: 4,
@@ -139,6 +141,55 @@ export function CreateBook() {
         <h1 className="font-display text-4xl sm:text-5xl mb-3">{t('create.title')}</h1>
         <p className="text-kidoria-muted">{t('create.subtitle')}</p>
       </div>
+
+      {/* Subscription status banner */}
+      {!subLoading && subscription?.isActive && (
+        <div className="mb-6 rounded-2xl border border-kidoria-rose/30 bg-kidoria-rose/5 px-5 py-4 flex items-center gap-4">
+          <div className="flex-1">
+            <p className="font-semibold text-sm text-kidoria-text">{subscription.planName}</p>
+            <p className="text-xs text-kidoria-muted mt-0.5">
+              {subscription.booksRemaining > 0
+                ? `${subscription.booksUsed} / ${subscription.planBookLimit} livres utilisés ce mois`
+                : `Quota atteint — renouvellement le ${subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '—'}`
+              }
+            </p>
+          </div>
+          <div className="w-24">
+            <div className="h-1.5 bg-kidoria-sky rounded-full overflow-hidden">
+              <div
+                className="h-full bg-kidoria-rose rounded-full"
+                style={{ width: `${Math.round((subscription.booksUsed / subscription.planBookLimit) * 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-kidoria-muted text-right mt-1">
+              {subscription.booksRemaining} restants
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Quota exceeded: show pay-per-book option */}
+      {!subLoading && subscription?.isActive && subscription.booksRemaining === 0 && (
+        <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 text-sm text-amber-800">
+          <p className="font-semibold mb-1">Quota mensuel atteint</p>
+          <p className="text-xs mb-3">
+            Vos {subscription.planBookLimit} livres du mois sont utilisés. Vous pouvez quand même créer un livre supplémentaire à 5 €.
+          </p>
+        </div>
+      )}
+
+      {/* Non-subscriber upsell */}
+      {!subLoading && !subscription?.isActive && (
+        <div className="mb-6 rounded-2xl bg-kidoria-lavender/30 border border-kidoria-sky px-5 py-4 flex items-center gap-4">
+          <div className="flex-1">
+            <p className="font-semibold text-sm">Fableya Plus — 25 livres / mois</p>
+            <p className="text-xs text-kidoria-muted mt-0.5">15 € / mois · Équivaut à 0,60 € par livre</p>
+          </div>
+          <button onClick={subscribe} className="btn-primary shrink-0 text-xs px-4 py-2">
+            S'abonner
+          </button>
+        </div>
+      )}
 
       {/* Mode toggle */}
       <div className="grid grid-cols-2 gap-3 mb-8">

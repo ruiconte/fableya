@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { SubscriptionStatus } from '../components/SubscriptionStatus'
 import type { Book, BookStatus } from '../lib/types'
 
 const STATUS_COLOR: Record<BookStatus, string> = {
@@ -83,6 +84,11 @@ export function Library() {
           )}
         </div>
         <Link to="/creer" className="btn-primary">{t('library.createNew')}</Link>
+      </div>
+
+      {/* Subscription section */}
+      <div className="mb-10 max-w-sm">
+        <SubscriptionStatus />
       </div>
 
       {books.length === 0 ? (
