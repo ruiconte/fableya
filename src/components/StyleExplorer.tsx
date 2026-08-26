@@ -35,10 +35,14 @@ function buildVariants(q: string): string[] {
 }
 
 function combinePrompts(refs: ExternalStyleReference[]): string {
+  const STRIP = new Set([
+    "children's book illustration style", 'storybook aesthetic',
+    'illustrated book artwork', "children's book illustration",
+    'storybook', 'picture book', 'children book',
+  ])
   const parts = refs.flatMap(r => r.generatedPrompt.split(',').map(p => p.trim()))
-  const generic = new Set(["children's book illustration style", 'storybook aesthetic', 'illustrated book artwork', "children's book illustration"])
-  const unique = [...new Set(parts)].filter(p => !generic.has(p))
-  return [...unique, "children's book illustration style"].join(', ')
+  const unique = [...new Set(parts)].filter(p => p && !STRIP.has(p.toLowerCase()))
+  return unique.join(', ')
 }
 
 interface PageState {

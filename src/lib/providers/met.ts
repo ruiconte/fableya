@@ -21,34 +21,39 @@ function buildPrompt(obj: MetObject): string {
   const parts: string[] = []
   const medium = (obj.medium || '').toLowerCase()
 
+  // Medium → specific rendering style descriptors
   if (medium.includes('watercolor') || medium.includes('watercolour')) {
-    parts.push('delicate watercolor painting, soft washes of color')
+    parts.push('watercolor painting', 'soft color washes', 'visible paper texture', 'wet-on-wet blending', 'translucent layers')
   } else if (medium.includes('oil')) {
-    parts.push('oil painting style, rich painterly texture')
+    parts.push('oil painting', 'thick impasto brushwork', 'rich saturated colors', 'painterly texture', 'visible brushstrokes')
+  } else if (medium.includes('ink') && medium.includes('wash')) {
+    parts.push('ink and wash', 'flowing ink lines', 'tonal washes', 'high contrast')
   } else if (medium.includes('ink')) {
-    parts.push('ink illustration, expressive line work')
+    parts.push('ink illustration', 'precise line work', 'high contrast black lines', 'minimal color')
   } else if (medium.includes('pencil') || medium.includes('graphite')) {
-    parts.push('detailed pencil drawing, fine graphite work')
+    parts.push('pencil drawing', 'fine graphite lines', 'subtle shading', 'monochromatic', 'delicate hatching')
   } else if (medium.includes('pastel')) {
-    parts.push('soft pastel artwork, chalky blended colors')
+    parts.push('pastel artwork', 'chalky soft colors', 'blended matte finish', 'gentle gradients')
   } else if (medium.includes('woodblock') || medium.includes('woodcut')) {
-    parts.push('woodblock print style, bold flat colors and outlines')
+    parts.push('woodblock print', 'bold flat color areas', 'strong black outlines', 'graphic shapes', 'limited palette')
   } else if (medium.includes('engraving') || medium.includes('etching')) {
-    parts.push('fine engraving style, intricate crosshatching')
+    parts.push('engraving style', 'fine crosshatching', 'intricate line patterns', 'high detail', 'monochromatic')
   } else if (medium.includes('gouache')) {
-    parts.push('gouache illustration, opaque flat colors')
+    parts.push('gouache illustration', 'flat opaque color', 'matte finish', 'bold shapes', 'no transparency')
+  } else if (medium.includes('lithograph')) {
+    parts.push('lithograph style', 'flat tonal areas', 'grainy texture', 'limited palette')
   } else if (obj.medium) {
     parts.push(obj.medium.split(';')[0].trim().toLowerCase())
   }
 
-  if (obj.period) parts.push(obj.period)
+  // Period / culture → era flavor
+  if (obj.period) parts.push(obj.period + ' era style')
   else if (obj.culture) parts.push(obj.culture + ' artistic tradition')
 
-  const tags = (obj.tags || []).map(t => t.term.toLowerCase())
-  if (tags.length) parts.push(tags.slice(0, 4).join(', '))
-
-  parts.push("children's book illustration")
-  parts.push('storybook aesthetic')
+  // Tags → subject/mood clues (style-relevant only)
+  const STYLE_TAG_WORDS = ['line', 'color', 'flat', 'bold', 'pattern', 'ornament', 'silhouette', 'graphic', 'naive', 'folk', 'expressionist', 'impressionist']
+  const tags = (obj.tags || []).map(t => t.term.toLowerCase()).filter(t => STYLE_TAG_WORDS.some(w => t.includes(w)))
+  if (tags.length) parts.push(tags.slice(0, 3).join(', '))
 
   return parts.filter(Boolean).join(', ')
 }

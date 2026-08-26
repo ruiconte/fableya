@@ -31,29 +31,28 @@ function buildPrompt(img: OpenverseImage): string {
   const combined = [title, ...tags].join(' ')
 
   if (combined.includes('watercolor') || combined.includes('aquarelle')) {
-    parts.push('delicate watercolor illustration, soft color washes')
+    parts.push('watercolor painting', 'soft color washes', 'visible paper texture', 'translucent layers')
   } else if (combined.includes('gouache')) {
-    parts.push('gouache illustration, opaque flat colors')
+    parts.push('gouache illustration', 'flat opaque color', 'matte finish', 'bold shapes')
+  } else if (combined.includes('ink') && combined.includes('wash')) {
+    parts.push('ink and wash', 'flowing ink lines', 'tonal washes', 'high contrast')
   } else if (combined.includes('ink') || combined.includes('engraving')) {
-    parts.push('detailed ink illustration, expressive line work')
+    parts.push('ink illustration', 'precise line work', 'high contrast black outlines', 'minimal color')
   } else if (combined.includes('pastel')) {
-    parts.push('soft pastel illustration, chalky blended colors')
+    parts.push('pastel artwork', 'chalky soft colors', 'blended matte finish', 'gentle gradients')
   } else if (combined.includes('art nouveau') || combined.includes('nouveau')) {
-    parts.push('Art Nouveau illustration style, organic flowing lines')
+    parts.push('Art Nouveau style', 'organic flowing lines', 'decorative flat patterns', 'sinuous curves', 'gold accents')
+  } else if (combined.includes('woodblock') || combined.includes('ukiyo')) {
+    parts.push('woodblock print', 'bold flat color areas', 'strong black outlines', 'graphic shapes', 'limited palette')
   } else if (combined.includes('vintage') || combined.includes('retro')) {
-    parts.push('vintage illustration style, retro printing aesthetic')
-  } else if (combined.includes('japanese') || combined.includes('woodblock')) {
-    parts.push('Japanese woodblock print style, bold flat colors')
-  } else {
-    parts.push('illustrated book artwork')
+    parts.push('vintage printing style', 'muted aged colors', 'grain texture', 'retro letterpress aesthetic')
+  } else if (combined.includes('oil')) {
+    parts.push('oil painting', 'thick impasto', 'rich saturated colors', 'visible brushstrokes')
   }
 
-  const relevantTags = tags
-    .filter(t => !['illustration', 'book', 'children', 'vintage', 'art'].includes(t))
-    .slice(0, 4)
+  const STRIP_TAGS = new Set(['illustration', 'book', 'children', 'vintage', 'art', 'drawing', 'painting'])
+  const relevantTags = tags.filter(t => !STRIP_TAGS.has(t)).slice(0, 3)
   if (relevantTags.length) parts.push(relevantTags.join(', '))
-
-  parts.push("children's book illustration style")
 
   return parts.filter(Boolean).join(', ')
 }

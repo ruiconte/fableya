@@ -63,35 +63,36 @@ function buildPrompt(title: string, description: string): string {
   const parts: string[] = []
 
   if (combined.includes('watercolor') || combined.includes('aquarelle')) {
-    parts.push('watercolor illustration, soft color washes')
-  } else if (combined.includes('engraving') || combined.includes('gravure')) {
-    parts.push('engraving illustration style, fine crosshatch lines')
+    parts.push('watercolor painting', 'soft color washes', 'visible paper texture', 'translucent layers')
+  } else if (combined.includes('engraving') || combined.includes('gravure') || combined.includes('etching')) {
+    parts.push('engraving style', 'fine crosshatching', 'intricate line patterns', 'high detail', 'monochromatic')
   } else if (combined.includes('art nouveau') || combined.includes('nouveau')) {
-    parts.push('Art Nouveau illustration, flowing organic lines, decorative borders')
+    parts.push('Art Nouveau style', 'organic flowing lines', 'decorative flat patterns', 'sinuous curves', 'ornamental borders')
   } else if (combined.includes('woodcut') || combined.includes('woodblock') || combined.includes('ukiyo')) {
-    parts.push('woodcut print style, bold flat colors and outlines')
+    parts.push('woodblock print', 'bold flat color areas', 'strong black outlines', 'graphic shapes', 'limited palette')
   } else if (combined.includes('lithograph')) {
-    parts.push('lithograph illustration, soft tonal gradients')
+    parts.push('lithograph style', 'flat tonal areas', 'grainy texture', 'muted limited palette')
   } else if (combined.includes('ink') || combined.includes('pen')) {
-    parts.push('pen and ink illustration, detailed line work')
+    parts.push('pen and ink illustration', 'precise black line work', 'high contrast', 'crosshatching shading')
   } else if (combined.includes('gouache')) {
-    parts.push('gouache illustration, opaque vivid colors')
+    parts.push('gouache illustration', 'flat opaque color', 'matte finish', 'bold shapes', 'no transparency')
   } else if (combined.includes('oil') || combined.includes('painting')) {
-    parts.push('oil painting style, rich colors')
-  } else {
-    parts.push('classic book illustration style')
+    parts.push('oil painting', 'thick impasto brushwork', 'rich saturated colors', 'painterly texture')
+  } else if (combined.includes('pastel')) {
+    parts.push('pastel artwork', 'chalky soft colors', 'blended matte finish')
   }
 
+  // Extract discriminative style keywords from title (artist names, movements, eras)
+  const SKIP_WORDS = new Set(['file', 'from', 'with', 'illustration', 'illustratie', 'book', 'page', 'plate', 'figure', 'image'])
   const clean = title.replace(/^File:/, '').replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ')
   const keywords = clean
     .split(' ')
-    .filter(w => w.length > 3 && !['File', 'from', 'with', 'illustration', 'Illustration'].includes(w))
-    .slice(0, 4)
+    .filter(w => w.length > 3 && !SKIP_WORDS.has(w.toLowerCase()))
+    .slice(0, 3)
     .join(', ')
     .toLowerCase()
   if (keywords) parts.push(keywords)
 
-  parts.push("children's book illustration style")
   return parts.filter(Boolean).join(', ')
 }
 
