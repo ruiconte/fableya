@@ -5,7 +5,7 @@ export function Footer() {
   const { t } = useTranslation()
 
   return (
-    <footer className="bg-white border-t border-kidoria-sky mt-20">
+    <footer className="bg-white border-t border-kidoria-sky mt-20" style={{ position: 'relative', zIndex: 1 }}>
       <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-10">
 
