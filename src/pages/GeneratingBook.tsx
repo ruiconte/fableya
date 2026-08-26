@@ -21,6 +21,17 @@ export function GeneratingBook() {
 
   useEffect(() => {
     if (!bookId) return
+
+    // Kick off generation if book not yet started
+    const kickoff = async () => {
+      const { data: book } = await supabase.from('books').select('status').eq('id', bookId).single()
+      if (book?.status === 'pending' || book?.status === 'paid') {
+        const { error } = await supabase.functions.invoke('generate-book', { body: { book_id: bookId } })
+        if (error) { setStatus('failed'); return }
+      }
+    }
+    kickoff()
+
     const interval = setInterval(async () => {
       const { data } = await supabase.from('books').select('status').eq('id', bookId).single()
       if (data?.status === 'completed') { clearInterval(interval); navigate(`/livre/${bookId}`) }

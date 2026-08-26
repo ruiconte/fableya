@@ -134,11 +134,7 @@ export function CreateBook() {
         .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
-      const { data, error: fnError } = await supabase.functions.invoke('generate-book', {
-        body: { book_id: book.id },
-      })
-      if (fnError) throw fnError
-      if (data?.error) throw new Error(data.message || data.error)
+      // GeneratingBook will call generate-book automatically on arrival
       navigate(`/generation?book_id=${book.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('common.error'))
