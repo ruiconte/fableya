@@ -276,7 +276,7 @@ export function Home() {
                 </div>
                 <p className="text-white/80 text-xs mb-1">25 livres inclus chaque mois</p>
                 <p className="text-white/60 text-xs mb-5">Soit 0,60 € / livre · Résiliation sans engagement</p>
-                <Link to="/mes-livres" className="block w-full text-center bg-white text-kidoria-rose font-semibold rounded-lg py-3 text-sm hover:bg-white/90 transition-opacity">
+                <Link to="/bibliotheque" className="block w-full text-center bg-white text-kidoria-rose font-semibold rounded-lg py-3 text-sm hover:bg-white/90 transition-opacity">
                   S'abonner — 15 € / mois
                 </Link>
               </div>

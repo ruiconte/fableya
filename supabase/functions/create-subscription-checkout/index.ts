@@ -87,8 +87,8 @@ Deno.serve(async (req) => {
       'payment_method_types[0]': 'card',
       'subscription_data[metadata][user_id]': user.id,
       'metadata[user_id]': user.id,
-      success_url: `${siteUrl}/mes-livres?subscription=success`,
-      cancel_url: `${siteUrl}/mes-livres`,
+      success_url: `${siteUrl}/bibliotheque?subscription=success`,
+      cancel_url: `${siteUrl}/bibliotheque`,
     })
 
     // Upsert subscription row with customer id (subscription_id comes via webhook)

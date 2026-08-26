@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
 
     const params = new URLSearchParams({
       customer: sub.stripe_customer_id,
-      return_url: `${siteUrl}/mes-livres`,
+      return_url: `${siteUrl}/bibliotheque`,
     })
 
     const res = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
