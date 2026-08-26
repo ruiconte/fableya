@@ -172,7 +172,7 @@ export function Library() {
                     <Link to={`/livre/${book.id}`} className="btn-primary w-full justify-center text-xs py-2.5">
                       {t('library.read')}
                     </Link>
-                  ) : (book.status === 'generating' || book.status === 'paid') ? (
+                  ) : (book.status === 'generating' || book.status === 'paid' || book.status === 'queued') ? (
                     <Link to={`/generation?book_id=${book.id}`} className="btn-secondary w-full justify-center text-xs py-2.5">
                       {t('library.seeProgress')}
                     </Link>

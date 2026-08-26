@@ -19,6 +19,7 @@ Deno.serve(async (req) => {
   let book_id: string | undefined
   let subscriptionQuotaConsumed = false
   let usageRowId: string | undefined
+  let userId: string | undefined
 
   try {
     const authHeader = req.headers.get('Authorization')
@@ -26,6 +27,7 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
     if (authError || !user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+    userId = user.id
 
     // Rate limit: max 5 generations per hour (covers both pay-per-book and subscription)
     const since = new Date(Date.now() - 60 * 60 * 1000).toISOString()
@@ -33,7 +35,7 @@ Deno.serve(async (req) => {
       .from('books')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
-      .in('status', ['generating', 'completed', 'failed'])
+      .in('status', ['queued', 'paid', 'generating', 'completed', 'failed'])
       .gte('created_at', since)
     if ((count ?? 0) >= 5) {
       return new Response(JSON.stringify({ error: 'Rate limit: max 5 générations par heure' }), { status: 429, headers: corsHeaders })
@@ -148,7 +150,7 @@ Deno.serve(async (req) => {
 
     // Reverse quota consumption on system error (not on user/quota errors)
     if (subscriptionQuotaConsumed && book_id) {
-      await supabase.rpc('decrement_book_usage', { p_user_id: user.id })
+      await supabase.rpc('decrement_book_usage', { p_user_id: userId })
         .then(() => console.log('Quota reversed due to system error'))
         .catch((e: unknown) => console.error('Failed to reverse quota:', e))
 
