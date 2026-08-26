@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { SubscriptionStatus } from '../components/SubscriptionStatus'
+import { useSubscription } from '../hooks/useSubscription'
 import type { Book, BookStatus } from '../lib/types'
 
 const STATUS_COLOR: Record<BookStatus, string> = {
@@ -36,6 +37,16 @@ export function Library() {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const pendingActivation = searchParams.get('subscription') === 'success'
+  const { subscription: liveSubscription } = useSubscription(pendingActivation)
+
+  // Once active, remove the query param so the banner disappears
+  useEffect(() => {
+    if (pendingActivation && liveSubscription?.isActive) {
+      setSearchParams({}, { replace: true })
+    }
+  }, [pendingActivation, liveSubscription?.isActive, setSearchParams])
 
   const deleteBook = async (bookId: string) => {
     if (!confirm('Supprimer ce livre définitivement ?')) return
@@ -85,6 +96,14 @@ export function Library() {
         </div>
         <Link to="/creer" className="btn-primary">{t('library.createNew')}</Link>
       </div>
+
+      {/* Activation pending banner */}
+      {pendingActivation && !liveSubscription?.isActive && (
+        <div className="mb-6 flex items-center gap-3 bg-kidoria-rose/10 border border-kidoria-rose/20 rounded-xl px-5 py-4 max-w-sm">
+          <div className="w-4 h-4 border-2 border-kidoria-rose border-t-transparent rounded-full animate-spin shrink-0" />
+          <p className="text-sm text-kidoria-text font-medium">Activation de votre abonnement en cours…</p>
+        </div>
+      )}
 
       {/* Subscription section */}
       <div className="mb-10 max-w-sm">

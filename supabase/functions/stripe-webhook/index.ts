@@ -89,15 +89,38 @@ Deno.serve(async (req) => {
         console.error('Missing user_id or customer in subscription session')
         return new Response('Missing metadata', { status: 400 })
       }
-      // Subscription details come via customer.subscription.created — just ensure customer id is stored
+
+      // Fetch the real subscription object from Stripe to get actual status
+      const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')!
+      const subRes = await fetch(`https://api.stripe.com/v1/subscriptions/${session.subscription}`, {
+        headers: { 'Authorization': `Bearer ${stripeSecretKey}` },
+      })
+      const stripeSubJson = await subRes.json()
+
+      const plan = stripeSubJson.items?.data?.[0]?.price
+        ? getPlanByPriceId(stripeSubJson.items.data[0].price.id)
+        : null
+      const periodStart = stripeSubJson.current_period_start
+        ? new Date(stripeSubJson.current_period_start * 1000).toISOString()
+        : null
+      const periodEnd = stripeSubJson.current_period_end
+        ? new Date(stripeSubJson.current_period_end * 1000).toISOString()
+        : null
+
       await supabase.from('subscriptions').upsert({
         user_id: userId,
         stripe_customer_id: customerId,
         stripe_subscription_id: session.subscription,
-        status: 'incomplete',
+        stripe_price_id: stripeSubJson.items?.data?.[0]?.price?.id ?? null,
+        status: stripeSubJson.status ?? 'incomplete',
+        current_period_start: periodStart,
+        current_period_end: periodEnd,
+        cancel_at_period_end: stripeSubJson.cancel_at_period_end ?? false,
+        plan_book_limit: plan?.monthlyBookLimit ?? 25,
+        books_used_this_period: 0,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' })
-      console.log('Subscription checkout completed, customer:', customerId)
+      console.log('Subscription checkout completed, status:', stripeSubJson.status, 'customer:', customerId)
     }
   }
 

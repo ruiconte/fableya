@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
 export interface SubscriptionInfo {
@@ -13,17 +13,17 @@ export interface SubscriptionInfo {
   cancelAtPeriodEnd: boolean
 }
 
-export function useSubscription() {
+export function useSubscription(pollUntilActive = false) {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchSubscription = useCallback(async () => {
-    setLoading(true)
     setError(null)
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { setSubscription(null); return }
+      if (!session) { setSubscription(null); setLoading(false); return }
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-subscription`,
@@ -32,6 +32,7 @@ export function useSubscription() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to fetch subscription')
       setSubscription(data.subscription)
+      return data.subscription
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unknown error')
     } finally {
@@ -40,6 +41,19 @@ export function useSubscription() {
   }, [])
 
   useEffect(() => { fetchSubscription() }, [fetchSubscription])
+
+  // Poll every 3 s until subscription becomes active (used after Stripe redirect)
+  useEffect(() => {
+    if (!pollUntilActive) return
+    pollRef.current = setInterval(async () => {
+      const sub = await fetchSubscription()
+      if (sub?.isActive) {
+        clearInterval(pollRef.current!)
+        pollRef.current = null
+      }
+    }, 3000)
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [pollUntilActive, fetchSubscription])
 
   const subscribe = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession()

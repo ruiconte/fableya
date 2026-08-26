@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
 
     // Reverse quota consumption on system error (not on user/quota errors)
     if (subscriptionQuotaConsumed && book_id) {
-      await supabase.rpc('decrement_book_usage', { p_user_id: book_id })
+      await supabase.rpc('decrement_book_usage', { p_user_id: user.id })
         .then(() => console.log('Quota reversed due to system error'))
         .catch((e: unknown) => console.error('Failed to reverse quota:', e))
 

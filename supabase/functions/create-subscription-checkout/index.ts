@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
     // Check not already subscribed
     const { data: existing } = await supabase
       .from('subscriptions')
-      .select('status')
+      .select('status, stripe_customer_id')
       .eq('user_id', user.id)
       .single()
 
