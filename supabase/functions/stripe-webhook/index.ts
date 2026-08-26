@@ -90,37 +90,46 @@ Deno.serve(async (req) => {
         return new Response('Missing metadata', { status: 400 })
       }
 
-      // Fetch the real subscription object from Stripe to get actual status
+      // Fetch the real subscription object from Stripe to get period dates and price
       const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')!
-      const subRes = await fetch(`https://api.stripe.com/v1/subscriptions/${session.subscription}`, {
-        headers: { 'Authorization': `Bearer ${stripeSecretKey}` },
-      })
-      const stripeSubJson = await subRes.json()
+      let stripeSubJson: Record<string, unknown> = {}
+      try {
+        const subRes = await fetch(`https://api.stripe.com/v1/subscriptions/${session.subscription}`, {
+          headers: { 'Authorization': `Bearer ${stripeSecretKey}` },
+        })
+        stripeSubJson = await subRes.json()
+        console.log('Fetched subscription from Stripe:', JSON.stringify(stripeSubJson).slice(0, 200))
+      } catch (e) {
+        console.error('Failed to fetch subscription from Stripe, proceeding with defaults:', e)
+      }
 
-      const plan = stripeSubJson.items?.data?.[0]?.price
-        ? getPlanByPriceId(stripeSubJson.items.data[0].price.id)
-        : null
+      const items = (stripeSubJson.items as { data?: { price?: { id?: string } }[] } | undefined)?.data
+      const priceId = items?.[0]?.price?.id ?? null
+      const plan = priceId ? getPlanByPriceId(priceId) : null
       const periodStart = stripeSubJson.current_period_start
-        ? new Date(stripeSubJson.current_period_start * 1000).toISOString()
+        ? new Date((stripeSubJson.current_period_start as number) * 1000).toISOString()
         : null
       const periodEnd = stripeSubJson.current_period_end
-        ? new Date(stripeSubJson.current_period_end * 1000).toISOString()
+        ? new Date((stripeSubJson.current_period_end as number) * 1000).toISOString()
         : null
+      // A completed checkout with mode=subscription always means active
+      const subStatus = (stripeSubJson.status as string | undefined) ?? 'active'
 
-      await supabase.from('subscriptions').upsert({
+      const { error: upsertError } = await supabase.from('subscriptions').upsert({
         user_id: userId,
         stripe_customer_id: customerId,
         stripe_subscription_id: session.subscription,
-        stripe_price_id: stripeSubJson.items?.data?.[0]?.price?.id ?? null,
-        status: stripeSubJson.status ?? 'incomplete',
+        stripe_price_id: priceId,
+        status: subStatus,
         current_period_start: periodStart,
         current_period_end: periodEnd,
-        cancel_at_period_end: stripeSubJson.cancel_at_period_end ?? false,
+        cancel_at_period_end: (stripeSubJson.cancel_at_period_end as boolean | undefined) ?? false,
         plan_book_limit: plan?.monthlyBookLimit ?? 25,
         books_used_this_period: 0,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' })
-      console.log('Subscription checkout completed, status:', stripeSubJson.status, 'customer:', customerId)
+      if (upsertError) console.error('Upsert error:', upsertError)
+      console.log('Subscription checkout completed, status:', subStatus, 'customer:', customerId)
     }
   }
 
