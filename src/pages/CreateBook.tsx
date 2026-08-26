@@ -134,17 +134,11 @@ export function CreateBook() {
         .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
-      const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-book`,
-        {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${session!.access_token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ book_id: book.id }),
-        }
-      )
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || data.error || 'Erreur génération')
+      const { data, error: fnError } = await supabase.functions.invoke('generate-book', {
+        body: { book_id: book.id },
+      })
+      if (fnError) throw fnError
+      if (data?.error) throw new Error(data.message || data.error)
       navigate(`/generation?book_id=${book.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('common.error'))
