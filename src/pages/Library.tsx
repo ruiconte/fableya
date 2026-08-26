@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useSubscription } from '../hooks/useSubscription'
+import { downloadBookPdf } from '../lib/downloadBookPdf'
 import type { Book, BookStatus } from '../lib/types'
 
 const STATUS_COLOR: Record<BookStatus, string> = {
@@ -38,6 +39,21 @@ export function Library() {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
+
+  const handleDownloadPdf = async (book: Book) => {
+    setDownloadingId(book.id)
+    try {
+      const { data: pages } = await supabase
+        .from('book_pages')
+        .select('*')
+        .eq('book_id', book.id)
+        .order('page_number')
+      await downloadBookPdf(book, pages ?? [])
+    } finally {
+      setDownloadingId(null)
+    }
+  }
   const [searchParams, setSearchParams] = useSearchParams()
   const pendingActivation = searchParams.get('subscription') === 'success'
   const { subscription: liveSubscription } = useSubscription(pendingActivation)
@@ -169,9 +185,20 @@ export function Library() {
 
                 <div className="mt-auto space-y-2">
                   {book.status === 'completed' ? (
-                    <Link to={`/livre/${book.id}`} className="btn-primary w-full justify-center text-xs py-2.5">
-                      {t('library.read')}
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link to={`/livre/${book.id}`} className="btn-primary flex-1 justify-center text-xs py-2.5">
+                        {t('library.read')}
+                      </Link>
+                      <button
+                        onClick={() => handleDownloadPdf(book)}
+                        disabled={downloadingId === book.id}
+                        className="btn-secondary px-3 py-2.5 text-xs flex items-center gap-1 disabled:opacity-50 shrink-0"
+                        title="Télécharger PDF"
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        {downloadingId === book.id ? '…' : 'PDF'}
+                      </button>
+                    </div>
                   ) : (book.status === 'generating' || book.status === 'paid' || book.status === 'queued') ? (
                     <Link to={`/generation?book_id=${book.id}`} className="btn-secondary w-full justify-center text-xs py-2.5">
                       {t('library.seeProgress')}
