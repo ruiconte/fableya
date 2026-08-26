@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://fableya.com',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 const N8N_WEBHOOK_URL = 'https://n8n.srv1608234.hstgr.cloud/webhook/bf8f6868-2bdd-47c0-86c9-8ed5b186cd6d'
