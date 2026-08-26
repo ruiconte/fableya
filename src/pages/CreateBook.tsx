@@ -153,7 +153,7 @@ export function CreateBook() {
         >
           <div className="flex items-center gap-2 mb-1">
             <span className="font-black text-sm">{t('create.modeQuick')}</span>
-            {!isAdvanced && <span className="ml-auto text-kidoria-rose">✓</span>}
+            {!isAdvanced && <span className="ml-auto text-kidoria-rose text-sm font-bold">✓</span>}
           </div>
           <p className="text-xs text-kidoria-muted leading-snug">{t('create.modeQuickDesc')}</p>
         </button>
@@ -169,7 +169,7 @@ export function CreateBook() {
         >
           <div className="flex items-center gap-2 mb-1">
             <span className="font-black text-sm">{t('create.modeAdvanced')}</span>
-            {isAdvanced && <span className="ml-auto text-kidoria-rose">✓</span>}
+            {isAdvanced && <span className="ml-auto text-kidoria-rose text-sm font-bold">✓</span>}
           </div>
           <p className="text-xs text-kidoria-muted leading-snug">{t('create.modeAdvancedDesc')}</p>
         </button>
@@ -180,7 +180,10 @@ export function CreateBook() {
         {/* ── Child info (quick mode) ── */}
         {!isAdvanced && (
           <div className="card space-y-6">
-            <h2 className="font-display text-xl">{t('create.childSection')}</h2>
+            <div className="flex items-center gap-3">
+              <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
+              <h2 className="font-display text-xl">{t('create.childSection')}</h2>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="label" htmlFor="child_name">{t('create.childName')} *</label>
@@ -199,6 +202,9 @@ export function CreateBook() {
                 </select>
               </div>
             </div>
+            <p className="text-xs text-kidoria-muted bg-kidoria-cream rounded-xl px-3 py-2.5 leading-relaxed">
+              <span className="font-semibold">Conseil :</span> utilisez le prénom et l'âge réel ou imaginé de votre enfant pour une histoire encore plus magique.
+            </p>
           </div>
         )}
 
@@ -220,14 +226,17 @@ export function CreateBook() {
 
         {/* ── Genre (always visible) ── */}
         <div className="card space-y-6">
-          <h2 className="font-display text-xl">{t('create.genreSection')}</h2>
+          <div className="flex items-center gap-3">
+            <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
+            <h2 className="font-display text-xl">{t('create.genreSection')}</h2>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {GENRES.map(g => (
               <button key={g.value} type="button" onClick={() => set('genre', g.value)}
                 className={`rounded-2xl border-2 p-3 text-left transition-all ${
                   form.genre === g.value
                     ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
-                    : 'border-gray-200 hover:border-kidoria-rose/50'
+                    : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
                 }`}>
                 <div className="text-sm font-semibold">{t(`genres.${g.value}`)}</div>
               </button>
@@ -237,14 +246,17 @@ export function CreateBook() {
 
         {/* ── Moral value (always visible) ── */}
         <div className="card space-y-6">
-          <h2 className="font-display text-xl">{t('create.moralSection')}</h2>
+          <div className="flex items-center gap-3">
+            <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">3</span>
+            <h2 className="font-display text-xl">{t('create.moralSection')}</h2>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {MORAL_VALUES.map(v => (
               <button key={v.value} type="button" onClick={() => set('moral_value', v.value)}
                 className={`rounded-2xl border-2 p-3 text-center transition-all ${
                   form.moral_value === v.value
                     ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
-                    : 'border-gray-200 hover:border-kidoria-rose/50'
+                    : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
                 }`}>
                 <div className="text-xs font-semibold leading-tight">{t(`morals.${v.value}`)}</div>
               </button>
@@ -383,6 +395,20 @@ export function CreateBook() {
         {error && (
           <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 font-medium">{error}</div>
         )}
+
+        {/* Bottom banner — "Chaque histoire est unique" */}
+        <div className="rounded-2xl bg-kidoria-lavender/30 border border-kidoria-sky px-5 py-4 flex items-center gap-4">
+          <div>
+            <p className="font-bold text-sm">Chaque histoire est unique</p>
+            <p className="text-xs text-kidoria-muted leading-relaxed mt-0.5">
+              Fableya crée des livres magiques et éducatifs, adaptés à votre enfant.
+            </p>
+          </div>
+          <button type="submit" onClick={handlePreview} disabled={loading}
+            className="btn-primary ml-auto shrink-0 text-sm px-6 py-2.5">
+            {loading ? '…' : t('create.previewButton')} →
+          </button>
+        </div>
 
         {/* Submit */}
         <div className="card text-center bg-kidoria-lavender/20">
