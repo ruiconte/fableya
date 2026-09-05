@@ -1,7 +1,20 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation, Trans } from 'react-i18next'
 import { SAMPLE_BOOKS, type SampleBookData } from '../lib/sampleBooks'
 import { PageSEO } from '../components/PageSEO'
+import { useSubscription } from '../hooks/useSubscription'
+import { useAuth } from '../contexts/AuthContext'
+
+const BASE = 'https://gmrlijhmwltpndeytacj.supabase.co/storage/v1/object/public/books'
+const HERO_COVERS = [
+  { id: '91fac612-a7c1-406c-bbe2-72b22be50e9e', img: `${BASE}/91fac612-a7c1-406c-bbe2-72b22be50e9e/page_1.png` },
+  { id: '0c07a43d-effe-4cad-821c-e3e9948af9ec', img: `${BASE}/0c07a43d-effe-4cad-821c-e3e9948af9ec/page_1.png` },
+  { id: '68fd16e8-2c7f-42dd-b525-cc4ed8bf5112', img: `${BASE}/68fd16e8-2c7f-42dd-b525-cc4ed8bf5112/page_1.png` },
+  { id: '67fa34cd-4caa-4524-a75f-b27e835fa2e3', img: `${BASE}/67fa34cd-4caa-4524-a75f-b27e835fa2e3/page_1.png` },
+  { id: '92ecae91-66f9-4905-9d46-db791420dffb', img: `${BASE}/92ecae91-66f9-4905-9d46-db791420dffb/page_1.png` },
+  { id: '27ed25b6-de40-4df7-896c-1978f6239279', img: `${BASE}/27ed25b6-de40-4df7-896c-1978f6239279/page_1.png` },
+]
 
 function BookCover({
   book,
@@ -35,6 +48,23 @@ function BookCover({
 
 export function Home() {
   const { t } = useTranslation()
+  const { user } = useAuth()
+  const { subscription } = useSubscription()
+  const [trialEligible, setTrialEligible] = useState<boolean | null>(null)
+
+  // Check if new user (0 books ever generated)
+  useEffect(() => {
+    if (!user) { setTrialEligible(true); return }
+    if (subscription?.isActive) { setTrialEligible(false); return }
+    import('../lib/supabase').then(({ supabase }) => {
+      supabase
+        .from('books')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['queued', 'paid', 'generating', 'completed', 'preview_ready'])
+        .then(({ count }) => setTrialEligible((count ?? 0) === 0))
+    })
+  }, [user, subscription])
 
   return (
     <div>
@@ -67,16 +97,20 @@ export function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link to="/creer" className="btn-primary text-base px-8 py-4">
-                  {t('home.heroCTA')}
+                  {subscription?.isActive
+                    ? t('home.heroCTASub')
+                    : trialEligible
+                      ? t('home.heroCTATrial')
+                      : t('home.heroCTA')}
                 </Link>
                 <Link to="/apercu" className="btn-secondary text-base px-8 py-4 flex items-center gap-2">
                   <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:'50%',background:'#1a1614',flexShrink:0}}>
                     <svg width="8" height="10" viewBox="0 0 8 10" fill="none"><path d="M1 1l6 4-6 4V1z" fill="white"/></svg>
                   </span>
-                  Voir un exemple
+                  {t('home.seeExample')}
                 </Link>
               </div>
-              <p className="mt-5 text-sm text-kidoria-muted">{t('home.heroSub2')}</p>
+              {!trialEligible && <p className="mt-5 text-sm text-kidoria-muted">{t('home.heroSub2')}</p>}
             </div>
 
             {/* Right: scattered books (desktop) */}
@@ -107,30 +141,30 @@ export function Home() {
 
               {/* Row 1 books */}
               <div className="absolute book-float-a" style={{width:200,top:'3%',left:'2%',transform:'rotate(-14deg)',zIndex:10,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
-                <BookCover book={SAMPLE_BOOKS[0]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[0].id}`}><img src={HERO_COVERS[0].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
               <div className="absolute book-float-b" style={{width:210,top:'1%',left:'33%',transform:'rotate(5deg)',zIndex:12,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
-                <BookCover book={SAMPLE_BOOKS[1]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[1].id}`}><img src={HERO_COVERS[1].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
               <div className="absolute book-float-c" style={{width:185,top:'4%',right:'2%',transform:'rotate(12deg)',zIndex:10,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
-                <BookCover book={SAMPLE_BOOKS[2]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[2].id}`}><img src={HERO_COVERS[2].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
 
               {/* Row 2 books */}
               <div className="absolute book-float-b" style={{width:230,top:'46%',left:'0%',transform:'rotate(-7deg)',zIndex:14,borderRadius:12,overflow:'hidden',boxShadow:'0 20px 56px rgba(26,22,20,0.26)'}}>
-                <BookCover book={SAMPLE_BOOKS[2]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[3].id}`}><img src={HERO_COVERS[3].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
               <div className="absolute book-float-a" style={{width:200,top:'44%',left:'36%',transform:'rotate(8deg)',zIndex:13,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
-                <BookCover book={SAMPLE_BOOKS[0]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[4].id}`}><img src={HERO_COVERS[4].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
               <div className="absolute book-float-c" style={{width:190,top:'43%',right:'1%',transform:'rotate(-10deg)',zIndex:11,borderRadius:12,overflow:'hidden',boxShadow:'0 16px 48px rgba(26,22,20,0.22)'}}>
-                <BookCover book={SAMPLE_BOOKS[1]} className="w-full" />
+                <Link to={`/exemple/${HERO_COVERS[5].id}`}><img src={HERO_COVERS[5].img} alt="" className="w-full block cursor-pointer hover:brightness-90 transition-all" /></Link>
               </div>
 
               {/* Social proof */}
               <div style={{position:'absolute',bottom:'3%',right:'4%',background:'white',borderRadius:40,padding:'10px 18px',display:'flex',alignItems:'center',gap:10,boxShadow:'0 4px 24px rgba(26,22,20,0.12)',zIndex:20}}>
                 <span style={{fontSize:16}}>✨</span>
-                <span style={{fontSize:13,fontWeight:600,color:'#1a1614'}}>Des milliers d'histoires uniques déjà créées</span>
+                <span style={{fontSize:13,fontWeight:600,color:'#1a1614'}}>{t('home.socialProof')}</span>
                 <div style={{display:'flex',marginLeft:4}}>
                   {['#C89EAE','#8BB0C8','#A0C89A'].map((c,i)=>(
                     <div key={i} style={{width:26,height:26,borderRadius:'50%',background:c,border:'2px solid white',marginLeft:i>0?-8:0,zIndex:3-i}}/>
@@ -181,6 +215,34 @@ export function Home() {
         </div>
       </section>
 
+      {/* ── VIDEO ────────────────────────────────────────────────────────────── */}
+      <section className="py-20">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          <div className="lg:w-1/2 text-center lg:text-left">
+            <p className="text-kidoria-rose text-[11px] font-semibold tracking-[0.22em] uppercase mb-5">
+              {t('home.videoLabel')}
+            </p>
+            <h2 className="font-display text-4xl lg:text-5xl mb-5 text-kidoria-text">
+              {t('home.videoTitle')}
+            </h2>
+            <p className="text-kidoria-muted leading-relaxed text-sm max-w-sm mx-auto lg:mx-0">
+              {t('home.videoDesc')}
+            </p>
+          </div>
+          <div className="lg:w-1/2 flex justify-center">
+            <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 16px 48px rgba(26,22,20,0.18)', width: 315, height: 560 }}>
+              <iframe
+                src="https://www.youtube.com/embed/SXYmZxk60xA"
+                title="Fableya — Livre personnalisé pour enfant"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── BOOK GALLERY ─────────────────────────────────────────────────────── */}
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
@@ -194,7 +256,7 @@ export function Home() {
               </h2>
             </div>
             <Link to="/apercu" className="btn-secondary self-start lg:self-auto shrink-0 text-sm">
-              Explorer les exemples →
+              {t('home.exploreExamples')}
             </Link>
           </div>
 
@@ -221,7 +283,7 @@ export function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
                     <div>
                       <p className="text-white font-semibold text-sm">{book.title}</p>
-                      <p className="text-white/70 text-xs mt-1">Lire l'extrait →</p>
+                      <p className="text-white/70 text-xs mt-1">{t('home.readExcerpt')}</p>
                     </div>
                   </div>
                 </div>
@@ -248,39 +310,38 @@ export function Home() {
               </ul>
             </div>
 
-            {/* Pricing: two options */}
-            <div className="space-y-4">
+            {/* Pricing: hidden for active subscribers */}
+            {!subscription?.isActive && <div className="space-y-4">
               {/* Pay-per-book */}
               <div className="bg-white rounded-xl border border-kidoria-sky p-7">
-                <p className="text-xs font-semibold tracking-widest uppercase text-kidoria-muted mb-4">Un livre</p>
+                <p className="text-xs font-semibold tracking-widest uppercase text-kidoria-muted mb-4">{t('home.pricingSingleTitle')}</p>
                 <div className="flex items-end gap-1 mb-1">
                   <span className="font-display text-5xl text-kidoria-text leading-none">5€</span>
-                  <span className="text-kidoria-muted text-sm mb-1">/ livre</span>
+                  <span className="text-kidoria-muted text-sm mb-1">/ {t('home.unitBook')}</span>
                 </div>
-                <p className="text-kidoria-muted text-xs mb-5">15 pages illustrées · Paiement unique</p>
+                <p className="text-kidoria-muted text-xs mb-5">{t('home.pricingSingleDesc')}</p>
                 <Link to="/creer" className="btn-secondary w-full justify-center text-sm py-3">
-                  Créer un livre — 5 €
+                  {t('home.pricingSingleCTA')}
                 </Link>
-                <p className="text-xs text-kidoria-muted mt-3">Les 5 premières pages sont gratuites.</p>
               </div>
 
               {/* Fableya Plus */}
               <div className="bg-kidoria-rose rounded-xl p-7 text-white relative overflow-hidden">
                 <div className="absolute top-3 right-3 text-[10px] font-bold bg-white/20 rounded-full px-2 py-0.5">
-                  Recommandé
+                  {t('home.pricingRecommended')}
                 </div>
                 <p className="text-xs font-semibold tracking-widest uppercase text-white/70 mb-4">Fableya Plus</p>
                 <div className="flex items-end gap-1 mb-1">
                   <span className="font-display text-5xl leading-none">15€</span>
-                  <span className="text-white/70 text-sm mb-1">/ mois</span>
+                  <span className="text-white/70 text-sm mb-1">/ {t('home.unitMonth')}</span>
                 </div>
-                <p className="text-white/80 text-xs mb-1">25 livres inclus chaque mois</p>
-                <p className="text-white/60 text-xs mb-5">Soit 0,60 € / livre · Résiliation sans engagement</p>
+                <p className="text-white/80 text-xs mb-1">{t('home.pricingPlusBooks')}</p>
+                <p className="text-white/60 text-xs mb-5">{t('home.pricingPlusPerBook')}</p>
                 <Link to="/bibliotheque" className="block w-full text-center bg-white text-kidoria-rose font-semibold rounded-lg py-3 text-sm hover:bg-white/90 transition-opacity">
-                  S'abonner — 15 € / mois
+                  {t('home.pricingPlusCTA')}
                 </Link>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       </section>
@@ -312,7 +373,7 @@ export function Home() {
             to="/creer"
             className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-kidoria-rose text-white font-semibold rounded-lg text-base hover:opacity-90 transition-opacity"
           >
-            {t('home.heroCTA')}
+            {subscription?.isActive ? t('home.heroCTASub') : trialEligible ? t('home.heroCTATrial') : t('home.heroCTA')}
           </Link>
         </div>
       </section>

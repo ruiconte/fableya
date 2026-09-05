@@ -72,59 +72,68 @@ Deno.serve(async (req) => {
         .single()
 
       if (!sub || !ACTIVE_SUB_STATUSES.includes(sub.status)) {
-        return new Response(JSON.stringify({
-          error: 'payment_required',
-          message: 'Un paiement est requis pour générer ce livre.'
-        }), { status: 402, headers: corsHeaders })
-      }
+        // Free trial: allow first book ever for users with no subscription
+        const { count: totalBooks } = await supabase
+          .from('books')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .in('status', ['queued', 'pending', 'paid', 'generating', 'completed', 'preview_ready'])
+        if ((totalBooks ?? 0) <= 1) {
+          console.log('Free trial book authorized for user:', user.id)
+          // Proceed as trial — no payment, no subscription quota consumed
+        } else {
+          return new Response(JSON.stringify({
+            error: 'payment_required',
+            message: 'Un paiement est requis pour générer ce livre.'
+          }), { status: 402, headers: corsHeaders })
+        }
+      } else {
+        if (sub.current_period_end && new Date(sub.current_period_end) < new Date()) {
+          return new Response(JSON.stringify({
+            error: 'subscription_expired',
+            message: 'Votre abonnement a expiré. Veuillez le renouveler.'
+          }), { status: 402, headers: corsHeaders })
+        }
 
-      if (sub.current_period_end && new Date(sub.current_period_end) < new Date()) {
-        return new Response(JSON.stringify({
-          error: 'subscription_expired',
-          message: 'Votre abonnement a expiré. Veuillez le renouveler.'
-        }), { status: 402, headers: corsHeaders })
-      }
+        if (sub.books_used_this_period >= sub.plan_book_limit) {
+          return new Response(JSON.stringify({
+            error: 'quota_exceeded',
+            message: `Vous avez utilisé vos ${sub.plan_book_limit} livres du mois.`,
+            renewsAt: sub.current_period_end,
+          }), { status: 429, headers: corsHeaders })
+        }
 
-      if (sub.books_used_this_period >= sub.plan_book_limit) {
-        return new Response(JSON.stringify({
-          error: 'quota_exceeded',
-          message: `Vous avez utilisé vos ${sub.plan_book_limit} livres du mois.`,
-          renewsAt: sub.current_period_end,
-        }), { status: 429, headers: corsHeaders })
-      }
-
-      // Atomically increment usage — prevents race conditions
-      // UPDATE ... WHERE books_used_this_period < plan_book_limit returns 0 rows if quota hit concurrently
-      const { data: updated } = await supabase.rpc('increment_book_usage', {
-        p_user_id: user.id,
-        p_limit: sub.plan_book_limit,
-      })
-
-      if (!updated || updated === 0) {
-        return new Response(JSON.stringify({
-          error: 'quota_exceeded',
-          message: `Vous avez utilisé vos ${sub.plan_book_limit} livres du mois.`,
-        }), { status: 429, headers: corsHeaders })
-      }
-
-      subscriptionQuotaConsumed = true
-
-      // Insert audit record (status=pending until n8n confirms)
-      const { data: usageRow } = await supabase
-        .from('book_generation_usage')
-        .insert({
-          user_id: user.id,
-          book_id: book_id,
-          subscription_id: sub.id,
-          billing_period_start: null,
-          billing_period_end: sub.current_period_end,
-          status: 'pending',
+        // Atomically increment usage — prevents race conditions
+        const { data: updated } = await supabase.rpc('increment_book_usage', {
+          p_user_id: user.id,
+          p_limit: sub.plan_book_limit,
         })
-        .select('id')
-        .single()
 
-      usageRowId = usageRow?.id
-      console.log('Subscription quota consumed for user:', user.id, 'usage:', sub.books_used_this_period + 1, '/', sub.plan_book_limit)
+        if (!updated || updated === 0) {
+          return new Response(JSON.stringify({
+            error: 'quota_exceeded',
+            message: `Vous avez utilisé vos ${sub.plan_book_limit} livres du mois.`,
+          }), { status: 429, headers: corsHeaders })
+        }
+
+        subscriptionQuotaConsumed = true
+
+        const { data: usageRow } = await supabase
+          .from('book_generation_usage')
+          .insert({
+            user_id: user.id,
+            book_id: book_id,
+            subscription_id: sub.id,
+            billing_period_start: null,
+            billing_period_end: sub.current_period_end,
+            status: 'pending',
+          })
+          .select('id')
+          .single()
+
+        usageRowId = usageRow?.id
+        console.log('Subscription quota consumed for user:', user.id, 'usage:', sub.books_used_this_period + 1, '/', sub.plan_book_limit)
+      }
     }
 
     // ── Launch generation ────────────────────────────────────────────────────
