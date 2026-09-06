@@ -9,7 +9,10 @@ export function Account() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const { subscription, loading: subLoading, openPortal } = useSubscription()
+  const { subscription, loading: subLoading, cancelSubscription, reactivateSubscription } = useSubscription()
+  const [subActionLoading, setSubActionLoading] = useState(false)
+  const [subActionMsg, setSubActionMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [bookCount, setBookCount] = useState<number | null>(null)
 
   useEffect(() => {
@@ -75,7 +78,7 @@ export function Account() {
       {/* Subscription + stats card */}
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-lg">Mon abonnement</h2>
+          <h2 className="font-black text-lg">{t('account.subscription')}</h2>
           {!subLoading && subscription?.isActive && (
             <span className="text-xs font-semibold bg-kidoria-rose/10 text-kidoria-rose px-3 py-1 rounded-full">
               Fableya Plus
@@ -89,25 +92,25 @@ export function Account() {
           <div className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
-                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Livres restants</p>
+                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">{t('account.booksRemaining')}</p>
                 <p className="text-2xl font-black text-kidoria-text">{subscription.booksRemaining}</p>
-                <p className="text-xs text-kidoria-muted">sur {subscription.planBookLimit} ce mois</p>
+                <p className="text-xs text-kidoria-muted">{t('account.booksRemainingOf', { total: subscription.planBookLimit })}</p>
               </div>
               <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
-                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Mes livres</p>
+                <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">{t('account.myBooks')}</p>
                 <p className="text-2xl font-black text-kidoria-text">{bookCount ?? '—'}</p>
-                <p className="text-xs text-kidoria-muted">livres créés</p>
+                <p className="text-xs text-kidoria-muted">{t('account.booksCreated')}</p>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs text-kidoria-muted mb-1">
-                <span>{subscription.booksUsed} utilisés</span>
-                <span>
-                  {subscription.cancelAtPeriodEnd ? 'Se termine' : 'Renouvellement'} le{' '}
-                  {subscription.currentPeriodEnd
-                    ? new Date(subscription.currentPeriodEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
-                    : '—'}
-                </span>
+                <span>{t('account.booksUsed', { count: subscription.booksUsed })}</span>
+                {subscription.currentPeriodEnd && (
+                  <span>
+                    {subscription.cancelAtPeriodEnd ? t('account.endsOn') : t('account.renewsOn')}{' '}
+                    {new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                  </span>
+                )}
               </div>
               <div className="h-2 bg-kidoria-sky rounded-full overflow-hidden">
                 <div
@@ -116,20 +119,103 @@ export function Account() {
                 />
               </div>
             </div>
-            <button onClick={openPortal} className="btn-secondary text-sm py-2 w-full justify-center">
-              Gérer l'abonnement
-            </button>
+            {/* In-app subscription management */}
+            <div className="border-t border-gray-100 pt-4 space-y-3">
+              {subActionMsg && (
+                <div className={subActionMsg.type === 'success'
+                  ? 'bg-green-50 text-green-700 text-sm rounded-xl px-4 py-3'
+                  : 'bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3'}>
+                  {subActionMsg.text}
+                </div>
+              )}
+
+              {subscription?.cancelAtPeriodEnd ? (
+                // Subscription scheduled to cancel — offer reactivation
+                <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 space-y-3">
+                  <p className="text-sm text-amber-800 font-semibold">
+                    {t('account.cancelPending')}
+                  </p>
+                  <p className="text-xs text-amber-700">
+                    {t('account.cancelEndsOn')}{' '}
+                    {subscription.currentPeriodEnd
+                      ? new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                      : '—'}.{' '}
+                    {t('account.cancelAccessUntil')}
+                  </p>
+                  <button
+                    onClick={async () => {
+                      setSubActionLoading(true)
+                      setSubActionMsg(null)
+                      try {
+                        await reactivateSubscription()
+                        setSubActionMsg({ type: 'success', text: t('account.reactivateSuccess') })
+                      } catch (e) {
+                        setSubActionMsg({ type: 'error', text: e instanceof Error ? e.message : 'Erreur' })
+                      } finally {
+                        setSubActionLoading(false)
+                      }
+                    }}
+                    disabled={subActionLoading}
+                    className="btn-primary text-sm py-2 w-full justify-center disabled:opacity-50"
+                  >
+                    {subActionLoading ? '…' : t('account.reactivate')}
+                  </button>
+                </div>
+              ) : (
+                // Active — offer cancellation
+                !showCancelConfirm ? (
+                  <button
+                    onClick={() => { setShowCancelConfirm(true); setSubActionMsg(null) }}
+                    className="text-kidoria-muted text-sm hover:text-red-500 transition-colors w-full text-center py-1"
+                  >
+                    {t('account.cancelSub')}
+                  </button>
+                ) : (
+                  <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 space-y-3">
+                    <p className="text-sm text-red-700 font-semibold">{t('account.cancelConfirmTitle')}</p>
+                    <p className="text-xs text-red-600">{t('account.cancelConfirmText')}</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={async () => {
+                          setSubActionLoading(true)
+                          setSubActionMsg(null)
+                          try {
+                            await cancelSubscription()
+                            setShowCancelConfirm(false)
+                            setSubActionMsg({ type: 'success', text: t('account.cancelSuccess') })
+                          } catch (e) {
+                            setSubActionMsg({ type: 'error', text: e instanceof Error ? e.message : 'Erreur' })
+                          } finally {
+                            setSubActionLoading(false)
+                          }
+                        }}
+                        disabled={subActionLoading}
+                        className="flex-1 bg-red-500 text-white font-bold text-sm px-4 py-2 rounded-xl disabled:opacity-50 hover:bg-red-600 transition-colors"
+                      >
+                        {subActionLoading ? '…' : t('account.cancelConfirmBtn')}
+                      </button>
+                      <button
+                        onClick={() => setShowCancelConfirm(false)}
+                        className="flex-1 btn-secondary text-sm py-2"
+                      >
+                        {t('account.cancel')}
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex items-center gap-4">
             <div className="flex-1 rounded-xl bg-kidoria-lavender/40 px-4 py-3">
-              <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">Mes livres</p>
+              <p className="text-[11px] text-kidoria-muted font-semibold uppercase tracking-wide mb-1">{t('account.myBooks')}</p>
               <p className="text-2xl font-black text-kidoria-text">{bookCount ?? '—'}</p>
-              <p className="text-xs text-kidoria-muted">livres créés</p>
+              <p className="text-xs text-kidoria-muted">{t('account.booksCreated')}</p>
             </div>
             <div className="flex-1 text-sm text-kidoria-muted">
-              <p className="font-semibold text-kidoria-text mb-1">Sans abonnement</p>
-              <p className="text-xs leading-relaxed">Passez à Fableya Plus pour 25 livres/mois à 15 €.</p>
+              <p className="font-semibold text-kidoria-text mb-1">{t('account.noSub')}</p>
+              <p className="text-xs leading-relaxed">{t('account.noSubCTA')}</p>
             </div>
           </div>
         )}
