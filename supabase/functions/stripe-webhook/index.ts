@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
         current_period_start: periodStart,
         current_period_end: periodEnd,
         cancel_at_period_end: (stripeSubJson.cancel_at_period_end as boolean | undefined) ?? false,
-        plan_book_limit: plan?.monthlyBookLimit ?? 25,
+        plan_book_limit: plan?.monthlyBookLimit ?? 20,
         books_used_this_period: 0,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' })
@@ -172,7 +172,7 @@ Deno.serve(async (req) => {
       current_period_start: periodStart,
       current_period_end: periodEnd,
       cancel_at_period_end: sub.cancel_at_period_end ?? false,
-      plan_book_limit: plan?.monthlyBookLimit ?? 25,
+      plan_book_limit: plan?.monthlyBookLimit ?? 20,
       updated_at: new Date().toISOString(),
     }
 
