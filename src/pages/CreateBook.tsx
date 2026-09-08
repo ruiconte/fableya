@@ -87,7 +87,17 @@ export function CreateBook() {
 
   const buildTitle = (data: BookFormData): string => {
     const protagonist = data.child_name || (form.characters?.[0]?.name ?? 'Personnage')
-    return `L'histoire de ${protagonist}`
+    const lang = data.language ?? 'fr'
+    const templates: Record<string, (n: string) => string> = {
+      fr: n => `L'histoire de ${n}`,
+      en: n => `${n}'s Story`,
+      ja: n => `${n}のお話`,
+      es: n => `La historia de ${n}`,
+      de: n => `Die Geschichte von ${n}`,
+      it: n => `La storia di ${n}`,
+      pt: n => `A história de ${n}`,
+    }
+    return (templates[lang] ?? templates['fr'])(protagonist)
   }
 
   const handlePayNow = async (e: React.FormEvent) => {
