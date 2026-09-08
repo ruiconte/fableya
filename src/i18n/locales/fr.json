@@ -184,7 +184,9 @@
   },
   "generating": {
     "title": "Votre livre est en cours de création…",
-    "subtitle": "Nous créons quelque chose de magique pour votre enfant. Cela peut prendre quelques minutes.",
+    "subtitle": "Nous créons quelque chose de magique pour votre enfant.",
+    "duration": "⏱ Environ 5 à 10 minutes",
+    "qualityNote": "Chaque illustration est générée sur mesure pour votre enfant — c'est ce qui rend votre livre vraiment unique. Ce processus demande un peu de patience, mais le résultat en vaut la peine !",
     "step1": "Paiement confirmé ✓",
     "step1Paid": "Paiement confirmé ✓",
     "step1Auth": "Génération autorisée ✓",
@@ -192,7 +194,7 @@
     "step3": "Rédaction de l'histoire…",
     "step4": "Illustration des pages…",
     "step5": "Finalisation du livre…",
-    "dontClose": "Ne fermez pas cette page. Vous serez redirigé automatiquement dès que votre livre est prêt.",
+    "dontClose": "Ne fermez pas cette page — vous serez redirigé automatiquement dès que votre livre est prêt.",
     "failedTitle": "Génération échouée",
     "failedSub": "Une erreur s'est produite lors de la génération de votre livre. Notre équipe a été notifiée.",
     "backToLibrary": "Retour à ma bibliothèque"

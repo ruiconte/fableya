@@ -184,7 +184,9 @@
   },
   "generating": {
     "title": "Tu libro se está creando…",
-    "subtitle": "Estamos creando algo mágico para tu hijo. Esto puede tardar unos minutos.",
+    "subtitle": "Estamos creando algo mágico para tu hijo.",
+    "duration": "⏱ Aproximadamente 5 a 10 minutos",
+    "qualityNote": "Cada ilustración se genera de forma única para tu hijo — eso es lo que hace que tu libro sea verdaderamente especial. Requiere un poco de paciencia, ¡pero el resultado vale la pena!",
     "step1": "Pago confirmado ✓",
     "step1Paid": "Pago confirmado ✓",
     "step1Auth": "Generación autorizada ✓",

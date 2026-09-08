@@ -110,10 +110,15 @@ export function GeneratingBook() {
           <div className="absolute inset-0 flex items-center justify-center text-5xl">✨</div>
         </div>
 
-        <h1 className="text-3xl font-black mb-3">{t('generating.title')}</h1>
-        <p className="text-kidoria-muted mb-10">{t('generating.subtitle')}</p>
+        <h1 className="text-3xl font-black mb-2">{t('generating.title')}</h1>
+        <p className="text-kidoria-muted mb-3">{t('generating.subtitle')}</p>
 
-        <div className="card text-left space-y-3">
+        {/* Duration badge */}
+        <div className="inline-flex items-center gap-2 bg-kidoria-lavender/50 text-kidoria-text text-sm font-semibold px-4 py-2 rounded-full mb-8">
+          {t('generating.duration')}
+        </div>
+
+        <div className="card text-left space-y-3 mb-4">
           {steps.map((step, i) => {
             const done = i < stepIndex
             const active = i === stepIndex
@@ -131,7 +136,6 @@ export function GeneratingBook() {
                 {active && i > 0 && (
                   <div className="w-4 h-4 border-2 border-kidoria-rose border-t-transparent rounded-full animate-spin" />
                 )}
-                {/* Show real page progress during illustration */}
                 {active && i === 3 && pagesCount > 0 && (
                   <span className="text-xs text-kidoria-muted font-semibold">{pagesCount}/{TOTAL_PAGES}</span>
                 )}
@@ -140,7 +144,12 @@ export function GeneratingBook() {
           })}
         </div>
 
-        <p className="text-xs text-kidoria-muted mt-6">{t('generating.dontClose')}</p>
+        {/* Quality explanation */}
+        <div className="bg-kidoria-sky/40 rounded-2xl px-4 py-3 text-left mb-4">
+          <p className="text-xs text-kidoria-muted leading-relaxed">{t('generating.qualityNote')}</p>
+        </div>
+
+        <p className="text-xs text-kidoria-muted">{t('generating.dontClose')}</p>
       </div>
     </div>
   )
