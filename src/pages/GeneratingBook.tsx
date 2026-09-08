@@ -48,7 +48,7 @@ export function GeneratingBook() {
 
     const kickoff = async () => {
       const { data: book } = await supabase.from('books').select('status').eq('id', bookId).single()
-      if (book?.status === 'queued' || book?.status === 'pending' || book?.status === 'paid') {
+      if (book?.status === 'draft' || book?.status === 'queued' || book?.status === 'pending' || book?.status === 'paid') {
         if (!generatingStartedAt.current) generatingStartedAt.current = Date.now()
         const { error } = await supabase.functions.invoke('generate-book', { body: { book_id: bookId } })
         if (error) { setStatus('failed'); return }
