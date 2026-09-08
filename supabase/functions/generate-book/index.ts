@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       .from('books')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
-      .in('status', ['queued', 'paid', 'generating', 'completed', 'failed'])
+      .in('status', ['draft', 'queued', 'paid', 'generating', 'completed', 'failed'])
       .gte('created_at', since)
     if ((count ?? 0) >= 5) {
       return new Response(JSON.stringify({ error: 'Rate limit: max 5 générations par heure' }), { status: 429, headers: corsHeaders })
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
           .from('books')
           .select('id', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .in('status', ['queued', 'pending', 'paid', 'generating', 'completed', 'preview_ready'])
+          .in('status', ['draft', 'queued', 'pending', 'paid', 'generating', 'completed', 'preview_ready'])
         if ((totalBooks ?? 0) <= 1) {
           console.log('Free trial book authorized for user:', user.id)
           // Proceed as trial — no payment, no subscription quota consumed
