@@ -79,5 +79,29 @@ export function useSubscription(pollUntilActive = false) {
     else throw new Error(data.error || 'Failed to open portal')
   }, [])
 
-  return { subscription, loading, error, refresh: fetchSubscription, subscribe, openPortal }
+  const cancelSubscription = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Not authenticated')
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-subscription`,
+      { method: 'POST', headers: { Authorization: `Bearer ${session.access_token}` } }
+    )
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Failed to cancel subscription')
+    await fetchSubscription()
+  }, [fetchSubscription])
+
+  const reactivateSubscription = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Not authenticated')
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/reactivate-subscription`,
+      { method: 'POST', headers: { Authorization: `Bearer ${session.access_token}` } }
+    )
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Failed to reactivate subscription')
+    await fetchSubscription()
+  }, [fetchSubscription])
+
+  return { subscription, loading, error, refresh: fetchSubscription, subscribe, openPortal, cancelSubscription, reactivateSubscription }
 }

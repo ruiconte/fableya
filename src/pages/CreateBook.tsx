@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import i18n from '../i18n'
@@ -9,8 +9,8 @@ import { useSubscription } from '../hooks/useSubscription'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
 import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
 import type { StyleProfile } from '../lib/providers/types'
-import { StyleExplorer } from '../components/StyleExplorer'
 import { CharacterSection } from '../components/CharacterSection'
+import { StyleExplorer } from '../components/StyleExplorer'
 import { BookShowcase } from '../components/BookShowcase'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
@@ -36,9 +36,20 @@ export function CreateBook() {
     custom_story_idea: '',
     creation_mode: 'quick',
   })
+  const [styleTab, setStyleTab] = useState<'preset' | 'references'>('preset')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [styleTab, setStyleTab] = useState<'preset' | 'explorer'>('preset')
+  const [trialEligible, setTrialEligible] = useState(false)
+
+  useEffect(() => {
+    if (!user || subscription?.isActive) return
+    supabase
+      .from('books')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .in('status', ['queued', 'paid', 'generating', 'completed', 'preview_ready'])
+      .then(({ count }) => setTrialEligible((count ?? 0) === 0))
+  }, [user, subscription])
 
   const set = <K extends keyof BookFormData>(key: K, value: BookFormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
@@ -76,7 +87,7 @@ export function CreateBook() {
 
   const buildTitle = (data: BookFormData): string => {
     const protagonist = data.child_name || (form.characters?.[0]?.name ?? 'Personnage')
-    return `${protagonist} et ${form.favorite_character || form.genre}`
+    return `L'histoire de ${protagonist}`
   }
 
   const handlePayNow = async (e: React.FormEvent) => {
@@ -111,13 +122,18 @@ export function CreateBook() {
       const title = buildTitle(submitData)
       const { data: book, error: bookError } = await supabase
         .from('books')
-        .insert({ user_id: user!.id, title, status: 'queued', form_data: submitData })
+        .insert({ user_id: user!.id, title, status: 'pending', form_data: submitData })
         .select().single()
       if (bookError) throw bookError
       // GeneratingBook will call generate-book automatically on arrival
-      navigate(`/generation?book_id=${book.id}`)
+      navigate(`/generation?book_id=${book.id}&source=${trialEligible ? 'trial' : 'sub'}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('common.error'))
+      console.error('handleGenerateWithSub error:', err)
+      const msg = err instanceof Error ? err.message
+        : (err as { message?: string })?.message
+        || JSON.stringify(err)
+        || t('common.error')
+      setError(msg)
       setLoading(false)
     }
   }
@@ -148,8 +164,8 @@ export function CreateBook() {
             <p className="font-semibold text-sm text-kidoria-text">{subscription.planName}</p>
             <p className="text-xs text-kidoria-muted mt-0.5">
               {subscription.booksRemaining > 0
-                ? `${subscription.booksUsed} / ${subscription.planBookLimit} livres utilisés ce mois`
-                : `Quota atteint — renouvellement le ${subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : '—'}`
+                ? t('create.usageLine', { used: subscription.booksUsed, total: subscription.planBookLimit })
+                : t('create.quotaReachedLine', { date: subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : '—' })
               }
             </p>
           </div>
@@ -161,7 +177,7 @@ export function CreateBook() {
               />
             </div>
             <p className="text-[10px] text-kidoria-muted text-right mt-1">
-              {subscription.booksRemaining} restants
+              {t('create.booksLeft', { count: subscription.booksRemaining })}
             </p>
           </div>
         </div>
@@ -170,10 +186,8 @@ export function CreateBook() {
       {/* Quota exceeded: show pay-per-book option */}
       {!subLoading && subscription?.isActive && subscription.booksRemaining === 0 && (
         <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 text-sm text-amber-800">
-          <p className="font-semibold mb-1">Quota mensuel atteint</p>
-          <p className="text-xs mb-3">
-            Vos {subscription.planBookLimit} livres du mois sont utilisés. Vous pouvez quand même créer un livre supplémentaire à 5 €.
-          </p>
+          <p className="font-semibold mb-1">{t('create.quotaTitle')}</p>
+          <p className="text-xs mb-3">{t('create.quotaText', { total: subscription.planBookLimit })}</p>
         </div>
       )}
 
@@ -181,11 +195,11 @@ export function CreateBook() {
       {!subLoading && !subscription?.isActive && (
         <div className="mb-6 rounded-2xl bg-kidoria-lavender/30 border border-kidoria-sky px-5 py-4 flex items-center gap-4">
           <div className="flex-1">
-            <p className="font-semibold text-sm">Fableya Plus — 25 livres / mois</p>
-            <p className="text-xs text-kidoria-muted mt-0.5">15 € / mois · Équivaut à 0,60 € par livre</p>
+            <p className="font-semibold text-sm">{t('create.upsellTitle')}</p>
+            <p className="text-xs text-kidoria-muted mt-0.5">{t('create.upsellSub')}</p>
           </div>
           <button onClick={subscribe} className="btn-primary shrink-0 text-xs px-4 py-2">
-            S'abonner
+            {t('create.subscribe')}
           </button>
         </div>
       )}
@@ -253,8 +267,34 @@ export function CreateBook() {
               </div>
             </div>
             <p className="text-xs text-kidoria-muted bg-kidoria-cream rounded-xl px-3 py-2.5 leading-relaxed">
-              <span className="font-semibold">Conseil :</span> utilisez le prénom et l'âge réel ou imaginé de votre enfant pour une histoire encore plus magique.
+              <span className="font-semibold">{t('create.tipLabel')}</span> {t('create.childTip')}
             </p>
+          </div>
+        )}
+
+        {/* ── Visual style (quick mode, preset only) ── */}
+        {!isAdvanced && (
+          <div className="card space-y-4">
+            <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
+            <div className="space-y-3">
+              {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => (
+                <button key={s.value} type="button" onClick={() => {
+                  set('visual_style', s.value as VisualStyle)
+                  setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
+                }}
+                  className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
+                    form.visual_style === s.value
+                      ? 'border-kidoria-rose bg-kidoria-rose/10'
+                      : 'border-gray-200 hover:border-kidoria-rose/50'
+                  }`}>
+                  <div>
+                    <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
+                    <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
+                  </div>
+                  {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -262,9 +302,9 @@ export function CreateBook() {
         {isAdvanced && (
           <div className="card space-y-6">
             <div>
-              <h2 className="font-display text-xl">Personnages</h2>
+              <h2 className="font-display text-xl">{t('create.charactersSection')}</h2>
               <p className="text-sm text-kidoria-muted mt-1">
-                Définissez les personnages qui apparaîtront dans l'histoire. Maximum {5} personnages.
+                {t('create.charactersSub')}
               </p>
             </div>
             <CharacterSection
@@ -321,39 +361,37 @@ export function CreateBook() {
             <div className="card space-y-6">
               <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
 
-              {/* Style mode tabs */}
+              {/* Style tabs */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-kidoria-lavender/40 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStyleTab('preset')
-                    if (form.visual_style === 'custom') set('visual_style', 'aquarelle')
-                  }}
-                  className={`rounded-lg py-2 text-sm font-semibold transition-all ${
-                    styleTab === 'preset'
-                      ? 'bg-white text-kidoria-text shadow-sm'
-                      : 'text-kidoria-muted hover:text-kidoria-text'
-                  }`}
-                >
-                  Styles Fableya
+                <button type="button" onClick={() => {
+                  setStyleTab('preset')
+                  if (form.visual_style === 'custom') {
+                    set('visual_style', 'aquarelle')
+                    setForm(prev => ({ ...prev, style_profile: undefined }))
+                  }
+                }} className={`rounded-lg py-2 text-sm font-semibold transition-all ${
+                  styleTab === 'preset' ? 'bg-white text-kidoria-text shadow-sm' : 'text-kidoria-muted hover:text-kidoria-text'
+                }`}>
+                  {t('create.styleTabPreset')}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setStyleTab('explorer')}
-                  className={`rounded-lg py-2 text-sm font-semibold transition-all ${
-                    styleTab === 'explorer'
-                      ? 'bg-white text-kidoria-text shadow-sm'
-                      : 'text-kidoria-muted hover:text-kidoria-text'
-                  }`}
-                >
-                  Trouver mon style
+                <button type="button" onClick={() => {
+                  if (!subscription?.isActive) return
+                  setStyleTab('references')
+                }} className={`rounded-lg py-2 text-sm font-semibold transition-all relative ${
+                  styleTab === 'references' ? 'bg-white text-kidoria-text shadow-sm' : 'text-kidoria-muted hover:text-kidoria-text'
+                } ${!subscription?.isActive ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                  {t('create.styleTabRef')}
+                  {!subscription?.isActive && <span className="ml-1 text-[10px] bg-kidoria-rose/20 text-kidoria-rose rounded-full px-1.5 py-0.5">Plus</span>}
                 </button>
               </div>
 
               {styleTab === 'preset' ? (
                 <div className="space-y-3">
-                  {VISUAL_STYLES.map(s => (
-                    <button key={s.value} type="button" onClick={() => set('visual_style', s.value as VisualStyle)}
+                  {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => (
+                    <button key={s.value} type="button" onClick={() => {
+                      set('visual_style', s.value as VisualStyle)
+                      setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
+                    }}
                       className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
                         form.visual_style === s.value
                           ? 'border-kidoria-rose bg-kidoria-rose/10'
@@ -367,23 +405,28 @@ export function CreateBook() {
                     </button>
                   ))}
                 </div>
-              ) : (
-                <StyleExplorer
-                  selected={form.style_profile ?? null}
-                  onSelect={(profile: StyleProfile) => {
-                    set('visual_style', 'custom')
-                    setForm(prev => ({ ...prev, style_profile: profile }))
-                  }}
-                  onClear={() => {
-                    set('visual_style', 'aquarelle')
-                    setForm(prev => ({ ...prev, style_profile: undefined }))
-                  }}
-                />
-              )}
+              ) : subscription?.isActive ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-kidoria-muted leading-relaxed">
+                    {t('create.refImageDesc')}
+                  </p>
+                  <StyleExplorer
+                    selected={form.style_profile ?? null}
+                    onSelect={(profile: StyleProfile) => {
+                      set('visual_style', 'custom')
+                      setForm(prev => ({ ...prev, style_profile: profile }))
+                    }}
+                    onClear={() => {
+                      set('visual_style', 'aquarelle')
+                      setForm(prev => ({ ...prev, style_profile: undefined }))
+                    }}
+                  />
+                </div>
+              ) : null}
             </div>
 
-            {/* Book language — advanced mode only */}
-            {isAdvanced && <div className="card space-y-6">
+            {/* Book language */}
+            {<div className="card space-y-6">
               <h2 className="font-display text-xl">{t('create.languageSection')}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {BOOK_LANGUAGES.map(l => (
@@ -452,7 +495,12 @@ export function CreateBook() {
           {subscription?.isActive && subscription.booksRemaining > 0 ? (
             <button type="button" onClick={handleGenerateWithSub} disabled={loading}
               className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
-              {loading ? '…' : 'Générer mon livre →'}
+              {loading ? '…' : t('create.generateButton')}
+            </button>
+          ) : trialEligible ? (
+            <button type="button" onClick={handleGenerateWithSub} disabled={loading}
+              className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
+              {loading ? '…' : t('create.trialButton')}
             </button>
           ) : (
             <button type="button" onClick={handlePayNow} disabled={loading}
@@ -462,8 +510,10 @@ export function CreateBook() {
           )}
           <p className="text-xs text-kidoria-muted mt-3">
             {subscription?.isActive && subscription.booksRemaining > 0
-              ? `Inclus dans votre abonnement · ${subscription.booksRemaining} livre${subscription.booksRemaining > 1 ? 's' : ''} restant${subscription.booksRemaining > 1 ? 's' : ''}`
-              : t('create.paySecure')}
+              ? t('create.includedInSub', { count: subscription.booksRemaining })
+              : trialEligible
+                ? t('create.trialNote')
+                : t('create.paySecure')}
           </p>
         </div>
       </form>

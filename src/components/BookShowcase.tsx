@@ -163,10 +163,17 @@ function Book({ slot, idx, src }: { slot: typeof BOOK_SLOTS[number]; idx: number
 
 export function BookShowcase() {
   const [images, setImages] = useState<string[]>([])
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
 
   useEffect(() => {
     fetchCovers().then(imgs => { if (imgs.length) setImages(imgs) })
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
   }, [])
+
+  if (isMobile) return null
 
   return createPortal(
     <div aria-hidden="true" style={{ pointerEvents: 'none' }}>

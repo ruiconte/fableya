@@ -1,21 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { PageSEO } from '../components/PageSEO'
+import { supabase } from '../lib/supabase'
 
-const BASE = 'https://gmrlijhmwltpndeytacj.supabase.co/storage/v1/object/public/books/06c4e0c9-c53f-40ce-b4f2-ebd79d563688'
+const SAMPLE_BOOK_ID = '91fac612-a7c1-406c-bbe2-72b22be50e9e'
 
-const SAMPLE_PAGES = [
-  { page_number: 1, text: "Louis est à la plage, ses petits pieds dans le sable chaud. Il regarde l'océan bleu, si grand et mystérieux. « Que se cache-t-il là-dessous ? » se demande-t-il, les yeux brillants.", image_url: `${BASE}/page_1.png` },
-  { page_number: 2, text: "Soudain, Louis aperçoit une ombre verte flotter doucement à la surface de l'eau. Est-ce une algue, ou autre chose ? Sa curiosité est piquée au vif !", image_url: `${BASE}/page_2.png` },
-  { page_number: 3, text: "L'ombre s'approche, et surprise ! C'est une grande tortue marine avec un sourire gentil. « Bonjour Louis, je m'appelle Toby », dit la tortue d'une voix douce.", image_url: `${BASE}/page_3.png` },
-  { page_number: 4, text: "Louis est ravi de rencontrer Toby ! « L'océan est-il plein de secrets ? » demande Louis avec enthousiasme. Toby hoche la tête avec un clin d'œil malicieux.", image_url: `${BASE}/page_4.png` },
-  { page_number: 5, text: "« Viens avec moi, Louis, je vais te montrer un petit secret », dit Toby. Ils nagent un peu plus loin, et Louis voit une petite lueur brillante au fond.", image_url: `${BASE}/page_5.png` },
-]
+interface Page {
+  page_number: number
+  text: string
+  image_url: string
+}
 
 export function SampleBook() {
-  const [pages] = useState(SAMPLE_PAGES)
+  const [pages, setPages] = useState<Page[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
+
+  useEffect(() => {
+    supabase
+      .from('book_pages')
+      .select('page_number, text, image_url')
+      .eq('book_id', SAMPLE_BOOK_ID)
+      .order('page_number')
+      .then(({ data }) => { if (data) setPages(data) })
+  }, [])
 
   const goNext = () => setCurrentPage(p => Math.min(p + 1, pages.length - 1))
   const goPrev = () => setCurrentPage(p => Math.max(p - 1, 0))
@@ -27,6 +36,7 @@ export function SampleBook() {
     setTouchStartX(null)
   }
 
+  const { t } = useTranslation()
   const page = pages[currentPage]
   const isLast = currentPage === pages.length - 1
 
@@ -41,10 +51,10 @@ export function SampleBook() {
       <div className="shrink-0 bg-white/90 backdrop-blur border-b border-gray-100 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
           <Link to="/" className="text-sm font-semibold text-kidoria-muted hover:text-kidoria-text transition-colors">
-            ← Accueil
+            {t('sample.back')}
           </Link>
-          <span className="font-black text-sm sm:text-base">Exemple de livre</span>
-          <span className="text-sm text-kidoria-muted font-semibold">{currentPage + 1} / {pages.length}</span>
+          <span className="font-black text-sm sm:text-base">{t('sample.title')}</span>
+          <span className="text-sm text-kidoria-muted font-semibold">{pages.length > 0 ? `${currentPage + 1} / ${pages.length}` : '…'}</span>
         </div>
       </div>
 
@@ -55,7 +65,7 @@ export function SampleBook() {
             <div className="w-full h-full rounded-3xl overflow-hidden">
               {page?.image_url
                 ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                : <div className="w-full h-full bg-kidoria-lavender/30" />}
+                : <div className="w-full h-full bg-kidoria-lavender/30 animate-pulse" />}
             </div>
           </div>
           <div className="sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white/60 h-1/2 sm:h-full overflow-y-auto">
@@ -66,7 +76,7 @@ export function SampleBook() {
         {/* Navigation */}
         <div className="shrink-0 bg-white/80 backdrop-blur border-t border-gray-100 py-3 px-4 flex items-center justify-center gap-4">
           <button onClick={goPrev} disabled={currentPage === 0} className="btn-secondary px-6 py-2 disabled:opacity-30 disabled:cursor-not-allowed">
-            Précédent
+            {t('sample.prev')}
           </button>
           <div className="hidden sm:flex items-center gap-1.5">
             {pages.map((_, i) => (
@@ -76,22 +86,22 @@ export function SampleBook() {
           </div>
           {isLast ? (
             <Link to="/creer" className="btn-primary px-6 py-2">
-              Créer mon livre →
+              {t('sample.createCTA')}
             </Link>
           ) : (
-            <button onClick={goNext} className="btn-primary px-6 py-2">
-              Suivant
+            <button onClick={goNext} disabled={pages.length === 0} className="btn-primary px-6 py-2 disabled:opacity-50">
+              {t('sample.next')}
             </button>
           )}
         </div>
       </div>
 
       {/* Paywall banner on last page */}
-      {isLast && (
+      {isLast && pages.length > 0 && (
         <div className="shrink-0 bg-gradient-to-r from-kidoria-rose/20 to-kidoria-lavender/20 border-t border-kidoria-rose/20 px-4 py-3 text-center">
           <p className="text-sm font-semibold text-kidoria-text">
-            Votre livre contiendra 15 pages personnalisées avec le prénom de votre enfant —{' '}
-            <Link to="/creer" className="text-kidoria-rose underline font-black">Créer mon livre</Link>
+            {t('sample.paywallText')}{' '}
+            <Link to="/creer" className="text-kidoria-rose underline font-black">{t('sample.paywallLink')}</Link>
           </p>
         </div>
       )}

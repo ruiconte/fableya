@@ -1,6 +1,7 @@
 /**
  * RGPD-compliant account deletion.
- * Deletes all user books/pages then removes the auth user.
+ * Cancels any active Stripe subscription immediately, then deletes all user
+ * data and the auth user.
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -39,6 +40,28 @@ Deno.serve(async (req) => {
   )
 
   try {
+    // Cancel Stripe subscription immediately if one exists
+    const { data: sub } = await supabaseAdmin
+      .from('subscriptions')
+      .select('stripe_subscription_id, status')
+      .eq('user_id', user.id)
+      .single()
+
+    if (sub?.stripe_subscription_id && ['active', 'trialing'].includes(sub.status)) {
+      const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')!
+      const res = await fetch(`https://api.stripe.com/v1/subscriptions/${sub.stripe_subscription_id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${stripeKey}` },
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        // Log but don't block deletion — Stripe may already have cancelled it
+        console.error('Stripe cancellation error:', err)
+      } else {
+        console.log('Stripe subscription cancelled:', sub.stripe_subscription_id)
+      }
+    }
+
     // Delete book pages (cascades via FK, but explicit for clarity)
     const { data: books } = await supabaseAdmin
       .from('books')

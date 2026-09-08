@@ -32,8 +32,7 @@ export function ReadBook() {
 
   const [loading, setLoading] = useState(true)
   const [pdfLoading, setPdfLoading] = useState(false)
-  const [cinemaMode, setCinemaMode] = useState(false)
-  const [cinemaTextVisible, setCinemaTextVisible] = useState(true)
+  const [cinemaMode, setCinemaMode] = useState(() => window.innerWidth < 768)
 
   useEffect(() => {
     if (!id || !user) return
@@ -92,62 +91,61 @@ export function ReadBook() {
   const page = pages[currentPage]
   const isCover = currentPage === 0
 
-  const toggleCinema = () => {
-    setCinemaMode(v => !v)
-    setCinemaTextVisible(true)
-    if (!cinemaMode) {
-      document.documentElement.requestFullscreen?.().catch(() => {})
-    } else {
-      document.exitFullscreen?.().catch(() => {})
-    }
-  }
+  const isMobile = window.innerWidth < 768
 
-  const handleCinemaTap = (e: React.MouseEvent) => {
-    const x = e.clientX / window.innerWidth
-    if (x < 0.3) goPrev()
-    else if (x > 0.7) goNext()
-    else setCinemaTextVisible(v => !v)
+  const toggleCinema = () => {
+    if (cinemaMode) {
+      document.exitFullscreen?.().catch(() => {})
+      if (isMobile) { navigate('/bibliotheque'); return }
+    } else {
+      document.documentElement.requestFullscreen?.().catch(() => {})
+    }
+    setCinemaMode(v => !v)
   }
 
   if (cinemaMode) {
     return (
       <div
-        className="fixed inset-0 bg-black z-50 flex items-center justify-center select-none"
+        className="fixed inset-0 bg-black z-50 flex flex-col select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        onClick={handleCinemaTap}
       >
-        {page.image_url
-          ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
-          : <div className="w-full h-full bg-kidoria-lavender/30" />
-        }
+        {/* Barre top */}
+        <div className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2">
+          <button onClick={toggleCinema} className="text-white/70 hover:text-white text-sm font-semibold">✕ Fermer</button>
+          <span className="text-white/50 text-sm font-semibold">{currentPage + 1} / {pages.length}</span>
+        </div>
 
-        {/* Texte overlay */}
-        {!isCover && (
-          <div className={`absolute bottom-0 left-0 right-0 transition-opacity duration-300 ${cinemaTextVisible ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="bg-gradient-to-t from-black/80 to-transparent px-6 pt-10 pb-8">
-              <p className="text-white text-lg sm:text-xl font-semibold text-center leading-relaxed">{page.text}</p>
-            </div>
+        {/* Image — cliquable gauche/droite */}
+        <div className="flex-1 min-h-0 relative" onClick={e => {
+          const x = e.clientX / window.innerWidth
+          if (x < 0.35) goPrev()
+          else if (x > 0.65) goNext()
+        }}>
+          {page.image_url
+            ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
+            : <div className="w-full h-full bg-kidoria-lavender/30" />
+          }
+          <div className="absolute left-0 top-0 h-full w-[35%] flex items-center justify-start pl-3 pointer-events-none">
+            {currentPage > 0 && <span className="text-white/30 text-3xl">‹</span>}
           </div>
-        )}
-
-        {/* Barre haut */}
-        <div className={`absolute top-0 left-0 right-0 transition-opacity duration-300 ${cinemaTextVisible ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="bg-gradient-to-b from-black/60 to-transparent px-4 pt-4 pb-8 flex items-center justify-between">
-            <button onClick={e => { e.stopPropagation(); toggleCinema() }} className="text-white/80 hover:text-white text-sm font-semibold">✕ Fermer</button>
-            <span className="text-white/60 text-sm font-semibold">{currentPage + 1} / {pages.length}</span>
+          <div className="absolute right-0 top-0 h-full w-[35%] flex items-center justify-end pr-3 pointer-events-none">
+            {currentPage < pages.length - 1 && <span className="text-white/30 text-3xl">›</span>}
           </div>
         </div>
 
-        {/* Zones tap gauche/droite */}
-        <div className="absolute left-0 top-0 w-[30%] h-full" />
-        <div className="absolute right-0 top-0 w-[30%] h-full" />
+        {/* Texte — panneau fixe en bas */}
+        {!isCover && page.text && (
+          <div className="shrink-0 bg-[#111] px-5 py-4">
+            <p className="text-white text-base sm:text-lg font-medium text-center leading-relaxed">{page.text}</p>
+          </div>
+        )}
       </div>
     )
   }
 
   return (
-    <div className={`flex flex-col bg-kidoria-cream overflow-hidden ${isFullscreen ? 'h-screen' : 'h-[calc(100vh-4rem)]'}`}>
+    <div className={`flex flex-col bg-kidoria-cream overflow-hidden ${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'}`}>
       {/* Top bar */}
       <div className="shrink-0 bg-white/90 backdrop-blur border-b border-gray-100 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">

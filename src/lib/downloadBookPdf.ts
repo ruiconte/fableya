@@ -1,5 +1,13 @@
 import type { Book, BookPage } from './types'
 
+// jsPDF standard fonts (Helvetica) don't support French ligatures like œ, æ
+function sanitizeForPdf(text: string): string {
+  return text
+    .replace(/œ/g, 'oe').replace(/Œ/g, 'Oe')
+    .replace(/æ/g, 'ae').replace(/Æ/g, 'Ae')
+    .replace(/ﬁ/g, 'fi').replace(/ﬂ/g, 'fl')
+}
+
 export async function downloadBookPdf(book: Book, pages: BookPage[]) {
   // If a pre-generated PDF exists, use it directly
   if (book.pdf_url) {
@@ -74,7 +82,7 @@ export async function downloadBookPdf(book: Book, pages: BookPage[]) {
         pdf.setFontSize(13)
         pdf.setFont('helvetica', 'normal')
         pdf.setTextColor(40, 30, 25)
-        const lines = pdf.splitTextToSize(page.text, W - MARGIN * 2)
+        const lines = pdf.splitTextToSize(sanitizeForPdf(page.text), W - MARGIN * 2)
         const lineH = 6
         const totalH = lines.length * lineH
         const startY = textAreaY + Math.max(0, (textAreaH - totalH) / 2)

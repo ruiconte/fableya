@@ -19,7 +19,7 @@ export interface Character {
   clothing?: string        // max 200
 }
 
-export type VisualStyle = 'aquarelle' | 'cartoon' | 'conte' | 'pastel' | 'album' | 'custom'
+export type VisualStyle = 'aquarelle' | 'cartoon' | 'conte' | 'pastel' | 'album' | 'manga' | 'papercut' | 'vintage' | 'custom'
 
 export type BookLanguage = 'fr' | 'en' | 'ja' | 'es' | 'de' | 'it' | 'pt'
 

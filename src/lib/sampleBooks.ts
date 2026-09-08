@@ -31,10 +31,10 @@ export const SAMPLE_BOOKS: SampleBookData[] = [
   {
     id: 'ee41ba00-5d5d-40ff-ba96-33dbc18f288e',
     title: 'Louis et l\'Aventure',
-    style: 'aquarelle',
+    style: 'conte',
     emoji: '🐿️',
     pages: [
-      { page_number: 1, text: "Aujourd'hui, Louis joue dans son beau jardin avec son ourson préféré, Teddy. Le soleil brille et ils construisent une grande tour de cubes colorés.", image_url: `${BASE}/ee41ba00-5d5d-40ff-ba96-33dbc18f288e/page_1.png` },
+      { page_number: 1, text: "Aujourd'hui, Louis joue dans son beau jardin avec son ourson préféré, Teddy. Le soleil brille et ils construisent une grande tour de cubes colorés.", image_url: `${BASE}/8ec726bc-6408-46e3-bc5b-3a9721830d5f/page_1.png` },
       { page_number: 2, text: "Mais oh là là ! Quand Louis regarde, Teddy n'est plus là ! Louis cherche partout, derrière les fleurs, sous le banc... mais Teddy est introuvable. Louis est un peu triste.", image_url: `${BASE}/ee41ba00-5d5d-40ff-ba96-33dbc18f288e/page_2.png` },
       { page_number: 3, text: "Soudain, une petite noisette roule près du pied de Louis. C'est Noisette l'écureuil ! Elle voit le visage un peu chagrin de Louis et semble comprendre.", image_url: `${BASE}/ee41ba00-5d5d-40ff-ba96-33dbc18f288e/page_3.png` },
       { page_number: 4, text: "Noisette se met à gigoter et à sauter, puis elle pointe sa petite patte vers un coin du jardin, comme si elle voulait dire : \"Viens par ici, Louis !\".", image_url: `${BASE}/ee41ba00-5d5d-40ff-ba96-33dbc18f288e/page_4.png` },
@@ -44,10 +44,10 @@ export const SAMPLE_BOOKS: SampleBookData[] = [
   {
     id: '3f49a53b-8bc3-4cea-bcb1-b0ba0f1b4fca',
     title: 'Pepito et le Courage',
-    style: 'conte',
+    style: 'cartoon',
     emoji: '🌙',
     pages: [
-      { page_number: 1, text: "Salut Pepito ! Connais-tu Pipo ? C'est un adorable petit chien avec une queue toute douce. Pipo adore jouer avec toi dans le jardin, sous le grand soleil.", image_url: `${BASE}/3f49a53b-8bc3-4cea-bcb1-b0ba0f1b4fca/page_1.png` },
+      { page_number: 1, text: "Salut Pepito ! Connais-tu Pipo ? C'est un adorable petit chien avec une queue toute douce. Pipo adore jouer avec toi dans le jardin, sous le grand soleil.", image_url: `${BASE}/f9ba893d-64b9-492d-95bf-e754b8399fe0/page_1.png` },
       { page_number: 2, text: "Mais quand le soleil commence à descendre et que le ciel devient orange et rose, Pipo devient un peu inquiet. Ses grandes oreilles se penchent un peu.", image_url: `${BASE}/3f49a53b-8bc3-4cea-bcb1-b0ba0f1b4fca/page_2.png` },
       { page_number: 3, text: "Quand la nuit est là, Pipo a un peu peur du noir, Pepito. Il se cache souvent sous la couverture. Mais ce soir, une toute petite lumière apparaît près de la fenêtre !", image_url: `${BASE}/3f49a53b-8bc3-4cea-bcb1-b0ba0f1b4fca/page_3.png` },
       { page_number: 4, text: "C'est Lumi, une petite luciole brillante ! Elle invite Pipo à venir explorer la nuit. « Viens Pipo, la nuit est pleine de merveilles ! » dit Lumi.", image_url: `${BASE}/3f49a53b-8bc3-4cea-bcb1-b0ba0f1b4fca/page_4.png` },

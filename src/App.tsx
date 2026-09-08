@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AuthProvider } from './contexts/AuthContext'
 import { Layout } from './components/Layout'
+import { ReaderLayout } from './components/ReaderLayout'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
@@ -68,9 +69,7 @@ function App() {
             <Route path="/paiement-confirme" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
             <Route path="/generation" element={<ProtectedRoute><GeneratingBook /></ProtectedRoute>} />
             <Route path="/bibliotheque" element={<ProtectedRoute><Library /></ProtectedRoute>} />
-            <Route path="/livre/:id" element={<ProtectedRoute><ReadBook /></ProtectedRoute>} />
             <Route path="/apercu" element={<SampleBook />} />
-            <Route path="/exemple/:id" element={<PublicBook />} />
             <Route path="/preview/:id" element={<ProtectedRoute><PreviewBook /></ProtectedRoute>} />
             <Route path="/compte" element={<ProtectedRoute><Account /></ProtectedRoute>} />
 
@@ -81,6 +80,10 @@ function App() {
                 <a href="/" className="btn-primary inline-flex">{t('notFound.back')}</a>
               </div>
             } />
+          </Route>
+          <Route element={<ReaderLayout />}>
+            <Route path="/exemple/:id" element={<PublicBook />} />
+            <Route path="/livre/:id" element={<ProtectedRoute><ReadBook /></ProtectedRoute>} />
           </Route>
         </Routes>
         </Suspense>

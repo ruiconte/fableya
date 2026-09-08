@@ -31,7 +31,7 @@ const STATUS_DOT: Record<BookStatus, string> = {
   failed: 'bg-red-400',
 }
 
-const DELETABLE_STATUSES: BookStatus[] = ['completed', 'failed', 'pending_payment', 'preview_ready', 'queued']
+const DELETABLE_STATUSES: BookStatus[] = ['completed', 'failed', 'pending_payment', 'preview_ready', 'queued', 'pending']
 
 export function Library() {
   const { user } = useAuth()
@@ -113,7 +113,7 @@ export function Library() {
             )}
             {liveSubscription?.isActive && (
               <p className="text-kidoria-muted text-sm">
-                · <span className="text-kidoria-rose font-semibold">{liveSubscription.booksRemaining}</span> livre{liveSubscription.booksRemaining !== 1 ? 's' : ''} restant{liveSubscription.booksRemaining !== 1 ? 's' : ''} ce mois
+                · <span className="text-kidoria-rose font-semibold">{liveSubscription.booksRemaining}</span> {t('library.booksRemaining', { count: liveSubscription.booksRemaining })}
               </p>
             )}
           </div>
@@ -134,7 +134,9 @@ export function Library() {
           <p className="text-kidoria-muted text-5xl mb-6 font-display">—</p>
           <h2 className="font-display text-3xl mb-3 text-kidoria-text">{t('library.emptyTitle')}</h2>
           <p className="text-kidoria-muted mb-10 max-w-sm mx-auto text-sm leading-relaxed">{t('library.emptySub')}</p>
-          <Link to="/creer" className="btn-primary">{t('library.emptyCTA')}</Link>
+          <Link to="/creer" className="btn-primary">
+            {liveSubscription?.isActive ? t('library.emptyCTASub') : t('library.emptyCTA')}
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -199,7 +201,7 @@ export function Library() {
                         {downloadingId === book.id ? '…' : 'PDF'}
                       </button>
                     </div>
-                  ) : (book.status === 'generating' || book.status === 'paid' || book.status === 'queued') ? (
+                  ) : (book.status === 'generating' || book.status === 'paid' || book.status === 'queued' || book.status === 'pending') ? (
                     <Link to={`/generation?book_id=${book.id}`} className="btn-secondary w-full justify-center text-xs py-2.5">
                       {t('library.seeProgress')}
                     </Link>

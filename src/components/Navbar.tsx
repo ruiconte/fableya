@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
@@ -10,6 +10,18 @@ export function Navbar() {
   const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!userMenuOpen) return
+    const handler = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [userMenuOpen])
 
   const handleSignOut = async () => {
     await signOut()
@@ -47,7 +59,7 @@ export function Navbar() {
               <Link to="/creer" className="btn-primary text-sm px-5 py-2 ml-1">
                 {t('nav.createBook')}
               </Link>
-              <div className="relative ml-1">
+              <div className="relative ml-1" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="w-8 h-8 rounded-full bg-kidoria-lavender flex items-center justify-center font-semibold text-kidoria-text text-sm hover:bg-kidoria-sky transition-colors"

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import type { Book, BookPage } from '../lib/types'
@@ -8,6 +9,7 @@ export function PreviewBook() {
   const { id } = useParams<{ id: string }>()
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [book, setBook] = useState<Book | null>(null)
   const [pages, setPages] = useState<BookPage[]>([])
   const [status, setStatus] = useState<string>('pending')
@@ -125,7 +127,7 @@ export function PreviewBook() {
         {/* Navigation */}
         <div className="shrink-0 bg-white/80 backdrop-blur border-t border-gray-100 py-3 px-4 flex items-center justify-center gap-4">
           <button onClick={goPrev} disabled={currentPage === 0} className="btn-secondary px-6 py-2 disabled:opacity-30 disabled:cursor-not-allowed">
-            Précédent
+            {t('sample.prev')}
           </button>
           <div className="hidden sm:flex items-center gap-1.5">
             {pages.map((_, i) => (
@@ -135,10 +137,10 @@ export function PreviewBook() {
           </div>
           {isLastPreviewPage ? (
             <button onClick={handlePay} disabled={paying} className="btn-primary px-6 py-2 disabled:opacity-60">
-              {paying ? '…' : 'Débloquer la suite — 5€'}
+              {paying ? '…' : t('sample.unlockCTA')}
             </button>
           ) : (
-            <button onClick={goNext} className="btn-primary px-6 py-2">Suivant</button>
+            <button onClick={goNext} className="btn-primary px-6 py-2">{t('sample.next')}</button>
           )}
         </div>
       </div>
@@ -147,7 +149,7 @@ export function PreviewBook() {
       {isLastPreviewPage && (
         <div className="shrink-0 bg-gradient-to-r from-kidoria-rose/20 to-kidoria-lavender/20 border-t border-kidoria-rose/20 px-4 py-3 text-center">
           <p className="text-sm font-semibold text-kidoria-text">
-            L'histoire continue sur <strong>{book?.form_data?.creation_mode === 'advanced' ? 15 : 10} pages</strong> supplémentaires — débloque-les maintenant !
+            <span dangerouslySetInnerHTML={{ __html: t('sample.paywallPreview', { count: book?.form_data?.creation_mode === 'advanced' ? 15 : 10 }) }} />
           </p>
         </div>
       )}
