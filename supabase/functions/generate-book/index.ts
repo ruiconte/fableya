@@ -29,16 +29,22 @@ Deno.serve(async (req) => {
     if (authError || !user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
     userId = user.id
 
-    // Rate limit: max 5 generations per hour (covers both pay-per-book and subscription)
-    const since = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    const { count } = await supabase
-      .from('books')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .in('status', ['draft', 'queued', 'paid', 'generating', 'completed', 'failed'])
-      .gte('created_at', since)
-    if ((count ?? 0) >= 5) {
-      return new Response(JSON.stringify({ error: 'Rate limit: max 5 générations par heure' }), { status: 429, headers: corsHeaders })
+    // Check admin role — admins bypass all quota/rate limits
+    const { data: callerProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const isAdmin = callerProfile?.role === 'admin'
+
+    // Rate limit: max 5 generations per hour (skipped for admins)
+    if (!isAdmin) {
+      const since = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      const { count } = await supabase
+        .from('books')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['draft', 'queued', 'paid', 'generating', 'completed', 'failed'])
+        .gte('created_at', since)
+      if ((count ?? 0) >= 5) {
+        return new Response(JSON.stringify({ error: 'Rate limit: max 5 générations par heure' }), { status: 429, headers: corsHeaders })
+      }
     }
 
     const body = await req.json()
@@ -55,7 +61,10 @@ Deno.serve(async (req) => {
     if (bookError || !book) throw new Error('Book not found or access denied')
 
     // ── Authorization ────────────────────────────────────────────────────────
-    if (book.status === 'paid') {
+    if (isAdmin) {
+      // Admin bypass: unlimited generation, no quota consumed
+      console.log('Admin generation bypass for book:', book_id)
+    } else if (book.status === 'paid') {
       // Pay-per-book path: Stripe webhook already set status=paid, allow through
       console.log('Pay-per-book generation authorized for book:', book_id)
     } else if (book.status === 'generating') {
@@ -64,6 +73,23 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     } else {
+      // Check bonus credits first (admin-granted, independent from subscription)
+      const { data: creditRows } = await supabase
+        .from('admin_credits')
+        .select('amount')
+        .eq('user_id', user.id)
+      const bonusBalance = (creditRows ?? []).reduce((sum: number, r: { amount: number }) => sum + r.amount, 0)
+      if (bonusBalance > 0) {
+        // Consume one bonus credit
+        await supabase.from('admin_credits').insert({
+          user_id: user.id,
+          amount: -1,
+          reason: 'consumed for book generation',
+          created_by: user.id,
+        })
+        console.log('Bonus credit consumed for user:', user.id, 'remaining:', bonusBalance - 1)
+        // Proceed without touching subscription quota
+      } else {
       // Must have an active subscription to generate without paying per-book
       const { data: sub } = await supabase
         .from('subscriptions')
@@ -134,6 +160,7 @@ Deno.serve(async (req) => {
         usageRowId = usageRow?.id
         console.log('Subscription quota consumed for user:', user.id, 'usage:', sub.books_used_this_period + 1, '/', sub.plan_book_limit)
       }
+      } // end bonus-credits else
     }
 
     // ── Launch generation ────────────────────────────────────────────────────

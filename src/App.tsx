@@ -21,6 +21,13 @@ const SampleBook = lazy(() => import('./pages/SampleBook').then(m => ({ default:
 const PublicBook = lazy(() => import('./pages/PublicBook').then(m => ({ default: m.PublicBook })))
 const PreviewBook = lazy(() => import('./pages/PreviewBook').then(m => ({ default: m.PreviewBook })))
 const Account = lazy(() => import('./pages/Account').then(m => ({ default: m.Account })))
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })))
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })))
+const AdminUserDetail = lazy(() => import('./pages/admin/AdminUserDetail').then(m => ({ default: m.AdminUserDetail })))
+const AdminBooks = lazy(() => import('./pages/admin/AdminBooks').then(m => ({ default: m.AdminBooks })))
+const AdminBookDetail = lazy(() => import('./pages/admin/AdminBookDetail').then(m => ({ default: m.AdminBookDetail })))
+const AdminLogs = lazy(() => import('./pages/admin/AdminLogs').then(m => ({ default: m.AdminLogs })))
 const CGU = lazy(() => import('./pages/legal/CGU').then(m => ({ default: m.CGU })))
 const Privacy = lazy(() => import('./pages/legal/Privacy').then(m => ({ default: m.Privacy })))
 const Mentions = lazy(() => import('./pages/legal/Mentions').then(m => ({ default: m.Mentions })))
@@ -81,6 +88,16 @@ function App() {
               </div>
             } />
           </Route>
+          {/* Admin — standalone layout, no navbar */}
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+            <Route path="/admin/books" element={<AdminBooks />} />
+            <Route path="/admin/books/:id" element={<AdminBookDetail />} />
+            <Route path="/admin/logs" element={<AdminLogs />} />
+          </Route>
+
           <Route element={<ReaderLayout />}>
             <Route path="/exemple/:id" element={<PublicBook />} />
             <Route path="/livre/:id" element={<ProtectedRoute><ReadBook /></ProtectedRoute>} />
