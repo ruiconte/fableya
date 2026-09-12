@@ -9,9 +9,7 @@ import { useSubscription } from '../hooks/useSubscription'
 import { useAdmin } from '../hooks/useAdmin'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
 import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
-import type { StyleProfile } from '../lib/providers/types'
 import { CharacterSection } from '../components/CharacterSection'
-import { StyleExplorer } from '../components/StyleExplorer'
 import { BookShowcase } from '../components/BookShowcase'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
@@ -38,7 +36,6 @@ export function CreateBook() {
     custom_story_idea: '',
     creation_mode: 'quick',
   })
-  const [styleTab, setStyleTab] = useState<'preset' | 'references'>('preset')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [trialEligible, setTrialEligible] = useState(false)
@@ -373,68 +370,25 @@ export function CreateBook() {
             <div className="card space-y-6">
               <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
 
-              {/* Style tabs */}
-              <div className="grid grid-cols-2 gap-2 p-1 bg-kidoria-lavender/40 rounded-xl">
-                <button type="button" onClick={() => {
-                  setStyleTab('preset')
-                  if (form.visual_style === 'custom') {
-                    set('visual_style', 'aquarelle')
-                    setForm(prev => ({ ...prev, style_profile: undefined }))
-                  }
-                }} className={`rounded-lg py-2 text-sm font-semibold transition-all ${
-                  styleTab === 'preset' ? 'bg-white text-kidoria-text shadow-sm' : 'text-kidoria-muted hover:text-kidoria-text'
-                }`}>
-                  {t('create.styleTabPreset')}
-                </button>
-                <button type="button" onClick={() => {
-                  if (!subscription?.isActive) return
-                  setStyleTab('references')
-                }} className={`rounded-lg py-2 text-sm font-semibold transition-all relative ${
-                  styleTab === 'references' ? 'bg-white text-kidoria-text shadow-sm' : 'text-kidoria-muted hover:text-kidoria-text'
-                } ${!subscription?.isActive ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                  {t('create.styleTabRef')}
-                  {!subscription?.isActive && <span className="ml-1 text-[10px] bg-kidoria-rose/20 text-kidoria-rose rounded-full px-1.5 py-0.5">Plus</span>}
-                </button>
+              <div className="space-y-3">
+                {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => (
+                  <button key={s.value} type="button" onClick={() => {
+                    set('visual_style', s.value as VisualStyle)
+                    setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
+                  }}
+                    className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
+                      form.visual_style === s.value
+                        ? 'border-kidoria-rose bg-kidoria-rose/10'
+                        : 'border-gray-200 hover:border-kidoria-rose/50'
+                    }`}>
+                    <div>
+                      <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
+                      <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
+                    </div>
+                    {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
+                  </button>
+                ))}
               </div>
-
-              {styleTab === 'preset' ? (
-                <div className="space-y-3">
-                  {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => (
-                    <button key={s.value} type="button" onClick={() => {
-                      set('visual_style', s.value as VisualStyle)
-                      setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
-                    }}
-                      className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
-                        form.visual_style === s.value
-                          ? 'border-kidoria-rose bg-kidoria-rose/10'
-                          : 'border-gray-200 hover:border-kidoria-rose/50'
-                      }`}>
-                      <div>
-                        <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
-                        <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
-                      </div>
-                      {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              ) : subscription?.isActive ? (
-                <div className="space-y-4">
-                  <p className="text-sm text-kidoria-muted leading-relaxed">
-                    {t('create.refImageDesc')}
-                  </p>
-                  <StyleExplorer
-                    selected={form.style_profile ?? null}
-                    onSelect={(profile: StyleProfile) => {
-                      set('visual_style', 'custom')
-                      setForm(prev => ({ ...prev, style_profile: profile }))
-                    }}
-                    onClear={() => {
-                      set('visual_style', 'aquarelle')
-                      setForm(prev => ({ ...prev, style_profile: undefined }))
-                    }}
-                  />
-                </div>
-              ) : null}
             </div>
 
             {/* Book language */}
