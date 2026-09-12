@@ -89,13 +89,13 @@ function App() {
             } />
           </Route>
           {/* Admin — standalone layout, no navbar */}
-          <Route element={<AdminLayout />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/users/:id" element={<AdminUserDetail />} />
-            <Route path="/admin/books" element={<AdminBooks />} />
-            <Route path="/admin/books/:id" element={<AdminBookDetail />} />
-            <Route path="/admin/logs" element={<AdminLogs />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="users/:id" element={<AdminUserDetail />} />
+            <Route path="books" element={<AdminBooks />} />
+            <Route path="books/:id" element={<AdminBookDetail />} />
+            <Route path="logs" element={<AdminLogs />} />
           </Route>
 
           <Route element={<ReaderLayout />}>
