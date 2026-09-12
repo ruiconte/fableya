@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
-export function Layout({ children }: { children?: React.ReactNode }) {
+export function Layout({ children }: { children?: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

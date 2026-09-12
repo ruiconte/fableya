@@ -48,6 +48,8 @@ function HtmlLangSync() {
 
 function App() {
   const { t } = useTranslation()
+  // BUILD CHECK — remove after confirming admin route works
+  console.log('[fableya] build: admin-v5-sync-import')
 
   return (
     <BrowserRouter>
