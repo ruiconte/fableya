@@ -5,6 +5,13 @@ import { AuthProvider } from './contexts/AuthContext'
 import { Layout } from './components/Layout'
 import { ReaderLayout } from './components/ReaderLayout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { AdminLayout } from './pages/admin/AdminLayout'
+import { AdminDashboard } from './pages/admin/AdminDashboard'
+import { AdminUsers } from './pages/admin/AdminUsers'
+import { AdminUserDetail } from './pages/admin/AdminUserDetail'
+import { AdminBooks } from './pages/admin/AdminBooks'
+import { AdminBookDetail } from './pages/admin/AdminBookDetail'
+import { AdminLogs } from './pages/admin/AdminLogs'
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
 const Login = lazy(() => import('./pages/auth/Login').then(m => ({ default: m.Login })))
@@ -21,13 +28,6 @@ const SampleBook = lazy(() => import('./pages/SampleBook').then(m => ({ default:
 const PublicBook = lazy(() => import('./pages/PublicBook').then(m => ({ default: m.PublicBook })))
 const PreviewBook = lazy(() => import('./pages/PreviewBook').then(m => ({ default: m.PreviewBook })))
 const Account = lazy(() => import('./pages/Account').then(m => ({ default: m.Account })))
-const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })))
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })))
-const AdminUsers = lazy(() => import('./pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })))
-const AdminUserDetail = lazy(() => import('./pages/admin/AdminUserDetail').then(m => ({ default: m.AdminUserDetail })))
-const AdminBooks = lazy(() => import('./pages/admin/AdminBooks').then(m => ({ default: m.AdminBooks })))
-const AdminBookDetail = lazy(() => import('./pages/admin/AdminBookDetail').then(m => ({ default: m.AdminBookDetail })))
-const AdminLogs = lazy(() => import('./pages/admin/AdminLogs').then(m => ({ default: m.AdminLogs })))
 const CGU = lazy(() => import('./pages/legal/CGU').then(m => ({ default: m.CGU })))
 const Privacy = lazy(() => import('./pages/legal/Privacy').then(m => ({ default: m.Privacy })))
 const Mentions = lazy(() => import('./pages/legal/Mentions').then(m => ({ default: m.Mentions })))
