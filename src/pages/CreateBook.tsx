@@ -15,20 +15,68 @@ import { BookShowcase } from '../components/BookShowcase'
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
 
 const BASE = 'https://gmrlijhmwltpndeytacj.supabase.co/storage/v1/object/public/books'
-const STYLE_EXAMPLES: Record<string, string[]> = {
-  aquarelle: ['78e36a8c-b22f-41a7-8470-acba77076841','125551af-07b2-43c9-bd41-dac7bbbfeb80','fe668fe2-3e28-4a17-abf0-9813ee8bbfaf','f2f9c7c1-7386-4c48-a54e-2b965b417f00','33e59288-936a-4985-a257-1dacaaf6f9de','926fd6e9-09c6-42e8-b185-b4d4fc9dc053','706cf097-ca9b-4eaf-aa51-c2b5b3fb2477'].map(id => `${BASE}/${id}/page_1.png`),
-  cartoon:   ['cff1770e-8f26-4f74-ad2c-ba94ad3ced09','20bc4b58-a2e6-4679-88d9-e7532f7186c3','27ed25b6-de40-4df7-896c-1978f6239279'].map(id => `${BASE}/${id}/page_1.png`),
-  conte:     ['5732aa5f-2724-42e5-8f93-a5261c12b0a9','13c14f04-f93e-4be3-b8e6-a23ebcc71155','92ecae91-66f9-4905-9d46-db791420dffb'].map(id => `${BASE}/${id}/page_1.png`),
-  pastel:    ['bf91b5bc-e057-41cb-b6a2-893b13964697','67fa34cd-4caa-4524-a75f-b27e835fa2e3','ab17192e-b26b-4aa7-8add-3f6e7aaef59c'].map(id => `${BASE}/${id}/page_1.png`),
-  album:     ['73323e8f-61fa-4692-ae53-0610f7d62255','68fd16e8-2c7f-42dd-b525-cc4ed8bf5112'].map(id => `${BASE}/${id}/page_1.png`),
-  manga:     ['471ea1d3-4942-4dc1-84d1-1b87fbaeec96','04e819a3-bda9-49f6-8769-c3513c00adc8','6e7a1b51-4ee6-4384-a70d-6d2a05f09043','0c07a43d-effe-4cad-821c-e3e9948af9ec'].map(id => `${BASE}/${id}/page_1.png`),
-  papercut:  ['de12d90e-767f-45de-b5ba-17ec743fe82b','61f75aad-af05-48de-b771-9399f14407eb','91fac612-a7c1-406c-bbe2-72b22be50e9e'].map(id => `${BASE}/${id}/page_1.png`),
-  vintage:   ['616b8366-34cf-43cc-afd9-1655f3bb9d5d','e9dd8c8a-19c1-4bbf-b270-f058ee912d0a'].map(id => `${BASE}/${id}/page_1.png`),
+const STYLE_EXAMPLES: Record<string, { id: string; url: string }[]> = {
+  aquarelle: ['78e36a8c-b22f-41a7-8470-acba77076841','125551af-07b2-43c9-bd41-dac7bbbfeb80','fe668fe2-3e28-4a17-abf0-9813ee8bbfaf','f2f9c7c1-7386-4c48-a54e-2b965b417f00','33e59288-936a-4985-a257-1dacaaf6f9de','926fd6e9-09c6-42e8-b185-b4d4fc9dc053','706cf097-ca9b-4eaf-aa51-c2b5b3fb2477'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  cartoon:   ['cff1770e-8f26-4f74-ad2c-ba94ad3ced09','20bc4b58-a2e6-4679-88d9-e7532f7186c3','27ed25b6-de40-4df7-896c-1978f6239279'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  conte:     ['5732aa5f-2724-42e5-8f93-a5261c12b0a9','13c14f04-f93e-4be3-b8e6-a23ebcc71155','92ecae91-66f9-4905-9d46-db791420dffb'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  pastel:    ['bf91b5bc-e057-41cb-b6a2-893b13964697','67fa34cd-4caa-4524-a75f-b27e835fa2e3','ab17192e-b26b-4aa7-8add-3f6e7aaef59c'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  album:     ['73323e8f-61fa-4692-ae53-0610f7d62255','68fd16e8-2c7f-42dd-b525-cc4ed8bf5112'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  manga:     ['471ea1d3-4942-4dc1-84d1-1b87fbaeec96','04e819a3-bda9-49f6-8769-c3513c00adc8','6e7a1b51-4ee6-4384-a70d-6d2a05f09043','0c07a43d-effe-4cad-821c-e3e9948af9ec'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  papercut:  ['de12d90e-767f-45de-b5ba-17ec743fe82b','61f75aad-af05-48de-b771-9399f14407eb','91fac612-a7c1-406c-bbe2-72b22be50e9e'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  vintage:   ['616b8366-34cf-43cc-afd9-1655f3bb9d5d','e9dd8c8a-19c1-4bbf-b270-f058ee912d0a'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
 }
 
 function getSiteLang(): BookLanguage {
   const base = i18n.language?.split('-')[0] as BookLanguage
   return SUPPORTED_LANGUAGES.includes(base) ? base : 'fr'
+}
+
+function StyleSelector({ selectedStyle, onSelect, onOpenBook, t }: {
+  selectedStyle: string
+  onSelect: (val: string, prompt: string) => void
+  onOpenBook: (id: string) => void
+  t: (k: string) => string
+}) {
+  return (
+    <div className="card space-y-4">
+      <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
+      <div className="space-y-3">
+        {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => {
+          const examples = STYLE_EXAMPLES[s.value] ?? []
+          const selected = selectedStyle === s.value
+          return (
+            <div key={s.value}
+              onClick={() => onSelect(s.value, s.prompt)}
+              className={`w-full rounded-2xl border-2 p-4 cursor-pointer transition-all ${
+                selected ? 'border-kidoria-rose bg-kidoria-rose/10' : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
+              }`}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1">
+                  <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
+                  <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
+                </div>
+                {selected && <span className="text-kidoria-rose text-xl shrink-0">✓</span>}
+              </div>
+              {examples.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {examples.map((ex, i) => (
+                    <button key={i} type="button"
+                      onClick={e => { e.stopPropagation(); onOpenBook(ex.id) }}
+                      className="shrink-0 group relative rounded-xl overflow-hidden focus:outline-none">
+                      <img src={ex.url} alt="" className="h-28 w-28 object-cover rounded-xl border border-gray-100 group-hover:opacity-80 transition-opacity" loading="lazy" />
+                      <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="bg-black/60 text-white text-xs rounded-full px-2 py-1">Ouvrir</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 export function CreateBook() {
@@ -293,31 +341,16 @@ export function CreateBook() {
           </div>
         )}
 
-        {/* ── Visual style (quick mode, preset only) ── */}
-        {!isAdvanced && (
-          <div className="card space-y-4">
-            <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
-            <div className="space-y-3">
-              {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => (
-                <button key={s.value} type="button" onClick={() => {
-                  set('visual_style', s.value as VisualStyle)
-                  setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
-                }}
-                  className={`w-full rounded-2xl border-2 p-4 text-left flex items-center gap-3 transition-all ${
-                    form.visual_style === s.value
-                      ? 'border-kidoria-rose bg-kidoria-rose/10'
-                      : 'border-gray-200 hover:border-kidoria-rose/50'
-                  }`}>
-                  <div>
-                    <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
-                    <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
-                  </div>
-                  {form.visual_style === s.value && <span className="ml-auto text-kidoria-rose text-xl">✓</span>}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* ── Visual style (both modes) ── */}
+        <StyleSelector
+          selectedStyle={form.visual_style}
+          onSelect={(val, prompt) => {
+            set('visual_style', val as VisualStyle)
+            setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: prompt } }))
+          }}
+          onOpenBook={id => window.open(`/livre/${id}`, '_blank')}
+          t={t}
+        />
 
         {/* ── Characters (advanced mode) ── */}
         {isAdvanced && (
@@ -378,41 +411,6 @@ export function CreateBook() {
         {/* ── Advanced-only fields ── */}
         {isAdvanced && (
           <>
-            {/* Visual style */}
-            <div className="card space-y-6">
-              <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
-
-              <div className="space-y-3">
-                {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => {
-                  const examples = STYLE_EXAMPLES[s.value] ?? []
-                  const selected = form.visual_style === s.value
-                  return (
-                    <button key={s.value} type="button" onClick={() => {
-                      set('visual_style', s.value as VisualStyle)
-                      setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: s.prompt } }))
-                    }}
-                      className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
-                        selected ? 'border-kidoria-rose bg-kidoria-rose/10' : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
-                      }`}>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="flex-1">
-                          <div className="font-bold text-sm">{t(`styles.${s.value}_label`)}</div>
-                          <div className="text-xs text-kidoria-muted">{t(`styles.${s.value}_desc`)}</div>
-                        </div>
-                        {selected && <span className="text-kidoria-rose text-xl">✓</span>}
-                      </div>
-                      {examples.length > 0 && (
-                        <div className="flex gap-2 overflow-x-auto pb-1">
-                          {examples.map((url, i) => (
-                            <img key={i} src={url} alt="" className="h-20 w-20 object-cover rounded-xl shrink-0 border border-gray-100" loading="lazy" />
-                          ))}
-                        </div>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
 
             {/* Book language */}
             {<div className="card space-y-6">
