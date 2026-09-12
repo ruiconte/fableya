@@ -90,18 +90,22 @@ function App() {
             <Route path="/preview/:id" element={<ProtectedRoute><PreviewBook /></ProtectedRoute>} />
             <Route path="/compte" element={<ProtectedRoute><Account /></ProtectedRoute>} />
 
-            <Route path="*" element={
-              <div className="page-container text-center py-20">
-                <div className="text-5xl mb-4 text-kidoria-muted font-display">404</div>
-                <h1 className="text-3xl font-black mb-3">{t('notFound.title')}</h1>
-                <a href="/" className="btn-primary inline-flex">{t('notFound.back')}</a>
-              </div>
-            } />
           </Route>
           <Route element={<ReaderLayout />}>
             <Route path="/exemple/:id" element={<PublicBook />} />
             <Route path="/livre/:id" element={<ProtectedRoute><ReadBook /></ProtectedRoute>} />
           </Route>
+
+          {/* 404 top-level — outside any pathless layout to avoid wildcard conflicts */}
+          <Route path="*" element={
+            <Layout>
+              <div className="page-container text-center py-20">
+                <div className="text-5xl mb-4 text-kidoria-muted font-display">404</div>
+                <h1 className="text-3xl font-black mb-3">{t('notFound.title')}</h1>
+                <a href="/" className="btn-primary inline-flex">{t('notFound.back')}</a>
+              </div>
+            </Layout>
+          } />
         </Routes>
         </Suspense>
       </AuthProvider>
