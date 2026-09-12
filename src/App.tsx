@@ -55,6 +55,16 @@ function App() {
         <HtmlLangSync />
         <Suspense fallback={<div className="min-h-screen" />}>
         <Routes>
+          {/* Admin — standalone layout, no navbar — declared FIRST for priority */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="users/:id" element={<AdminUserDetail />} />
+            <Route path="books" element={<AdminBooks />} />
+            <Route path="books/:id" element={<AdminBookDetail />} />
+            <Route path="logs" element={<AdminLogs />} />
+          </Route>
+
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/connexion" element={<Login />} />
@@ -88,16 +98,6 @@ function App() {
               </div>
             } />
           </Route>
-          {/* Admin — standalone layout, no navbar */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="users/:id" element={<AdminUserDetail />} />
-            <Route path="books" element={<AdminBooks />} />
-            <Route path="books/:id" element={<AdminBookDetail />} />
-            <Route path="logs" element={<AdminLogs />} />
-          </Route>
-
           <Route element={<ReaderLayout />}>
             <Route path="/exemple/:id" element={<PublicBook />} />
             <Route path="/livre/:id" element={<ProtectedRoute><ReadBook /></ProtectedRoute>} />
