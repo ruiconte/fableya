@@ -6,6 +6,7 @@ import { PageSEO } from '../components/PageSEO'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useSubscription } from '../hooks/useSubscription'
+import { useAdmin } from '../hooks/useAdmin'
 import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
 import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
 import type { StyleProfile } from '../lib/providers/types'
@@ -25,6 +26,7 @@ export function CreateBook() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { subscription, loading: subLoading, subscribe } = useSubscription()
+  const { isAdmin } = useAdmin()
   const [form, setForm] = useState<BookFormData>({
     child_name: '',
     child_age: 4,
@@ -502,7 +504,7 @@ export function CreateBook() {
         {/* Submit */}
         <div className="card text-center bg-kidoria-lavender/20">
           <p className="text-kidoria-muted text-sm mb-4">{t('create.summaryNote')}</p>
-          {subscription?.isActive && subscription.booksRemaining > 0 ? (
+          {isAdmin || (subscription?.isActive && subscription.booksRemaining > 0) ? (
             <button type="button" onClick={handleGenerateWithSub} disabled={loading}
               className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto">
               {loading ? '…' : t('create.generateButton')}
