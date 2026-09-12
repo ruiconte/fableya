@@ -348,7 +348,7 @@ export function CreateBook() {
             set('visual_style', val as VisualStyle)
             setForm(prev => ({ ...prev, style_profile: { references: [], generatedPrompt: prompt } }))
           }}
-          onOpenBook={id => window.open(`/livre/${id}`, '_blank')}
+          onOpenBook={id => window.open(`/exemple/${id}`, '_blank')}
           t={t}
         />
 
