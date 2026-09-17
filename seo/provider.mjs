@@ -4,7 +4,7 @@ import { outputText, sourcesFromResponse } from './content.mjs';
 // Gemini API — same key as the book generator (GEMINI_API_KEY)
 export function provider(db, jobId, env = process.env, fetcher = fetch) {
   return async function call(stage, instructions, input, schema) {
-    const model = (env.SEO_GEMINI_MODEL ?? 'gemini-2.5-flash');
+    const model = (env.SEO_GEMINI_MODEL ?? 'gemini-2.0-flash');
     const key = required('GEMINI_API_KEY', env);
     if (input.length > 60_000) throw new Error('Contexte trop long : réduire le brief ou les sources');
     const id = await db.rpc('seo_reserve_call', { p_job: jobId, p_stage: stage, p_model: model });
