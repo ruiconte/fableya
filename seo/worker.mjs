@@ -69,17 +69,8 @@ export async function publishDue(db) {
 }
 
 export async function runWorker(db = database(), env = process.env) {
-  // Diagnostic: log which env vars are present (not their values)
-  for (const k of ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','GEMINI_API_KEY','SEO_GEMINI_MODEL']) {
-    const v = env[k];
-    if (v) console.log(`[env] ${k}: ${v.length} chars, first char code ${v.charCodeAt(0)}, last char code ${v.charCodeAt(v.length-1)}`);
-    else console.log(`[env] ${k}: MISSING`);
-  }
-  console.log('[worker] schedule...');
   await schedule(db,env);
-  console.log('[worker] publishDue...');
   await publishDue(db);
-  console.log('[worker] distributeDue...');
   let failed = !await distributeDue(db,env);
   // A bounded invocation works in GitHub Actions or cron, with the same persisted queue.
   for(let n=0;n<4;n++) {
