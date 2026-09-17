@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "build:prerender": "tsc && vite build && react-snap",
     "preview": "vite preview",
+    "seo:worker": "node --env-file-if-exists=seo/.env seo/worker.mjs",
+    "test:seo": "node --test seo/tests/*.test.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
@@ -43,6 +45,7 @@
     "fixInsertRule": true
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.0",

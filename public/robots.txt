@@ -8,3 +8,4 @@ Disallow: /generation
 Disallow: /paiement-confirme
 
 Sitemap: https://fableya.com/sitemap.xml
+Sitemap: https://fableya.com/blog-sitemap.xml

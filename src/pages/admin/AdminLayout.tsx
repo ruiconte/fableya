@@ -13,6 +13,7 @@ export function AdminLayout() {
     { to: '/admin/users', label: 'Utilisateurs' },
     { to: '/admin/books', label: 'Livres' },
     { to: '/admin/logs', label: 'Audit log' },
+    { to: '/admin/seo', label: 'Journal & SEO' },
   ]
 
   return (

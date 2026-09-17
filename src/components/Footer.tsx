@@ -26,6 +26,7 @@ export function Footer() {
               <li><Link to="/creer" className="text-kidoria-muted hover:text-kidoria-text transition-colors">{t('footer.create')}</Link></li>
               <li><Link to="/bibliotheque" className="text-kidoria-muted hover:text-kidoria-text transition-colors">{t('footer.library')}</Link></li>
               <li><Link to="/contact" className="text-kidoria-muted hover:text-kidoria-text transition-colors">{t('footer.contact')}</Link></li>
+              <li><a href="/blog" className="text-kidoria-muted hover:text-kidoria-text transition-colors">Journal Fableya</a></li>
             </ul>
           </div>
 
