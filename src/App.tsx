@@ -14,6 +14,7 @@ import { AdminBookDetail } from './pages/admin/AdminBookDetail'
 import { AdminLogs } from './pages/admin/AdminLogs'
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
+const AdminSEO = lazy(() => import('./pages/admin/AdminSEO').then(m => ({ default: m.AdminSEO })))
 const Login = lazy(() => import('./pages/auth/Login').then(m => ({ default: m.Login })))
 const Register = lazy(() => import('./pages/auth/Register').then(m => ({ default: m.Register })))
 const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword').then(m => ({ default: m.ForgotPassword })))
@@ -65,6 +66,7 @@ function App() {
             <Route path="books" element={<AdminBooks />} />
             <Route path="books/:id" element={<AdminBookDetail />} />
             <Route path="logs" element={<AdminLogs />} />
+            <Route path="seo" element={<AdminSEO />} />
           </Route>
 
           <Route element={<Layout />}>
