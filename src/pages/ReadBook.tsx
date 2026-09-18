@@ -126,6 +126,12 @@ export function ReadBook() {
             ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
             : <div className="w-full h-full bg-kidoria-lavender/30" />
           }
+          {!isCover && page.text && (
+            <div className="absolute inset-x-0 bottom-0 h-[30%] flex items-end pb-4 px-4 pointer-events-none"
+              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(5,3,12,0.82) 55%, rgba(5,3,12,0.92) 100%)' }}>
+              <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug drop-shadow-sm">{page.text}</p>
+            </div>
+          )}
           <div className="absolute left-0 top-0 h-full w-[35%] flex items-center justify-start pl-3 pointer-events-none">
             {currentPage > 0 && <span className="text-white/30 text-3xl">‹</span>}
           </div>
@@ -133,13 +139,6 @@ export function ReadBook() {
             {currentPage < pages.length - 1 && <span className="text-white/30 text-3xl">›</span>}
           </div>
         </div>
-
-        {/* Texte — panneau fixe en bas */}
-        {!isCover && page.text && (
-          <div className="shrink-0 bg-[#111] px-5 py-4">
-            <p className="text-white text-base sm:text-lg font-medium text-center leading-relaxed">{page.text}</p>
-          </div>
-        )}
       </div>
     )
   }
@@ -186,19 +185,16 @@ export function ReadBook() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
-            {/* Image — left on desktop, top on mobile */}
-            <div className="sm:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 h-1/2 sm:h-full">
-              <div className="w-full h-full rounded-3xl overflow-hidden">
-                {page.image_url
-                  ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                  : <div className="w-full h-full bg-kidoria-lavender/30" />}
+          <div className="flex-1 relative overflow-hidden bg-black">
+            {page.image_url
+              ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
+              : <div className="w-full h-full bg-kidoria-lavender/30" />}
+            {page.text && (
+              <div className="absolute inset-x-0 bottom-0 h-[32%] flex items-end pb-6 px-5"
+                style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(5,3,12,0.78) 60%, rgba(5,3,12,0.88) 100%)' }}>
+                <p className="w-full text-white text-base sm:text-xl font-semibold text-center leading-snug drop-shadow-sm">{page.text}</p>
               </div>
-            </div>
-            {/* Text — right on desktop, bottom on mobile */}
-            <div className="sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white/60 h-1/2 sm:h-full overflow-y-auto">
-              <p className="text-kidoria-text leading-relaxed text-lg sm:text-2xl font-semibold text-center sm:text-left">{page.text}</p>
-            </div>
+            )}
           </div>
         )}
 
