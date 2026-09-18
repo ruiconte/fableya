@@ -127,9 +127,9 @@ export function ReadBook() {
             : <div className="w-full h-full bg-kidoria-lavender/30" />
           }
           {!isCover && page.text && (
-            <div className="absolute inset-x-0 bottom-0 h-[30%] flex items-end pb-4 px-4 pointer-events-none"
-              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(5,3,12,0.82) 55%, rgba(5,3,12,0.92) 100%)' }}>
-              <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug drop-shadow-sm">{page.text}</p>
+            <div className="absolute inset-x-0 bottom-0 flex items-end pb-5 px-5 pointer-events-none"
+              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(8,5,18,0.65) 45%, rgba(8,5,18,0.80) 100%)', paddingTop: '6%' }}>
+              <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>{page.text}</p>
             </div>
           )}
           <div className="absolute left-0 top-0 h-full w-[35%] flex items-center justify-start pl-3 pointer-events-none">
@@ -185,16 +185,18 @@ export function ReadBook() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 relative overflow-hidden bg-black">
-            {page.image_url
-              ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
-              : <div className="w-full h-full bg-kidoria-lavender/30" />}
-            {page.text && (
-              <div className="absolute inset-x-0 bottom-0 h-[32%] flex items-end pb-6 px-5"
-                style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(5,3,12,0.78) 60%, rgba(5,3,12,0.88) 100%)' }}>
-                <p className="w-full text-white text-base sm:text-xl font-semibold text-center leading-snug drop-shadow-sm">{page.text}</p>
-              </div>
-            )}
+          <div className="flex-1 flex items-center justify-center bg-black overflow-hidden">
+            <div className="relative h-full" style={{ aspectRatio: '3/4' }}>
+              {page.image_url
+                ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
+                : <div className="w-full h-full bg-kidoria-lavender/30" />}
+              {page.text && (
+                <div className="absolute inset-x-0 bottom-0 flex items-end pb-5 px-5"
+                  style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(8,5,18,0.65) 45%, rgba(8,5,18,0.80) 100%)', paddingTop: '6%' }}>
+                  <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>{page.text}</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
