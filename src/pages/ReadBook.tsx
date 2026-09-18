@@ -126,12 +126,6 @@ export function ReadBook() {
             ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-contain" />
             : <div className="w-full h-full bg-kidoria-lavender/30" />
           }
-          {!isCover && page.text && (
-            <div className="absolute inset-x-0 bottom-0 flex items-end pb-5 px-5 pointer-events-none"
-              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(8,5,18,0.65) 45%, rgba(8,5,18,0.80) 100%)', paddingTop: '6%' }}>
-              <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>{page.text}</p>
-            </div>
-          )}
           <div className="absolute left-0 top-0 h-full w-[35%] flex items-center justify-start pl-3 pointer-events-none">
             {currentPage > 0 && <span className="text-white/30 text-3xl">‹</span>}
           </div>
@@ -185,17 +179,11 @@ export function ReadBook() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-black overflow-hidden">
-            <div className="relative h-full" style={{ aspectRatio: '3/4' }}>
+          <div className="flex-1 flex items-center justify-center bg-kidoria-cream overflow-hidden">
+            <div className="h-full max-h-full" style={{ aspectRatio: '3/4' }}>
               {page.image_url
-                ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
+                ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover rounded-none" />
                 : <div className="w-full h-full bg-kidoria-lavender/30" />}
-              {page.text && (
-                <div className="absolute inset-x-0 bottom-0 flex items-end pb-5 px-5"
-                  style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(8,5,18,0.65) 45%, rgba(8,5,18,0.80) 100%)', paddingTop: '6%' }}>
-                  <p className="w-full text-white text-sm sm:text-base font-semibold text-center leading-snug" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>{page.text}</p>
-                </div>
-              )}
             </div>
           </div>
         )}
