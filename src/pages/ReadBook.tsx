@@ -133,13 +133,6 @@ export function ReadBook() {
             {currentPage < pages.length - 1 && <span className="text-white/30 text-3xl">›</span>}
           </div>
         </div>
-
-        {/* Texte — panneau fixe en bas pour le mode cinéma */}
-        {!isCover && page.text && (
-          <div className="shrink-0 bg-[#0e0c18]/90 px-5 py-4">
-            <p className="text-white/90 text-sm sm:text-base font-medium text-center leading-relaxed">{page.text}</p>
-          </div>
-        )}
       </div>
     )
   }
@@ -186,21 +179,15 @@ export function ReadBook() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
-            {/* Image — pleine hauteur, ratio portrait */}
-            <div className="flex-1 flex items-center justify-center bg-kidoria-cream overflow-hidden">
-              <div className="h-full max-h-full" style={{ aspectRatio: '3/4' }}>
-                {page.image_url
-                  ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                  : <div className="w-full h-full bg-kidoria-lavender/30" />}
-              </div>
-            </div>
-            {/* Texte — panneau latéral sur desktop, bande en bas sur mobile */}
-            {page.text && (
-              <div className="shrink-0 sm:w-64 lg:w-72 flex items-center justify-center p-5 sm:p-7 bg-white/80 border-t sm:border-t-0 sm:border-l border-gray-100">
-                <p className="text-kidoria-text leading-relaxed text-sm sm:text-base lg:text-lg font-semibold text-center">{page.text}</p>
-              </div>
-            )}
+          // Image plein largeur — le texte est deja integre dans l'illustration
+          // (bulle nuage generee cote generator.py), plus de panneau texte separe.
+          // Largeur prioritaire sur la hauteur (h-auto) : l'image peut depasser la
+          // hauteur visible sur un ecran large/bas, la zone defile verticalement
+          // plutot que de reduire l'image pour tenir dans la hauteur disponible.
+          <div className="flex-1 overflow-y-auto bg-kidoria-cream flex items-start justify-center">
+            {page.image_url
+              ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-auto object-contain" />
+              : <div className="w-full aspect-[3/4] bg-kidoria-lavender/30" />}
           </div>
         )}
 

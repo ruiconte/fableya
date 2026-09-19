@@ -118,13 +118,6 @@ export function PublicBook() {
             {currentPage < pages.length - 1 && <span className="text-white/30 text-3xl">›</span>}
           </div>
         </div>
-
-        {/* Texte — panneau fixe en bas, séparé de l'image */}
-        {page?.text && (
-          <div className="shrink-0 bg-[#111] px-5 py-4">
-            <p className="text-white text-base sm:text-lg font-medium text-center leading-relaxed">{page.text}</p>
-          </div>
-        )}
       </div>
     )
   }
@@ -154,17 +147,13 @@ export function PublicBook() {
       </div>
 
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        <div className="flex-1 min-h-0 flex flex-col sm:flex-row overflow-hidden">
-          <div className="sm:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 h-1/2 sm:h-full">
-            <div className="w-full h-full rounded-3xl overflow-hidden">
-              {page?.image_url
-                ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-full object-cover" />
-                : <div className="w-full h-full bg-kidoria-lavender/30 animate-pulse" />}
-            </div>
-          </div>
-          <div className="sm:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white/60 h-1/2 sm:h-full overflow-y-auto">
-            <p className="text-kidoria-text leading-relaxed text-lg sm:text-2xl font-semibold text-center sm:text-left">{page?.text}</p>
-          </div>
+        {/* Image plein largeur — le texte est integre dans l'illustration (bulle nuage
+            generee cote generator.py). Largeur prioritaire sur la hauteur : la zone
+            defile verticalement plutot que de reduire l'image pour tenir en hauteur. */}
+        <div className="flex-1 min-h-0 overflow-y-auto bg-white flex items-start justify-center">
+          {page?.image_url
+            ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-auto object-contain rounded-3xl" />
+            : <div className="w-full aspect-[3/4] bg-kidoria-lavender/30 animate-pulse rounded-3xl" />}
         </div>
 
         <div className="shrink-0 bg-white/80 backdrop-blur border-t border-gray-100 py-3 px-4 flex items-center justify-center gap-4">
