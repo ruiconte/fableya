@@ -56,7 +56,7 @@ export function CadeauNaissance() {
           <ol className="space-y-6">
             {[
               { n: '1', title: 'Renseignez le prénom du bébé', desc: 'Entrez le prénom, l\'âge (0 ou 1 an) et le thème de l\'histoire — aventure, magie, animaux...' },
-              { n: '2', title: 'Choisissez le style d\'illustration', desc: 'Aquarelle douce, conte chaleureux, dessin animé coloré — 5 styles disponibles pour correspondre au goût des parents.' },
+              { n: '2', title: 'Choisissez le style d\'illustration', desc: 'Aquarelle douce, conte chaleureux, dessin animé coloré — 15 styles disponibles pour correspondre au goût des parents.' },
               { n: '3', title: 'Payez et recevez le livre', desc: 'Paiement sécurisé de 5 € via Stripe. Le livre de 15 pages illustrées est généré et disponible immédiatement.' },
             ].map((step) => (
               <li key={step.n} className="card flex gap-6 items-start">

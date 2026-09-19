@@ -52,7 +52,7 @@
     "videoLabel": "En action",
     "videoTitle": "Voyez Fableya en 30 secondes",
     "videoDesc": "De la création à la lecture — comment votre enfant devient le héros de sa propre histoire illustrée.",
-    "feature1": "5 styles visuels au choix — aquarelle, cartoon, conte et plus",
+    "feature1": "15 styles visuels au choix — aquarelle, cartoon, conte et plus",
     "feature2": "Disponible en 7 langues pour votre livre",
     "feature3": "Des valeurs morales intégrées : courage, amitié, confiance…",
     "feature4": "Lecture confortable sur mobile et desktop",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "Créer un livre — 5 €",
     "pricingSingleFree": "Les 5 premières pages sont gratuites.",
     "pricingRecommended": "Recommandé",
-    "pricingPlusBooks": "20 livres inclus chaque mois",
-    "pricingPlusPerBook": "Soit 0,75 € / livre · Résiliation sans engagement",
+    "pricingPlusBooks": "12 livres inclus chaque mois",
+    "pricingPlusPerBook": "Soit 1,25 € / livre · Résiliation sans engagement",
     "pricingPlusCTA": "S'abonner — 15 € / mois",
     "unitBook": "livre",
     "unitMonth": "mois"
@@ -156,7 +156,7 @@
     "styleTabPreset": "Styles Fableya",
     "styleTabRef": "Images de référence",
     "refImageDesc": "Ajoutez des images qui représentent le style visuel que vous souhaitez pour votre livre. Fableya s'en inspirera pour illustrer toutes les pages.",
-    "upsellTitle": "Fableya Plus — 20 livres / mois",
+    "upsellTitle": "Fableya Plus — 12 livres / mois",
     "upsellSub": "15 € / mois · Images de référence incluses",
     "subscribe": "S'abonner",
     "usageLine": "{{used}} / {{total}} livres utilisés ce mois",
@@ -276,7 +276,7 @@
     "cancelConfirmBtn": "Confirmer la résiliation",
     "cancelSuccess": "Abonnement résilié. Il restera actif jusqu'à la fin de la période.",
     "noSub": "Sans abonnement",
-    "noSubCTA": "Passez à Fableya Plus pour 20 livres/mois à 15 €."
+    "noSubCTA": "Passez à Fableya Plus pour 12 livres/mois à 15 €."
   },
   "payment": {
     "successTitle": "Paiement confirmé !",
@@ -342,7 +342,35 @@
     "papercut_label": "Papier découpé",
     "papercut_desc": "Collage en papier découpé aux couches colorées superposées",
     "vintage_label": "Vintage gravure",
-    "vintage_desc": "Gravures style 19ème siècle aux hachures fines et tons sépia"
+    "vintage_desc": "Gravures style 19ème siècle aux hachures fines et tons sépia",
+
+    "anim3d_label": "Film d'animation 3D",
+
+    "anim3d_desc": "Rendu 3D façon grand film d'animation, lumière chaude et personnages arrondis",
+
+    "clay_label": "Pâte à modeler",
+
+    "clay_desc": "Personnages et décors en argile, style animation image par image",
+
+    "feutre_label": "Feutrine et tissu",
+
+    "feutre_desc": "Personnages en laine feutrée et détails brodés, univers textile douillet",
+
+    "crayon_label": "Crayons de couleur",
+
+    "crayon_desc": "Dessin aux crayons de couleur et cires, traits texturés et joyeux",
+
+    "peinture_label": "Peinture à l'huile",
+
+    "peinture_desc": "Peinture à l'huile classique, touches riches et lumière chaude",
+
+    "anime_label": "Anime peint main",
+
+    "anime_desc": "Style film d'animation japonais, décors peints et lumière douce",
+
+    "linogravure_label": "Linogravure",
+
+    "linogravure_desc": "Gravure sur lino en aplats francs, texture d'impression sur papier crème"
   },
   "character": {
     "sectionTitle": "Personnages",

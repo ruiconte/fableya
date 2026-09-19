@@ -35,7 +35,7 @@ export function GenerateurHistoire() {
             {[
               { icon: '✏️', title: 'Décrivez votre enfant', desc: 'Prénom, âge, personnage ou animal préféré, valeur que vous voulez transmettre (courage, amitié, persévérance…).' },
               { icon: '🤖', title: "L'IA génère l'histoire", desc: "Notre modèle d'IA crée une histoire originale adaptée à l'âge de votre enfant, avec des rebondissements et une morale." },
-              { icon: '🎨', title: 'Illustrations générées', desc: 'Chaque page est illustrée dans le style que vous choisissez. Aquarelle, cartoon, conte — 5 styles disponibles.' },
+              { icon: '🎨', title: 'Illustrations générées', desc: 'Chaque page est illustrée dans le style que vous choisissez. Aquarelle, cartoon, conte — 15 styles disponibles.' },
             ].map((item, i) => (
               <div key={i} className="card text-center">
                 <div className="text-4xl mb-4">{item.icon}</div>

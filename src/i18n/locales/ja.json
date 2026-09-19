@@ -38,7 +38,7 @@
     "examplesTitle": "一人ひとりの子どもに合ったユニークな本",
     "examplesSub": "Fableyaが作れる本の例",
     "whyTitle": "なぜFableya？",
-    "feature1": "5つのビジュアルスタイル — 水彩、アニメ、おとぎ話など",
+    "feature1": "15のビジュアルスタイル — 水彩、アニメ、おとぎ話など",
     "feature2": "7言語で本を作成できます",
     "feature3": "勇気、友情、自信などの道徳的価値を組み込めます",
     "feature4": "スマートフォンでもパソコンでも快適に読める",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "本を作る — €5",
     "pricingSingleFree": "最初の5ページは無料です。",
     "pricingRecommended": "おすすめ",
-    "pricingPlusBooks": "毎月20冊含む",
-    "pricingPlusPerBook": "1冊あたり€0.75 · いつでもキャンセル可",
+    "pricingPlusBooks": "毎月12冊含む",
+    "pricingPlusPerBook": "1冊あたり€1.25 · いつでもキャンセル可",
     "pricingPlusCTA": "登録する — €15 / 月",
     "unitBook": "冊",
     "unitMonth": "月"
@@ -156,7 +156,7 @@
     "styleTabPreset": "Fableyaスタイル",
     "styleTabRef": "参照画像",
     "refImageDesc": "本のビジュアルスタイルを表す画像を追加してください。Fableyaがすべてのページのイラストにインスピレーションとして使用します。",
-    "upsellTitle": "Fableya Plus — 月20冊",
+    "upsellTitle": "Fableya Plus — 月12冊",
     "upsellSub": "月額€15 · 参照画像込み",
     "subscribe": "登録する",
     "usageLine": "今月 {{used}} / {{total}} 冊使用済み",
@@ -276,7 +276,7 @@
     "cancelConfirmBtn": "解約を確認する",
     "cancelSuccess": "サブスクリプションを解約しました。期間終了まで有効です。",
     "noSub": "サブスクリプションなし",
-    "noSubCTA": "Fableya Plusにアップグレードして月20冊を€15で。"
+    "noSubCTA": "Fableya Plusにアップグレードして月12冊を€15で。"
   },
   "payment": {
     "successTitle": "支払い確認完了！",
@@ -342,7 +342,35 @@
     "papercut_label": "切り紙",
     "papercut_desc": "カラフルな平面形状を重ねた切り紙コラージュ",
     "vintage_label": "ヴィンテージ版画",
-    "vintage_desc": "細かいクロスハッチングとセピアトーンの19世紀版画スタイル"
+    "vintage_desc": "細かいクロスハッチングとセピアトーンの19世紀版画スタイル",
+
+    "anim3d_label": "3Dアニメ映画",
+
+    "anim3d_desc": "大作アニメ映画のような3D表現、温かい光と丸みのあるキャラクター",
+
+    "clay_label": "粘土アニメ",
+
+    "clay_desc": "粘土のキャラクターとセットによるストップモーション風",
+
+    "feutre_label": "フェルトと布",
+
+    "feutre_desc": "刺しゅうのディテールがあるフェルト人形の温かい布の世界",
+
+    "crayon_label": "色鉛筆",
+
+    "crayon_desc": "色鉛筆とクレヨンで描いた、質感のある楽しいタッチ",
+
+    "peinture_label": "油絵",
+
+    "peinture_desc": "豊かな筆致と温かな光のクラシックな油絵",
+
+    "anime_label": "手描きアニメ",
+
+    "anime_desc": "描き込まれた背景とやわらかな光の日本のアニメ映画風",
+
+    "linogravure_label": "リノカット版画",
+
+    "linogravure_desc": "力強い彫りの面とクリーム色の紙に刷った版画の質感"
   },
   "character": {
     "sectionTitle": "キャラクター",

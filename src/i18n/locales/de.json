@@ -38,7 +38,7 @@
     "examplesTitle": "Einzigartige Bücher für jedes Kind",
     "examplesSub": "Einige Beispiele dessen, was Fableya erstellen kann",
     "whyTitle": "Warum Fableya?",
-    "feature1": "5 visuelle Stile — Aquarell, Cartoon, Märchen und mehr",
+    "feature1": "15 visuelle Stile — Aquarell, Cartoon, Märchen und mehr",
     "feature2": "In 7 Sprachen für dein Buch verfügbar",
     "feature3": "Eingebaute Werte: Mut, Freundschaft, Selbstvertrauen…",
     "feature4": "Komfortables Lesen auf Mobilgerät und Desktop",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "Buch erstellen — €5",
     "pricingSingleFree": "Die ersten 5 Seiten sind kostenlos.",
     "pricingRecommended": "Empfohlen",
-    "pricingPlusBooks": "20 Bücher pro Monat inklusive",
-    "pricingPlusPerBook": "Nur €0,75 / Buch · Jederzeit kündbar",
+    "pricingPlusBooks": "12 Bücher pro Monat inklusive",
+    "pricingPlusPerBook": "Nur €1,25 / Buch · Jederzeit kündbar",
     "pricingPlusCTA": "Abonnieren — €15 / Monat",
     "unitBook": "Buch",
     "unitMonth": "Monat"
@@ -155,7 +155,7 @@
     "styleTabPreset": "Fableya-Stile",
     "styleTabRef": "Referenzbilder",
     "refImageDesc": "Füge Bilder hinzu, die den visuellen Stil deines Buches darstellen. Fableya lässt sich davon inspirieren, um alle Seiten zu illustrieren.",
-    "upsellTitle": "Fableya Plus — 20 Bücher / Monat",
+    "upsellTitle": "Fableya Plus — 12 Bücher / Monat",
     "upsellSub": "€15 / Monat · Referenzbilder inklusive",
     "subscribe": "Abonnieren",
     "usageLine": "{{used}} / {{total}} Bücher diesen Monat genutzt",
@@ -279,7 +279,7 @@
     "cancelConfirmBtn": "Kündigung bestätigen",
     "cancelSuccess": "Abonnement gekündigt. Es bleibt bis zum Ende der Periode aktiv.",
     "noSub": "Kein Abonnement",
-    "noSubCTA": "Wechseln Sie zu Fableya Plus für 20 Bücher/Monat für €15."
+    "noSubCTA": "Wechseln Sie zu Fableya Plus für 12 Bücher/Monat für €15."
   },
   "payment": {
     "successTitle": "Zahlung bestätigt!",
@@ -345,7 +345,35 @@
     "papercut_label": "Papierschnitt",
     "papercut_desc": "Collage aus geschichteten Papierschnitten mit farbigen Flächen",
     "vintage_label": "Vintage-Gravur",
-    "vintage_desc": "Gravurstil des 19. Jahrhunderts mit feinen Kreuzschraffuren und Sepia-Tönen"
+    "vintage_desc": "Gravurstil des 19. Jahrhunderts mit feinen Kreuzschraffuren und Sepia-Tönen",
+
+    "anim3d_label": "3D-Animationsfilm",
+
+    "anim3d_desc": "3D-Look wie ein großer Animationsfilm, warmes Licht und runde Figuren",
+
+    "clay_label": "Knetanimation",
+
+    "clay_desc": "Handgemachte Knetfiguren und Kulissen im Stop-Motion-Look",
+
+    "feutre_label": "Filz und Stoff",
+
+    "feutre_desc": "Figuren aus Filzwolle mit gestickten Details, gemütliche Textilwelt",
+
+    "crayon_label": "Buntstifte",
+
+    "crayon_desc": "Zeichnung mit Buntstiften und Wachsmalern, lebendige Striche",
+
+    "peinture_label": "Ölgemälde",
+
+    "peinture_desc": "Klassische Ölmalerei mit kräftigem Pinselstrich und warmem Licht",
+
+    "anime_label": "Gemalter Anime",
+
+    "anime_desc": "Japanischer Animationsfilm-Look mit gemalten Hintergründen und weichem Licht",
+
+    "linogravure_label": "Linolschnitt",
+
+    "linogravure_desc": "Kräftige Linolschnitt-Flächen mit Drucktextur auf cremefarbenem Papier"
   },
   "character": {
     "sectionTitle": "Charaktere",

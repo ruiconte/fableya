@@ -24,6 +24,9 @@ const STYLE_EXAMPLES: Record<string, { id: string; url: string }[]> = {
   manga:     ['471ea1d3-4942-4dc1-84d1-1b87fbaeec96','04e819a3-bda9-49f6-8769-c3513c00adc8','6e7a1b51-4ee6-4384-a70d-6d2a05f09043','0c07a43d-effe-4cad-821c-e3e9948af9ec'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
   papercut:  ['de12d90e-767f-45de-b5ba-17ec743fe82b','61f75aad-af05-48de-b771-9399f14407eb','91fac612-a7c1-406c-bbe2-72b22be50e9e'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
   vintage:   ['616b8366-34cf-43cc-afd9-1655f3bb9d5d','e9dd8c8a-19c1-4bbf-b270-f058ee912d0a'].map(id => ({ id, url: `${BASE}/${id}/page_1.png` })),
+  // Nouveaux styles : une vignette illustrative, pas de livre d'exemple a ouvrir (id vide)
+  ...Object.fromEntries(['anim3d', 'clay', 'feutre', 'crayon', 'peinture', 'anime', 'linogravure']
+    .map(s => [s, [{ id: '', url: `${BASE}/style-samples/${s}.jpg` }]])),
 }
 
 function getSiteLang(): BookLanguage {
@@ -61,12 +64,14 @@ function StyleSelector({ selectedStyle, onSelect, onOpenBook, t }: {
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {examples.map((ex, i) => (
                     <button key={i} type="button"
-                      onClick={e => { e.stopPropagation(); onOpenBook(ex.id) }}
+                      onClick={e => { e.stopPropagation(); if (ex.id) onOpenBook(ex.id); else onSelect(s.value, s.prompt) }}
                       className="shrink-0 group relative rounded-xl overflow-hidden focus:outline-none">
                       <img src={ex.url} alt="" className="h-28 w-28 object-cover rounded-xl border border-gray-100 group-hover:opacity-80 transition-opacity" loading="lazy" />
-                      <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="bg-black/60 text-white text-xs rounded-full px-2 py-1">Ouvrir</span>
-                      </span>
+                      {ex.id && (
+                        <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="bg-black/60 text-white text-xs rounded-full px-2 py-1">Ouvrir</span>
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

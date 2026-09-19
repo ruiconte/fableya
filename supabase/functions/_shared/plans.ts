@@ -8,7 +8,7 @@ export interface Plan {
 export const PLANS: Record<string, Plan> = {
   plus: {
     stripePriceId: Deno.env.get('STRIPE_SUBSCRIPTION_PRICE_ID') ?? '',
-    monthlyBookLimit: 20,
+    monthlyBookLimit: 12,
     name: 'Fableya Plus',
     priceEurCents: 1500,
   },

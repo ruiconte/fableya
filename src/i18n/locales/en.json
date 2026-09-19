@@ -38,7 +38,7 @@
     "examplesTitle": "Unique books for every child",
     "examplesSub": "A few examples of what Fableya can create",
     "whyTitle": "Why Fableya?",
-    "feature1": "5 visual styles — watercolor, cartoon, fairytale and more",
+    "feature1": "15 visual styles — watercolor, cartoon, fairytale and more",
     "feature2": "Available in 7 languages for your book",
     "feature3": "Built-in moral values: courage, friendship, confidence…",
     "feature4": "Comfortable reading on mobile and desktop",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "Create a book — €5",
     "pricingSingleFree": "The first 5 pages are free.",
     "pricingRecommended": "Recommended",
-    "pricingPlusBooks": "20 books included per month",
-    "pricingPlusPerBook": "That's €0.75 / book · Cancel anytime",
+    "pricingPlusBooks": "12 books included per month",
+    "pricingPlusPerBook": "That's €1.25 / book · Cancel anytime",
     "pricingPlusCTA": "Subscribe — €15 / month",
     "unitBook": "book",
     "unitMonth": "month"
@@ -156,7 +156,7 @@
     "styleTabPreset": "Fableya Styles",
     "styleTabRef": "Reference Images",
     "refImageDesc": "Add images that represent the visual style you want for your book. Fableya will use them to inspire all the illustrations.",
-    "upsellTitle": "Fableya Plus — 20 books / month",
+    "upsellTitle": "Fableya Plus — 12 books / month",
     "upsellSub": "€15 / month · Reference images included",
     "subscribe": "Subscribe",
     "usageLine": "{{used}} / {{total}} books used this month",
@@ -276,7 +276,7 @@
     "cancelConfirmBtn": "Confirm cancellation",
     "cancelSuccess": "Subscription cancelled. It will remain active until the end of the period.",
     "noSub": "No subscription",
-    "noSubCTA": "Upgrade to Fableya Plus for 20 books/month at €15."
+    "noSubCTA": "Upgrade to Fableya Plus for 12 books/month at €15."
   },
   "payment": {
     "successTitle": "Payment confirmed!",
@@ -342,7 +342,35 @@
     "papercut_label": "Paper cutout",
     "papercut_desc": "Layered paper cutout collage with colorful flat shapes",
     "vintage_label": "Vintage engraving",
-    "vintage_desc": "19th century engraving style with fine crosshatching and sepia tones"
+    "vintage_desc": "19th century engraving style with fine crosshatching and sepia tones",
+
+    "anim3d_label": "3D animated film",
+
+    "anim3d_desc": "3D render like a feature animation, warm light and rounded characters",
+
+    "clay_label": "Clay animation",
+
+    "clay_desc": "Handmade clay characters and sets, stop-motion look",
+
+    "feutre_label": "Felt & fabric",
+
+    "feutre_desc": "Needle-felted wool characters with embroidered details, cozy textile world",
+
+    "crayon_label": "Colored pencils",
+
+    "crayon_desc": "Colored pencil and crayon drawing with textured, cheerful strokes",
+
+    "peinture_label": "Oil painting",
+
+    "peinture_desc": "Classic oil painting with rich brushwork and warm glowing light",
+
+    "anime_label": "Hand-painted anime",
+
+    "anime_desc": "Japanese animated film look with painted backdrops and soft light",
+
+    "linogravure_label": "Linocut print",
+
+    "linogravure_desc": "Bold carved linocut shapes with print texture on cream paper"
   },
   "character": {
     "sectionTitle": "Characters",

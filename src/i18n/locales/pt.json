@@ -38,7 +38,7 @@
     "examplesTitle": "Livros únicos para cada criança",
     "examplesSub": "Alguns exemplos do que o Fableya pode criar",
     "whyTitle": "Por que o Fableya?",
-    "feature1": "5 estilos visuais — aquarela, cartoon, conto e mais",
+    "feature1": "15 estilos visuais — aquarela, cartoon, conto e mais",
     "feature2": "Disponível em 7 idiomas para o seu livro",
     "feature3": "Valores integrados: coragem, amizade, confiança…",
     "feature4": "Leitura confortável em mobile e desktop",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "Criar um livro — €5",
     "pricingSingleFree": "As primeiras 5 páginas são gratuitas.",
     "pricingRecommended": "Recomendado",
-    "pricingPlusBooks": "20 livros incluídos por mês",
-    "pricingPlusPerBook": "€0,75 / livro · Cancele quando quiser",
+    "pricingPlusBooks": "12 livros incluídos por mês",
+    "pricingPlusPerBook": "€1,25 / livro · Cancele quando quiser",
     "pricingPlusCTA": "Assinar — €15 / mês",
     "unitBook": "livro",
     "unitMonth": "mês"
@@ -155,7 +155,7 @@
     "styleTabPreset": "Estilos Fableya",
     "styleTabRef": "Imagens de referência",
     "refImageDesc": "Adicione imagens que representem o estilo visual que deseja para o seu livro. O Fableya se inspirará nelas para ilustrar todas as páginas.",
-    "upsellTitle": "Fableya Plus — 20 livros / mês",
+    "upsellTitle": "Fableya Plus — 12 livros / mês",
     "upsellSub": "€15 / mês · Imagens de referência incluídas",
     "subscribe": "Assinar",
     "usageLine": "{{used}} / {{total}} livros usados este mês",
@@ -279,7 +279,7 @@
     "cancelConfirmBtn": "Confirmar cancelamento",
     "cancelSuccess": "Assinatura cancelada. Permanecerá ativa até o fim do período.",
     "noSub": "Sem assinatura",
-    "noSubCTA": "Atualize para Fableya Plus por 20 livros/mês a €15."
+    "noSubCTA": "Atualize para Fableya Plus por 12 livros/mês a €15."
   },
   "payment": {
     "successTitle": "Pagamento confirmado!",
@@ -345,7 +345,35 @@
     "papercut_label": "Papel recortado",
     "papercut_desc": "Colagem de camadas de papel recortado com formas planas coloridas",
     "vintage_label": "Gravura vintage",
-    "vintage_desc": "Estilo de gravura do século XIX com hachuras finas e tons sépia"
+    "vintage_desc": "Estilo de gravura do século XIX com hachuras finas e tons sépia",
+
+    "anim3d_label": "Filme de animação 3D",
+
+    "anim3d_desc": "Render 3D de grande filme de animação, luz quente e personagens arredondados",
+
+    "clay_label": "Massinha de modelar",
+
+    "clay_desc": "Personagens e cenários de argila, estilo stop-motion",
+
+    "feutre_label": "Feltro e tecido",
+
+    "feutre_desc": "Personagens de lã feltrada com detalhes bordados, mundo têxtil aconchegante",
+
+    "crayon_label": "Lápis de cor",
+
+    "crayon_desc": "Desenho com lápis de cor e giz de cera, traços texturizados e alegres",
+
+    "peinture_label": "Pintura a óleo",
+
+    "peinture_desc": "Pintura a óleo clássica com pinceladas ricas e luz quente",
+
+    "anime_label": "Anime pintado à mão",
+
+    "anime_desc": "Visual de filme de animação japonês com fundos pintados e luz suave",
+
+    "linogravure_label": "Xilogravura em linóleo",
+
+    "linogravure_desc": "Formas talhadas em linóleo com textura de impressão em papel creme"
   },
   "character": {
     "sectionTitle": "Personagens",

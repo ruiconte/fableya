@@ -38,7 +38,7 @@
     "examplesTitle": "Libri unici per ogni bambino",
     "examplesSub": "Alcuni esempi di ciò che Fableya può creare",
     "whyTitle": "Perché Fableya?",
-    "feature1": "5 stili visivi — acquerello, cartoon, fiaba e altro",
+    "feature1": "15 stili visivi — acquerello, cartoon, fiaba e altro",
     "feature2": "Disponibile in 7 lingue per il tuo libro",
     "feature3": "Valori integrati: coraggio, amicizia, fiducia…",
     "feature4": "Lettura comoda su mobile e desktop",
@@ -70,8 +70,8 @@
     "pricingSingleCTA": "Crea un libro — €5",
     "pricingSingleFree": "Le prime 5 pagine sono gratuite.",
     "pricingRecommended": "Consigliato",
-    "pricingPlusBooks": "20 libri inclusi al mese",
-    "pricingPlusPerBook": "€0,75 / libro · Disdici quando vuoi",
+    "pricingPlusBooks": "12 libri inclusi al mese",
+    "pricingPlusPerBook": "€1,25 / libro · Disdici quando vuoi",
     "pricingPlusCTA": "Abbonati — €15 / mese",
     "unitBook": "libro",
     "unitMonth": "mese"
@@ -155,7 +155,7 @@
     "styleTabPreset": "Stili Fableya",
     "styleTabRef": "Immagini di riferimento",
     "refImageDesc": "Aggiungi immagini che rappresentano lo stile visivo che desideri per il tuo libro. Fableya si ispirerà per illustrare tutte le pagine.",
-    "upsellTitle": "Fableya Plus — 20 libri / mese",
+    "upsellTitle": "Fableya Plus — 12 libri / mese",
     "upsellSub": "€15 / mese · Immagini di riferimento incluse",
     "subscribe": "Abbonati",
     "usageLine": "{{used}} / {{total}} libri usati questo mese",
@@ -279,7 +279,7 @@
     "cancelConfirmBtn": "Conferma disdetta",
     "cancelSuccess": "Abbonamento disdetto. Rimarrà attivo fino alla fine del periodo.",
     "noSub": "Nessun abbonamento",
-    "noSubCTA": "Passa a Fableya Plus per 20 libri/mese a €15."
+    "noSubCTA": "Passa a Fableya Plus per 12 libri/mese a €15."
   },
   "payment": {
     "successTitle": "Pagamento confermato!",
@@ -345,7 +345,35 @@
     "papercut_label": "Carta ritagliata",
     "papercut_desc": "Collage di carta ritagliata a strati con forme piatte colorate",
     "vintage_label": "Incisione vintage",
-    "vintage_desc": "Stile incisione del XIX secolo con tratteggi fini e toni seppia"
+    "vintage_desc": "Stile incisione del XIX secolo con tratteggi fini e toni seppia",
+
+    "anim3d_label": "Film d'animazione 3D",
+
+    "anim3d_desc": "Render 3D da grande film d'animazione, luce calda e personaggi rotondi",
+
+    "clay_label": "Plastilina",
+
+    "clay_desc": "Personaggi e scenografie di argilla, stile stop-motion",
+
+    "feutre_label": "Feltro e stoffa",
+
+    "feutre_desc": "Personaggi in lana infeltrita con dettagli ricamati, mondo tessile accogliente",
+
+    "crayon_label": "Matite colorate",
+
+    "crayon_desc": "Disegno a matite colorate e pastelli a cera, tratti vivaci e materici",
+
+    "peinture_label": "Pittura a olio",
+
+    "peinture_desc": "Pittura a olio classica con pennellate ricche e luce calda",
+
+    "anime_label": "Anime dipinto a mano",
+
+    "anime_desc": "Look da film d'animazione giapponese con sfondi dipinti e luce morbida",
+
+    "linogravure_label": "Linoleografia",
+
+    "linogravure_desc": "Forme intagliate nel linoleum con texture da stampa su carta crema"
   },
   "character": {
     "sectionTitle": "Personaggi",
