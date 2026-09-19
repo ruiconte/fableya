@@ -179,14 +179,12 @@ export function ReadBook() {
             </div>
           </div>
         ) : (
-          // Image plein largeur — le texte est deja integre dans l'illustration
-          // (bulle nuage generee cote generator.py), plus de panneau texte separe.
-          // Largeur prioritaire sur la hauteur (h-auto) : l'image peut depasser la
-          // hauteur visible sur un ecran large/bas, la zone defile verticalement
-          // plutot que de reduire l'image pour tenir dans la hauteur disponible.
-          <div className="flex-1 overflow-y-auto bg-kidoria-cream flex items-start justify-center">
+          // Le texte est deja integre dans l'illustration (bulle nuage generee
+          // cote generator.py), plus de panneau texte separe. La page entiere
+          // (image + bulle) doit rester visible sans defilement.
+          <div className="flex-1 min-h-0 overflow-hidden bg-kidoria-cream flex items-center justify-center p-2">
             {page.image_url
-              ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-auto object-contain" />
+              ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="max-w-full max-h-full w-auto h-auto object-contain" />
               : <div className="w-full aspect-[3/4] bg-kidoria-lavender/30" />}
           </div>
         )}

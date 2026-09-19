@@ -147,12 +147,11 @@ export function PublicBook() {
       </div>
 
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        {/* Image plein largeur — le texte est integre dans l'illustration (bulle nuage
-            generee cote generator.py). Largeur prioritaire sur la hauteur : la zone
-            defile verticalement plutot que de reduire l'image pour tenir en hauteur. */}
-        <div className="flex-1 min-h-0 overflow-y-auto bg-white flex items-start justify-center">
+        {/* Le texte est integre dans l'illustration (bulle nuage generee cote
+            generator.py). La page entiere doit rester visible sans defilement. */}
+        <div className="flex-1 min-h-0 overflow-hidden bg-white flex items-center justify-center p-2">
           {page?.image_url
-            ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="w-full h-auto object-contain rounded-3xl" />
+            ? <img src={page.image_url} alt={`Page ${page.page_number}`} className="max-w-full max-h-full w-auto h-auto object-contain rounded-3xl" />
             : <div className="w-full aspect-[3/4] bg-kidoria-lavender/30 animate-pulse rounded-3xl" />}
         </div>
 
