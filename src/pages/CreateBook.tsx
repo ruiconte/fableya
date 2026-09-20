@@ -42,14 +42,14 @@ function StyleSelector({ selectedStyle, onSelect, onOpenBook, t }: {
   return (
     <div className="card space-y-4">
       <h2 className="font-display text-xl">{t('create.styleSection')}</h2>
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {VISUAL_STYLES.filter(s => s.value !== 'custom').map(s => {
           const examples = STYLE_EXAMPLES[s.value] ?? []
           const selected = selectedStyle === s.value
           return (
             <div key={s.value}
               onClick={() => onSelect(s.value, s.prompt)}
-              className={`w-full rounded-2xl border-2 p-4 cursor-pointer transition-all ${
+              className={`w-full min-w-0 rounded-2xl border-2 p-3 sm:p-3 cursor-pointer transition-all ${
                 selected ? 'border-kidoria-rose bg-kidoria-rose/10' : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
               }`}>
               <div className="flex items-center gap-3 mb-3">
@@ -60,12 +60,12 @@ function StyleSelector({ selectedStyle, onSelect, onOpenBook, t }: {
                 {selected && <span className="text-kidoria-rose text-xl shrink-0">✓</span>}
               </div>
               {examples.length > 0 && (
-                <div className="flex gap-2 overflow-x-auto pb-1">
+                <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {examples.map((ex, i) => (
                     <button key={i} type="button"
                       onClick={e => { e.stopPropagation(); if (ex.id) onOpenBook(ex.id); else onSelect(s.value, s.prompt) }}
                       className="shrink-0 group relative rounded-xl overflow-hidden focus:outline-none">
-                      <img src={ex.url} alt="" className="h-28 w-28 object-cover rounded-xl border border-gray-100 group-hover:opacity-80 transition-opacity" loading="lazy" />
+                      <img src={ex.url} alt="" className="h-28 w-28 sm:h-24 sm:w-24 object-cover rounded-xl border border-gray-100 group-hover:opacity-80 transition-opacity" loading="lazy" />
                       {ex.id && (
                         <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <span className="bg-black/60 text-white text-xs rounded-full px-2 py-1">Ouvrir</span>
