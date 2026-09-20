@@ -7,9 +7,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useSubscription } from '../hooks/useSubscription'
 import { useAdmin } from '../hooks/useAdmin'
-import { VISUAL_STYLES, MORAL_VALUES, GENRES, BOOK_LANGUAGES } from '../lib/constants'
-import type { BookFormData, VisualStyle, BookLanguage, CreationMode, Character } from '../lib/types'
-import { CharacterSection } from '../components/CharacterSection'
+import { VISUAL_STYLES } from '../lib/constants'
+import type { BookFormData, VisualStyle, BookLanguage } from '../lib/types'
 import { BookShowcase } from '../components/BookShowcase'
 
 const SUPPORTED_LANGUAGES: BookLanguage[] = ['fr', 'en', 'ja', 'es', 'de', 'it', 'pt']
@@ -118,51 +117,28 @@ export function CreateBook() {
   const set = <K extends keyof BookFormData>(key: K, value: BookFormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
 
-  const setMode = (mode: CreationMode) => set('creation_mode', mode)
-  const isAdvanced = form.creation_mode === 'advanced'
-
   const validate = () => {
     if (!user) {
       navigate('/connexion', { state: { from: { pathname: '/creer' } } })
       return false
     }
-    if (isAdvanced) {
-      const chars = form.characters ?? []
-      if (chars.length === 0) { setError('Ajoutez au moins un personnage.'); return false }
-      if (chars.some(c => !c.name.trim())) { setError('Chaque personnage doit avoir un nom.'); return false }
-    } else {
-      if (!form.child_name.trim()) { setError(t('create.errorName')); return false }
-    }
+    if (form.custom_story_idea.trim().length < 5) { setError(t('create.errorIdea')); return false }
     return true
   }
 
-  // Build form_data for submission — derive legacy child_name/child_age from
-  // main character for n8n backward compatibility
-  const buildSubmitData = (): BookFormData => {
-    if (!isAdvanced || !form.characters?.length) return form
-    const main = form.characters.find(c => c.role === 'main') ?? form.characters[0]
-    const ageNum = main.age ? parseInt(main.age) : NaN
-    return {
-      ...form,
-      child_name: main.name,
-      child_age: isNaN(ageNum) ? 4 : ageNum,
-    }
-  }
+  // Mode unique : le style + la description libre suffisent (child_name vide =
+  // le generateur deduit personnages/theme/morale de la description). La langue
+  // du livre est celle du site au moment de l'envoi.
+  const buildSubmitData = (): BookFormData => ({
+    ...form,
+    child_name: '',
+    creation_mode: 'quick',
+    language: getSiteLang(),
+    custom_story_idea: form.custom_story_idea.trim(),
+  })
 
-  const buildTitle = (data: BookFormData): string => {
-    const protagonist = data.child_name || (form.characters?.[0]?.name ?? 'Personnage')
-    const lang = data.language ?? 'fr'
-    const templates: Record<string, (n: string) => string> = {
-      fr: n => `L'histoire de ${n}`,
-      en: n => `${n}'s Story`,
-      ja: n => `${n}のお話`,
-      es: n => `La historia de ${n}`,
-      de: n => `Die Geschichte von ${n}`,
-      it: n => `La storia di ${n}`,
-      pt: n => `A história de ${n}`,
-    }
-    return (templates[lang] ?? templates['fr'])(protagonist)
-  }
+  // Titre provisoire, remplace par le titre genere quand l'histoire est ecrite.
+  const buildTitle = (): string => t('create.defaultBookTitle')
 
   const handlePayNow = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -171,7 +147,7 @@ export function CreateBook() {
     setLoading(true)
     try {
       const submitData = buildSubmitData()
-      const title = buildTitle(submitData)
+      const title = buildTitle()
       const { data: book, error: bookError } = await supabase
         .from('books')
         .insert({ user_id: user!.id, title, status: 'pending_payment', form_data: submitData })
@@ -193,7 +169,7 @@ export function CreateBook() {
     setLoading(true)
     try {
       const submitData = buildSubmitData()
-      const title = buildTitle(submitData)
+      const title = buildTitle()
       const { data: book, error: bookError } = await supabase
         .from('books')
         .insert({ user_id: user!.id, title, status: 'draft', form_data: submitData })
@@ -278,75 +254,9 @@ export function CreateBook() {
         </div>
       )}
 
-      {/* Mode toggle */}
-      <div className="grid grid-cols-2 gap-3 mb-8">
-        <button
-          type="button"
-          onClick={() => setMode('quick')}
-          className={`rounded-2xl border-2 p-4 text-left transition-all ${
-            !isAdvanced
-              ? 'border-kidoria-rose bg-kidoria-rose/10'
-              : 'border-gray-200 hover:border-kidoria-rose/40 bg-white'
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-black text-sm">{t('create.modeQuick')}</span>
-            {!isAdvanced && <span className="ml-auto text-kidoria-rose text-sm font-bold">✓</span>}
-          </div>
-          <p className="text-xs text-kidoria-muted leading-snug">{t('create.modeQuickDesc')}</p>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setMode('advanced')}
-          className={`rounded-2xl border-2 p-4 text-left transition-all ${
-            isAdvanced
-              ? 'border-kidoria-rose bg-kidoria-rose/10'
-              : 'border-gray-200 hover:border-kidoria-rose/40 bg-white'
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-black text-sm">{t('create.modeAdvanced')}</span>
-            {isAdvanced && <span className="ml-auto text-kidoria-rose text-sm font-bold">✓</span>}
-          </div>
-          <p className="text-xs text-kidoria-muted leading-snug">{t('create.modeAdvancedDesc')}</p>
-        </button>
-      </div>
-
       <form onSubmit={e => e.preventDefault()} className="space-y-8">
 
-        {/* ── Child info (quick mode) ── */}
-        {!isAdvanced && (
-          <div className="card space-y-6">
-            <div className="flex items-center gap-3">
-              <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
-              <h2 className="font-display text-xl">{t('create.childSection')}</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="label" htmlFor="child_name">{t('create.childName')} *</label>
-                <input id="child_name" type="text" className="input"
-                  placeholder={t('create.childNamePlaceholder')}
-                  value={form.child_name} onChange={e => set('child_name', e.target.value)}
-                  maxLength={30} required />
-              </div>
-              <div>
-                <label className="label" htmlFor="child_age">{t('create.childAge')} *</label>
-                <select id="child_age" className="input" value={form.child_age}
-                  onChange={e => set('child_age', Number(e.target.value))}>
-                  {Array.from({ length: 10 }, (_, i) => i + 2).map(age => (
-                    <option key={age} value={age}>{age} {t('create.childAgeUnit')}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <p className="text-xs text-kidoria-muted bg-kidoria-cream rounded-xl px-3 py-2.5 leading-relaxed">
-              <span className="font-semibold">{t('create.tipLabel')}</span> {t('create.childTip')}
-            </p>
-          </div>
-        )}
-
-        {/* ── Visual style (both modes) ── */}
+        {/* ── Style visuel ── */}
         <StyleSelector
           selectedStyle={form.visual_style}
           onSelect={(val, prompt) => {
@@ -357,85 +267,8 @@ export function CreateBook() {
           t={t}
         />
 
-        {/* ── Characters (advanced mode) ── */}
-        {isAdvanced && (
-          <div className="card space-y-6">
-            <div>
-              <h2 className="font-display text-xl">{t('create.charactersSection')}</h2>
-              <p className="text-sm text-kidoria-muted mt-1">
-                {t('create.charactersSub')}
-              </p>
-            </div>
-            <CharacterSection
-              characters={form.characters ?? []}
-              onChange={(chars: Character[]) => setForm(prev => ({ ...prev, characters: chars }))}
-            />
-          </div>
-        )}
+        {/* ── Description libre du livre ── */}
 
-        {/* ── Genre (always visible) ── */}
-        <div className="card space-y-6">
-          <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
-            <h2 className="font-display text-xl">{t('create.genreSection')}</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {GENRES.map(g => (
-              <button key={g.value} type="button" onClick={() => set('genre', g.value)}
-                className={`rounded-2xl border-2 p-3 text-left transition-all ${
-                  form.genre === g.value
-                    ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
-                    : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
-                }`}>
-                <div className="text-sm font-semibold">{t(`genres.${g.value}`)}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Moral value (always visible) ── */}
-        <div className="card space-y-6">
-          <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-kidoria-rose text-white text-xs font-black flex items-center justify-center shrink-0">3</span>
-            <h2 className="font-display text-xl">{t('create.moralSection')}</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {MORAL_VALUES.map(v => (
-              <button key={v.value} type="button" onClick={() => set('moral_value', v.value)}
-                className={`rounded-2xl border-2 p-3 text-center transition-all ${
-                  form.moral_value === v.value
-                    ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
-                    : 'border-gray-200 hover:border-kidoria-rose/50 bg-white'
-                }`}>
-                <div className="text-xs font-semibold leading-tight">{t(`morals.${v.value}`)}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Advanced-only fields ── */}
-        {isAdvanced && (
-          <>
-
-            {/* Book language */}
-            {<div className="card space-y-6">
-              <h2 className="font-display text-xl">{t('create.languageSection')}</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {BOOK_LANGUAGES.map(l => (
-                  <button key={l.value} type="button" onClick={() => set('language', l.value as BookLanguage)}
-                    className={`rounded-2xl border-2 p-3 text-center transition-all ${
-                      form.language === l.value
-                        ? 'border-kidoria-rose bg-kidoria-rose/10 font-bold'
-                        : 'border-gray-200 hover:border-kidoria-rose/50'
-                    }`}>
-                    <div className="text-2xl mb-1">{l.flag}</div>
-                    <div className="text-xs font-semibold leading-tight">{t(`bookLanguages.${l.value}`)}</div>
-                  </button>
-                ))}
-              </div>
-            </div>}
-
-            {/* Story idea — free text */}
             <div className="card space-y-6">
               <div>
                 <h2 className="font-black text-lg mb-1">{t('create.storyIdeaSection')}</h2>
@@ -474,8 +307,6 @@ export function CreateBook() {
                 </div>
               </div>
             </div>
-          </>
-        )}
 
         {error && (
           <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 font-medium">{error}</div>

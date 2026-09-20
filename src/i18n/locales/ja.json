@@ -128,7 +128,7 @@
   },
   "create": {
     "title": "パーソナライズ絵本を作る",
-    "subtitle": "お子さまのことを教えてください。そのお子さまだけの物語を作ります。",
+    "subtitle": "スタイルを選び、作りたい本を教えてください。物語とイラストをお作りします。",
     "childSection": "お子さまについて",
     "childName": "名前",
     "childNamePlaceholder": "Emma、Lucas、ゆき…",
@@ -172,10 +172,14 @@
     "modeAdvanced": "詳細モード",
     "modeQuickDesc": "必要最小限の情報で、あとはお任せください。",
     "modeAdvancedDesc": "物語のすべての詳細をカスタマイズ。",
-    "storyIdeaSection": "アイデアを教えてください",
-    "storyIdeaIntro": "作りたい物語を自由に説明してください。今日あった出来事、伝えたい教訓、特定の冒険、テーマなど、どんなアイデアでも構いません。",
+    "storyIdeaSection": "作りたい本を教えてください",
+    "storyIdeaIntro": "作りたい本を自由に書いてください。登場人物(名前、年齢、ペットなど)、ストーリー、テーマや伝えたい教え。詳しいほど、あなたらしい一冊になります。",
     "storyIdeaPlaceholder": "例：息子は暗いところが怖いので、勇気とユーモアでその恐怖を乗り越える物語を作りたいです…",
-    "storyIdeaOptional": "任意 — 空欄の場合は、上記の選択をもとに素敵な物語を作成します。",
+    "storyIdeaOptional": "本はサイトの言語で書かれ、15ページのイラストと画像に組み込まれたテキストで仕上がります。",
+
+    "errorIdea": "作りたい本を書いてください(数語で構いません)。",
+
+    "defaultBookTitle": "私のFableyaの本",
     "storyIdeaExamples": "アイデアの例：",
     "storyIdeaExample1": "息子は暗いところが怖い — その恐怖を乗り越えられる物語を作りたい。",
     "storyIdeaExample2": "娘が今日海で素敵な一日を過ごした — その日を魔法の冒険に変えたい。",

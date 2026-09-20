@@ -128,7 +128,7 @@
   },
   "create": {
     "title": "Créer un livre personnalisé",
-    "subtitle": "Racontez-nous votre enfant et nous créerons une histoire rien que pour lui.",
+    "subtitle": "Choisissez un style, puis racontez-nous le livre que vous souhaitez : nous créons l'histoire et les illustrations.",
     "childSection": "Votre enfant",
     "childName": "Prénom",
     "childNamePlaceholder": "Emma, Lucas, Yuki…",
@@ -172,10 +172,14 @@
     "modeAdvanced": "Mode avancé",
     "modeQuickDesc": "Quelques infos essentielles, on s'occupe du reste.",
     "modeAdvancedDesc": "Personnalisez chaque détail de l'histoire.",
-    "storyIdeaSection": "Racontez-nous votre idée",
-    "storyIdeaIntro": "Décrivez librement l'histoire que vous aimeriez créer. Vous pouvez raconter un événement vécu aujourd'hui, une leçon que vous souhaitez transmettre, une aventure précise, un thème particulier ou toute autre idée.",
+    "storyIdeaSection": "Racontez-nous votre livre",
+    "storyIdeaIntro": "Décrivez le livre que vous souhaitez : les personnages (prénom, âge, animal de compagnie…), l'histoire, le thème ou la leçon à transmettre. Plus vous donnez de détails, plus le livre vous ressemblera.",
     "storyIdeaPlaceholder": "Ex : Mon fils a peur du noir, j'aimerais une histoire qui l'aide à surmonter cette peur avec courage et humour…",
-    "storyIdeaOptional": "Optionnel — si vous laissez ce champ vide, nous créerons une belle histoire en nous basant sur vos choix ci-dessus.",
+    "storyIdeaOptional": "Le livre est écrit dans la langue du site, avec 15 pages illustrées et le texte intégré aux images.",
+
+    "errorIdea": "Veuillez décrire le livre que vous souhaitez (quelques mots suffisent).",
+
+    "defaultBookTitle": "Mon livre Fableya",
     "storyIdeaExamples": "Exemples d'idées :",
     "storyIdeaExample1": "Mon fils a peur du noir, j'aimerais une histoire qui l'aide à surmonter cette peur.",
     "storyIdeaExample2": "Ma fille a passé une belle journée à la plage aujourd'hui, j'aimerais transformer cette journée en aventure magique.",

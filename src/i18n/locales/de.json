@@ -128,7 +128,7 @@
   },
   "create": {
     "title": "Ein personalisiertes Buch erstellen",
-    "subtitle": "Erzähl uns von deinem Kind und wir erstellen eine Geschichte nur für es.",
+    "subtitle": "Wählen Sie einen Stil und beschreiben Sie das gewünschte Buch: Wir erschaffen Geschichte und Illustrationen.",
     "childSection": "Dein Kind",
     "childName": "Vorname",
     "childNamePlaceholder": "Emma, Luca, Mia…",
@@ -172,10 +172,14 @@
     "modeAdvanced": "Erweiterter Modus",
     "modeQuickDesc": "Das Wesentliche — wir machen den Rest.",
     "modeAdvancedDesc": "Passe jedes Detail der Geschichte an.",
-    "storyIdeaSection": "Erzähl uns deine Idee",
-    "storyIdeaIntro": "Beschreibe frei die Geschichte, die du erstellen möchtest.",
+    "storyIdeaSection": "Erzählen Sie uns von Ihrem Buch",
+    "storyIdeaIntro": "Beschreiben Sie das gewünschte Buch: die Figuren (Vorname, Alter, Haustier …), die Geschichte, das Thema oder die Botschaft. Je mehr Details, desto persönlicher wird das Buch.",
     "storyIdeaPlaceholder": "Z.B. Mein Sohn hat Angst vor der Dunkelheit, ich würde gerne eine Geschichte, die ihm hilft, diese Angst zu überwinden…",
-    "storyIdeaOptional": "Optional — wenn du es leer lässt, erstellen wir eine schöne Geschichte basierend auf deinen Auswahlen.",
+    "storyIdeaOptional": "Das Buch wird in der Sprache der Website verfasst, mit 15 illustrierten Seiten und im Bild integriertem Text.",
+
+    "errorIdea": "Bitte beschreiben Sie das gewünschte Buch (ein paar Worte genügen).",
+
+    "defaultBookTitle": "Mein Fableya-Buch",
     "storyIdeaExamples": "Beispielideen:",
     "storyIdeaExample1": "Mein Sohn hat Angst vor der Dunkelheit — ich möchte eine Geschichte, die ihm hilft, diese Angst zu überwinden.",
     "storyIdeaExample2": "Meine Tochter hatte einen wunderbaren Tag am Strand — ich möchte das in ein magisches Abenteuer verwandeln.",

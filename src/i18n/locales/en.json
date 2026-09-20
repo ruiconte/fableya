@@ -128,7 +128,7 @@
   },
   "create": {
     "title": "Create a personalized book",
-    "subtitle": "Tell us about your child and we'll create a story just for them.",
+    "subtitle": "Pick a style, then tell us about the book you want: we create the story and the illustrations.",
     "childSection": "Your child",
     "childName": "First name",
     "childNamePlaceholder": "Emma, Lucas, Yuki…",
@@ -172,10 +172,14 @@
     "modeAdvanced": "Advanced mode",
     "modeQuickDesc": "A few essentials — we handle the rest.",
     "modeAdvancedDesc": "Customize every detail of the story.",
-    "storyIdeaSection": "Tell us your idea",
-    "storyIdeaIntro": "Freely describe the story you'd like to create. You can share something that happened today, a lesson you want to pass on, a specific adventure, a theme, or any other idea.",
+    "storyIdeaSection": "Tell us about your book",
+    "storyIdeaIntro": "Describe the book you'd like: the characters (name, age, pet…), the story, the theme or the lesson to pass on. The more detail you give, the more the book will feel like yours.",
     "storyIdeaPlaceholder": "E.g. My son is afraid of the dark, I'd love a story that helps him overcome that fear with courage and humor…",
-    "storyIdeaOptional": "Optional — if you leave this blank, we'll craft a beautiful story based on your choices above.",
+    "storyIdeaOptional": "The book is written in the site's language, with 15 illustrated pages and the text built into the images.",
+
+    "errorIdea": "Please describe the book you'd like (a few words are enough).",
+
+    "defaultBookTitle": "My Fableya book",
     "storyIdeaExamples": "Example ideas:",
     "storyIdeaExample1": "My son is afraid of the dark — I'd love a story that helps him overcome that fear.",
     "storyIdeaExample2": "My daughter had a wonderful day at the beach today — I'd love to turn that into a magical adventure.",
