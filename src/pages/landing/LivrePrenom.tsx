@@ -8,7 +8,7 @@ export function LivrePrenom() {
     <div>
       <PageSEO
         title="Livre avec le prénom de votre enfant — Histoire personnalisée"
-        description="Créez un livre illustré où le héros porte le prénom de votre enfant. Histoire unique générée par IA, 15 pages illustrées, disponible immédiatement pour 5 €."
+        description="Créez un livre illustré où le héros porte le prénom de votre enfant. Histoire unique générée par IA, 15 pages illustrées, disponible immédiatement pour 3 €."
         canonical="/livre-prenom-enfant"
       />
 
@@ -34,7 +34,7 @@ export function LivrePrenom() {
             </span>
           </div>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">
-            Créer le livre de mon enfant — 5 €
+            Créer le livre de mon enfant — 3 €
           </Link>
         </div>
       </section>
@@ -67,7 +67,7 @@ export function LivrePrenom() {
           <div className="space-y-4">
             {[
               { q: 'Est-ce que tous les prénoms fonctionnent ?', r: 'Oui, absolument tous les prénoms — français, étrangers, composés. L\'IA intègre naturellement n\'importe quel prénom dans l\'histoire.' },
-              { q: 'Puis-je lire le livre avant de payer ?', r: 'Oui ! Fableya génère les 5 premières pages gratuitement pour que vous puissiez lire un extrait avant de payer les 5 € pour le livre complet.' },
+              { q: 'Puis-je lire le livre avant de payer ?', r: 'Oui ! Fableya génère les 5 premières pages gratuitement pour que vous puissiez lire un extrait avant de payer les 3 € pour le livre complet.' },
               { q: 'Comment recevoir le livre ?', r: 'Le livre est accessible directement dans votre bibliothèque Fableya, lisible sur mobile et desktop. Vous pouvez aussi le télécharger en PDF.' },
             ].map((item, i) => (
               <details key={i} className="card group">
@@ -85,7 +85,7 @@ export function LivrePrenom() {
       <section className="py-16 bg-gradient-to-r from-kidoria-rose/30 to-kidoria-lavender/30">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-black mb-4">Créez le livre avec le prénom de votre enfant</h2>
-          <p className="text-kidoria-muted mb-8">5 € · Paiement unique · Prêt en moins de 10 minutes</p>
+          <p className="text-kidoria-muted mb-8">3 € · Paiement unique · Prêt en moins de 10 minutes</p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">Commencer maintenant</Link>
         </div>
       </section>

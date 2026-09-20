@@ -6,7 +6,7 @@ export function CadeauAnniversaire() {
     <div>
       <PageSEO
         title="Cadeau anniversaire enfant original — Livre illustré personnalisé"
-        description="Trouvez l'idée cadeau anniversaire parfaite pour un enfant. Un livre illustré personnalisé avec son prénom comme héros, pour 5 € seulement. Livraison digitale immédiate."
+        description="Trouvez l'idée cadeau anniversaire parfaite pour un enfant. Un livre illustré personnalisé avec son prénom comme héros, pour 3 € seulement. Livraison digitale immédiate."
         canonical="/cadeau-anniversaire-enfant"
       />
 
@@ -22,7 +22,7 @@ export function CadeauAnniversaire() {
             Offrez un livre illustré personnalisé où l'enfant est le héros de son propre anniversaire. Une histoire unique créée avec son prénom, ses goûts et la valeur que vous voulez lui transmettre.
           </p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">
-            Créer le cadeau — 5 €
+            Créer le cadeau — 3 €
           </Link>
           <p className="mt-3 text-sm text-kidoria-muted">Disponible immédiatement · Pas de livraison à attendre</p>
         </div>
@@ -55,7 +55,7 @@ export function CadeauAnniversaire() {
             {[
               { icon: '🎁', title: 'Original et mémorable', desc: 'Pas de jouet qui finira dans un tiroir. Un livre avec son propre prénom, c\'est un cadeau dont on parle.' },
               { icon: '⚡', title: 'Prêt en 10 minutes', desc: 'Vous avez oublié l\'anniversaire ? Pas de panique. Le livre est prêt et disponible en moins de 10 minutes.' },
-              { icon: '💰', title: 'Budget maîtrisé', desc: 'Un cadeau qui sort du lot pour seulement 5 €. Pas d\'abonnement, pas de frais cachés.' },
+              { icon: '💰', title: 'Budget maîtrisé', desc: 'Un cadeau qui sort du lot pour seulement 3 €. Pas d\'abonnement, pas de frais cachés.' },
             ].map((item, i) => (
               <div key={i} className="card text-center">
                 <div className="text-4xl mb-4">{item.icon}</div>
@@ -70,7 +70,7 @@ export function CadeauAnniversaire() {
       <section className="py-16 bg-gradient-to-r from-kidoria-rose/30 to-kidoria-lavender/30">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-black mb-4">Créez le cadeau d'anniversaire maintenant</h2>
-          <p className="text-kidoria-muted mb-8">5 € · Livraison digitale immédiate · Aucun abonnement</p>
+          <p className="text-kidoria-muted mb-8">3 € · Livraison digitale immédiate · Aucun abonnement</p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">Créer le livre personnalisé</Link>
         </div>
       </section>

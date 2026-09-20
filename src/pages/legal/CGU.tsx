@@ -20,7 +20,7 @@ export function CGU() {
 
         <section>
           <h2 className="font-black text-xl text-kidoria-text mb-3">3. Tarifs et paiement</h2>
-          <p>Le prix d'un livre personnalisé est de <strong>5 € TTC</strong>. Le paiement est effectué en une seule fois, sans abonnement ni frais récurrents. Le paiement est traité de manière sécurisée par Stripe.</p>
+          <p>Le prix d'un livre personnalisé est de <strong>3 € TTC</strong>. Le paiement est effectué en une seule fois, sans abonnement ni frais récurrents. Le paiement est traité de manière sécurisée par Stripe.</p>
         </section>
 
         <section>

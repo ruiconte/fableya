@@ -22,7 +22,7 @@ export function GenerateurHistoire() {
             Fableya est un générateur d'histoires pour enfants basé sur l'intelligence artificielle. En quelques informations sur votre enfant, il crée une histoire originale de 15 pages avec des illustrations générées spécialement pour lui.
           </p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">
-            Générer une histoire — 5 €
+            Générer une histoire — 3 €
           </Link>
           <p className="mt-3 text-sm text-kidoria-muted">Lisez les 5 premières pages gratuitement avant de payer</p>
         </div>
@@ -77,7 +77,7 @@ export function GenerateurHistoire() {
               { q: 'Le générateur fonctionne-t-il pour tous les âges ?', r: 'Oui, de 1 à 10 ans. Fableya adapte automatiquement le vocabulaire, la longueur des phrases et la complexité de l\'histoire à l\'âge indiqué.' },
               { q: 'Puis-je choisir le thème de l\'histoire ?', r: 'Oui : aventure, magie & féerie, nature & animaux, espace, océan, ou vie quotidienne. Vous pouvez aussi décrire librement votre idée en mode avancé.' },
               { q: 'L\'histoire est-elle vraiment originale ?', r: 'Chaque histoire est générée à la demande et n\'existe nulle part ailleurs. Deux enfants avec le même prénom obtiendront des histoires différentes.' },
-              { q: 'Combien coûte la génération ?', r: '5 € par livre complet (15 pages illustrées). Les 5 premières pages sont générées gratuitement pour que vous puissiez lire un extrait avant de payer.' },
+              { q: 'Combien coûte la génération ?', r: '3 € par livre complet (15 pages illustrées). Les 5 premières pages sont générées gratuitement pour que vous puissiez lire un extrait avant de payer.' },
             ].map((item, i) => (
               <details key={i} className="card group">
                 <summary className="font-black text-base cursor-pointer list-none flex justify-between items-center gap-4">
@@ -94,7 +94,7 @@ export function GenerateurHistoire() {
       <section className="py-16 bg-gradient-to-r from-kidoria-rose/30 to-kidoria-lavender/30">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-black mb-4">Essayez le générateur gratuitement</h2>
-          <p className="text-kidoria-muted mb-8">Les 5 premières pages sont gratuites · 5 € pour le livre complet</p>
+          <p className="text-kidoria-muted mb-8">Les 5 premières pages sont gratuites · 3 € pour le livre complet</p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">Générer l'histoire de mon enfant</Link>
         </div>
       </section>

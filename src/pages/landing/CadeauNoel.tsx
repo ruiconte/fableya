@@ -6,7 +6,7 @@ export function CadeauNoel() {
     <div>
       <PageSEO
         title="Idée cadeau Noël enfant — Livre illustré personnalisé unique"
-        description="Offrez un livre de Noël personnalisé avec le prénom de l'enfant comme héros. Idée cadeau originale pour les fêtes, 5 € seulement, disponible immédiatement."
+        description="Offrez un livre de Noël personnalisé avec le prénom de l'enfant comme héros. Idée cadeau originale pour les fêtes, 3 € seulement, disponible immédiatement."
         canonical="/idee-cadeau-noel-enfant"
       />
 
@@ -22,7 +22,7 @@ export function CadeauNoel() {
             Imaginez l'émerveillement de votre enfant en découvrant un livre illustré où il est lui-même le héros d'une aventure de Noël. Une histoire unique créée spécialement avec son prénom.
           </p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">
-            Créer le livre de Noël — 5 €
+            Créer le livre de Noël — 3 €
           </Link>
           <p className="mt-3 text-sm text-kidoria-muted">Disponible immédiatement · Pas de délai de livraison</p>
         </div>
@@ -56,7 +56,7 @@ export function CadeauNoel() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
             {[
               { n: '1', title: 'Personnalisez', desc: 'Prénom, âge, thème magie & féerie, valeur à transmettre.' },
-              { n: '2', title: 'Payez 5 €', desc: 'Paiement sécurisé Stripe. Apple Pay et Google Pay acceptés.' },
+              { n: '2', title: 'Payez 3 €', desc: 'Paiement sécurisé Stripe. Apple Pay et Google Pay acceptés.' },
               { n: '3', title: 'Offrez !', desc: 'Imprimez le PDF ou partagez le lien de lecture pour la découverte sous le sapin.' },
             ].map((step) => (
               <div key={step.n} className="card">
@@ -72,7 +72,7 @@ export function CadeauNoel() {
       <section className="py-16 bg-gradient-to-r from-kidoria-rose/30 to-kidoria-lavender/30">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-black mb-4">Créez le cadeau de Noël maintenant</h2>
-          <p className="text-kidoria-muted mb-8">5 € · Disponible immédiatement · Aucun abonnement</p>
+          <p className="text-kidoria-muted mb-8">3 € · Disponible immédiatement · Aucun abonnement</p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">Créer le livre de Noël</Link>
         </div>
       </section>

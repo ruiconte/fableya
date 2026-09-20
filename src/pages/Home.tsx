@@ -316,7 +316,7 @@ export function Home() {
               <div className="bg-white rounded-xl border border-kidoria-sky p-7">
                 <p className="text-xs font-semibold tracking-widest uppercase text-kidoria-muted mb-4">{t('home.pricingSingleTitle')}</p>
                 <div className="flex items-end gap-1 mb-1">
-                  <span className="font-display text-5xl text-kidoria-text leading-none">5€</span>
+                  <span className="font-display text-5xl text-kidoria-text leading-none">3€</span>
                   <span className="text-kidoria-muted text-sm mb-1">/ {t('home.unitBook')}</span>
                 </div>
                 <p className="text-kidoria-muted text-xs mb-5">{t('home.pricingSingleDesc')}</p>

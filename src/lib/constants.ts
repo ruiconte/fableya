@@ -50,4 +50,4 @@ export const BOOK_LANGUAGES = [
   { value: 'pt', flag: '🇵🇹' },
 ] as const
 
-export const BOOK_PRICE_EUR = 5
+export const BOOK_PRICE_EUR = 3

@@ -70,7 +70,7 @@ Dashboard → **Authentication → URL Configuration** :
 
 1. [Dashboard Stripe](https://dashboard.stripe.com) → **Products → Add product**
 2. Nom : `Livre Kidoria`
-3. Prix : `5,00 €` — paiement unique
+3. Prix : `3,00 €` — paiement unique
 4. Copiez le **Price ID** (`price_xxx`) → `.env` → `STRIPE_PRICE_ID`
 
 ### 4.2 Clés API
@@ -158,7 +158,7 @@ Les fichiers statiques sont dans `dist/`. Déployez sur Vercel, Netlify ou tout 
 
 ```
 Accueil → Formulaire → [si non connecté → Inscription/Connexion]
-→ Paiement Stripe (5€) → Stripe Checkout
+→ Paiement Stripe (3€) → Stripe Checkout
 → Webhook Stripe reçu → statut "paid" → génération lancée
 → Page "Génération en cours" (polling toutes les 3s)
 → statut "completed" → Liseuse intégrée

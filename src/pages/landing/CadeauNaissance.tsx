@@ -6,7 +6,7 @@ export function CadeauNaissance() {
     <div>
       <PageSEO
         title="Cadeau de naissance original — Livre illustré personnalisé"
-        description="Offrez un livre illustré unique comme cadeau de naissance. L'histoire est générée avec le prénom du bébé comme héros. Livraison digitale immédiate, 5 € seulement."
+        description="Offrez un livre illustré unique comme cadeau de naissance. L'histoire est générée avec le prénom du bébé comme héros. Livraison digitale immédiate, 3 € seulement."
         canonical="/cadeau-naissance"
       />
 
@@ -23,7 +23,7 @@ export function CadeauNaissance() {
             Offrez un livre illustré personnalisé avec le prénom du bébé comme héros de l'histoire. Une œuvre unique générée par IA que les parents garderont toute leur vie.
           </p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">
-            Créer le livre — 5 €
+            Créer le livre — 3 €
           </Link>
           <p className="mt-3 text-sm text-kidoria-muted">Livraison digitale immédiate · Paiement unique</p>
         </div>
@@ -57,7 +57,7 @@ export function CadeauNaissance() {
             {[
               { n: '1', title: 'Renseignez le prénom du bébé', desc: 'Entrez le prénom, l\'âge (0 ou 1 an) et le thème de l\'histoire — aventure, magie, animaux...' },
               { n: '2', title: 'Choisissez le style d\'illustration', desc: 'Aquarelle douce, conte chaleureux, dessin animé coloré — 15 styles disponibles pour correspondre au goût des parents.' },
-              { n: '3', title: 'Payez et recevez le livre', desc: 'Paiement sécurisé de 5 € via Stripe. Le livre de 15 pages illustrées est généré et disponible immédiatement.' },
+              { n: '3', title: 'Payez et recevez le livre', desc: 'Paiement sécurisé de 3 € via Stripe. Le livre de 15 pages illustrées est généré et disponible immédiatement.' },
             ].map((step) => (
               <li key={step.n} className="card flex gap-6 items-start">
                 <div className="w-10 h-10 rounded-full bg-kidoria-rose flex items-center justify-center text-white font-black shrink-0">{step.n}</div>
@@ -75,7 +75,7 @@ export function CadeauNaissance() {
       <section className="py-16 bg-gradient-to-r from-kidoria-rose/30 to-kidoria-lavender/30">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-black mb-4">Créez le livre de naissance maintenant</h2>
-          <p className="text-kidoria-muted mb-8">5 € · Paiement unique · Prêt en moins de 10 minutes</p>
+          <p className="text-kidoria-muted mb-8">3 € · Paiement unique · Prêt en moins de 10 minutes</p>
           <Link to="/creer" className="btn-primary text-lg px-8 py-4">Créer le livre personnalisé</Link>
         </div>
       </section>
